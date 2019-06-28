@@ -1,5 +1,5 @@
 TARGET = cecs
-LIBS = -lm -D_REENTRANT -lGL -lGLEW -lSDL2 -lSDL2_image
+LIBS = -lm -D_REENTRANT -std=c11 -lGL -lGLEW -lSDL2 -lSDL2_image
 
 CC = gcc
 CFLAGS = -g -Wall -I/usr/include/SDL2 -Icommon/ -Inogl/ -Igl/
