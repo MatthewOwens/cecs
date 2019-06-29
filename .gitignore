@@ -1,3 +1,50 @@
-# build files
-src/*.o
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+run-tests
 cecs
+
+# Subdirectories
+obj/
+build/
+CMakeFiles/
+
+# Make stuff
+Makefile
+CMakeCache.txt
+cmake_install.cmake
+CmakeLists.txtt
+*.sh
+
+# swap files
+*.sw*
+
+# krita
+*.kra
+*.kra~
+*.png~
