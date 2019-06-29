@@ -1,0 +1,20 @@
+list (APPEND CMAKE_CXX_FLAGS "-fPIC -Wall -DGL_GLETX_PROTOTYPES -Werror=return-type -g -pedantic-errors -std=c++11${CMAKE_CXX_FLAGS}")
+file(GLOB SRCS *.cpp catch.hpp)
+include_directories(../src)
+add_executable(run-tests ${SRCS} $<TARGET_OBJECTS:GAME_LIB>)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+
+find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
+find_package(Jsoncpp REQUIRED)
+
+if(SFML_FOUND)
+  include_directories(${SFML_INCLUDE_DIR})
+	#target_link_libraries(run-tests ${SFML_LIBRARIES})
+	target_link_libraries(run-tests PRIVATE sfml-graphics sfml-network sfml-audio)
+endif()
+
+if(Jsoncpp_FOUND)
+	message("Found jsoncpp in " ${Jsoncpp_INCLUDE_DIR})
+	include_directories(${Jsoncpp_INCLUDE_DIR})
+	target_link_libraries(run-tests PRIVATE ${Jsoncpp_LIBRARY})
+endif()
