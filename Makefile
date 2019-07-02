@@ -2,7 +2,7 @@ TARGET = cecs
 LIBS = -lm -D_REENTRANT -std=c11 -lGL -lGLEW -lSDL2 -lSDL2_image
 
 CC = gcc
-CFLAGS = -g -Wall -I/usr/include/SDL2 -Icommon/ -Inogl/ -Igl/
+CFLAGS = -g -Wall -I/usr/include/SDL2 -Icommon/ -Inogl/ -Igl/ -Ijsmn/
 
 .PHONY: default all clean
 
