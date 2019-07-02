@@ -7,7 +7,7 @@ CFLAGS = -g -Wall -I/usr/include/SDL2 -Icommon/ -Inogl/ -Igl/
 .PHONY: default all clean
 
 default: $(TARGET)
-	all: default
+all: default
 
 OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
 HEADERS = $(wildcard src/*.h)
