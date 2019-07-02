@@ -48,3 +48,6 @@ CmakeLists.txtt
 *.kra
 *.kra~
 *.png~
+
+# notes
+src/notes.md
