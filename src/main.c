@@ -15,10 +15,6 @@ int main(int argc, char **argv)
 	ComponentPosition pos = {0};
 	ComponentVelocity vel = {0};
 
-	vel.x = 5.f;
-	printf("position: (%f,%f)\n", pos.x, pos.y);
-	printf("velocity: (%f,%f)\n", vel.x, vel.y);
-
 	printf("registering components\n");
 	cecs_reg_component(cecs, &pos, sizeof(ComponentPosition));
 	cecs_reg_component(cecs, &vel, sizeof(ComponentVelocity));
