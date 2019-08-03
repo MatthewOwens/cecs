@@ -1,6 +1,6 @@
 #pragma once
 
-static enum cecs_errno
+enum cecs_errno
 {
 	CECSE_NONE = 0,
 	CECSE_INVALID_VALUE,
