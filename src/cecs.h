@@ -23,6 +23,8 @@ struct cecs{
 };
 
 struct cecs* cecs_init();
+int cecs_free(struct cecs* cecs);
+int cecs_start(struct cecs* cecs)
 
 // Registers data struct with cecs, returns 0 on success
 int cecs_reg_component(struct cecs* cecs, void *data, size_t size);
