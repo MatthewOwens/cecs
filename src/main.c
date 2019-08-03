@@ -3,6 +3,8 @@
 #include "components/components.h"
 #include "cecs.h"
 
+void testfunc() { }
+
 int main(int argc, char **argv)
 {
 	printf("initilising cecs...");
@@ -18,9 +20,9 @@ int main(int argc, char **argv)
 	printf("registering components\n");
 	cecs_reg_component(cecs, &pos, sizeof(ComponentPosition));
 	cecs_reg_component(cecs, &vel, sizeof(ComponentVelocity));
+	cecs_reg_system(cecs, testfunc, 0, 0);
 
 	cecs_start(cecs);
-
 	cecs_free(cecs);
 
 	return 0;
