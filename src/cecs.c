@@ -21,7 +21,7 @@ struct cecs* cecs_init()
 int cecs_free(struct cecs* cecs)
 {
 	if(cecs == NULL)
-		return cecse(CECSE_UNINITILISED);
+		return cecse(CECSE_NULL);
 
 	if(cecs->components != NULL){
 		for(int i = 0; i < cecs->num_components; ++i){
@@ -47,9 +47,8 @@ int cecs_reg_component(struct cecs* cecs, void *data, size_t size)
 	static uint32_t skey = 0x0;
 
 	if(cecs == NULL) {
-		return cecse(CECSE_UNINITILISED);
-	} else if (cecs->state == CECS_INITILISED ||
-		   cecs->state == CECS_STARTED){
+		return cecse(CECSE_NULL);
+	} else if (cecs->state == CECS_STARTED){
 		return cecse(CECSE_INVALID_OPERATION);
 	}
 
@@ -100,9 +99,8 @@ int cecs_reg_system(struct cecs* cecs, cecs_sys_func func,
 int cecs_start(struct cecs* cecs)
 {
 	if(cecs == NULL){
-		return cecse(CECSE_UNINITILISED);
-	}
-	else if(cecs->state != CECS_UNINITILISED){
+		return cecse(CECSE_NULL);
+	} else if(cecs->state != CECS_UNINITILISED) {
 		return cecse(CECSE_INVALID_OPERATION);
 	}
 

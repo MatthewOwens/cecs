@@ -6,7 +6,7 @@ enum cecs_errno
 	CECSE_INVALID_VALUE,
 	CECSE_INVALID_OPERATION,
 	CECSE_NOMEM,
-	CECSE_UNINITILISED
+	CECSE_NULL
 };
 
 void cecse_set(enum cecs_errno err);
