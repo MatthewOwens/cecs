@@ -11,6 +11,8 @@ struct cecs* cecs_init()
 	cecs->state = CECS_UNINITILISED;
 	cecs->components = NULL;
 	cecs->num_components = 0;
+	cecs->systems = NULL;
+	cecs->num_systems = 0;
 
 	cecse(CECSE_NONE);
 	return cecs;
@@ -30,6 +32,13 @@ int cecs_free(struct cecs* cecs)
 		}
 		free(cecs->components);
 	}
+
+	if(cecs->systems != NULL) {
+		printf("freeing systems\n");
+		free(cecs->systems);
+	}
+
+	free(cecs);
 	return cecse(CECSE_NONE);
 }
 
@@ -46,24 +55,45 @@ int cecs_reg_component(struct cecs* cecs, void *data, size_t size)
 
 	void* tmp  = reallocarray(cecs->components, cecs->num_components + 1,
 				sizeof(struct cecs_component));
+	if (tmp == NULL) { return cecse(CECSE_NOMEM); }
 
-	if(tmp == NULL){
-		return cecse(CECSE_NOMEM);
-	} else {
-		cecs->components = tmp;
-		int i = cecs->num_components;
+	cecs->components = tmp;
+	int i = cecs->num_components;
 
-		// generating a bit-unique key for this component
-		skey = skey << 1;
+	// generating a bit-unique key for this component
+	skey = skey << 1;
 
-		//cecs->components[cecs->num_components].data = data;
-		cecs->components[i].data = malloc(size);
-		memcpy(cecs->components[i].data, data, size);
-		cecs->components[i].size = size;
-		cecs->components[i].key = skey;
+	cecs->components[i].data = malloc(size);
+	memcpy(cecs->components[i].data, data, size);
+	cecs->components[i].size = size;
+	cecs->components[i].key = skey;
 
-		cecs->num_components += 1;
+	cecs->num_components += 1;
+	return cecse(CECSE_NONE);
+}
+
+int cecs_reg_system(struct cecs* cecs, cecs_sys_func func,
+		    uint32_t incl_mask, uint32_t excl_mask)
+{
+	printf("registering cecs system %p\n", func);
+	if(cecs == NULL) {
+		return cecse(CECSE_NULL);
+	} else if (cecs->state != CECS_UNINITILISED || func == NULL) {
+		return cecse(CECSE_INVALID_OPERATION);
 	}
+
+	void* tmp = reallocarray(cecs->systems, cecs->num_systems + 1,
+				 sizeof(struct cecs_system));
+	if(tmp == NULL) { return cecse(CECSE_NOMEM); }
+
+	cecs->systems = tmp;
+	int i = cecs->num_systems;
+
+	cecs->systems[i].function = func;
+	cecs->systems[i].inclusion_mask = incl_mask;
+	cecs->systems[i].exclusion_mask = excl_mask;
+
+	cecs->num_systems += 1;
 	return cecse(CECSE_NONE);
 }
 
