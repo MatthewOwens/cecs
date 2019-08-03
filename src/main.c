@@ -18,13 +18,16 @@ int main(int argc, char **argv)
 	ComponentVelocity vel = {0};
 
 	printf("registering components\n");
-	cecs_reg_component(cecs, &pos, sizeof(ComponentPosition));
-	cecs_reg_component(cecs, &vel, sizeof(ComponentVelocity));
+	cecs_reg_component(cecs, "position", &pos, sizeof(ComponentPosition));
+	cecs_reg_component(cecs, "velocity", &vel, sizeof(ComponentVelocity));
+
 	cecs_reg_system(cecs, testfunc, 0, 0);
+
+	printf("position key is %d\n", cecs_component_key(cecs, "position"));
+	printf("velocity key is %d\n", cecs_component_key(cecs, "velocity"));
 
 	cecs_start(cecs);
 	cecs_free(cecs);
-
 	return 0;
 }
 

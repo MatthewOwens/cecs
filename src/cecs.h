@@ -9,6 +9,7 @@ struct cecs_component
 	void *data;
 	size_t size;
 	uint32_t key;
+	const char *name;
 };
 
 struct cecs_system
@@ -39,11 +40,14 @@ int cecs_free(struct cecs* cecs);
 int cecs_start(struct cecs* cecs);
 
 // registers data struct with cecs, returns 0 on success
-int cecs_reg_component(struct cecs* cecs, void *data, size_t size);
+int cecs_reg_component( struct cecs* cecs, const char* name,
+			void *data, size_t size );
 
 /*
  * registers a function with cecs, return 0 on success
- * incl_mask and excl_mask are the relevant component keys bitwise or'd together
+ * incl_mask and excl_mask are component keys bitwise or'd together
 */
 int cecs_reg_system(struct cecs* cecs, cecs_sys_func func,
 		    uint32_t incl_mask, uint32_t excl_mask);
+
+uint32_t cecs_component_key(struct cecs* cecs, const char* name);

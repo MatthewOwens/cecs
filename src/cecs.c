@@ -42,9 +42,10 @@ int cecs_free(struct cecs* cecs)
 	return cecse(CECSE_NONE);
 }
 
-int cecs_reg_component(struct cecs* cecs, void *data, size_t size)
+int cecs_reg_component( struct cecs* cecs, const char* name,
+			void *data, size_t size )
 {
-	static uint32_t skey = 0x0;
+	static uint32_t skey = 1;
 
 	if(cecs == NULL) {
 		return cecse(CECSE_NULL);
@@ -61,11 +62,15 @@ int cecs_reg_component(struct cecs* cecs, void *data, size_t size)
 
 	// generating a bit-unique key for this component
 	skey = skey << 1;
+	printf("skey is %d\n" , skey);
 
 	cecs->components[i].data = malloc(size);
 	memcpy(cecs->components[i].data, data, size);
 	cecs->components[i].size = size;
 	cecs->components[i].key = skey;
+	cecs->components[i].name = name;
+
+	printf("successfully registered %s component\n", name);
 
 	cecs->num_components += 1;
 	return cecse(CECSE_NONE);
@@ -106,4 +111,17 @@ int cecs_start(struct cecs* cecs)
 
 	cecs->state = CECS_STARTED;
 	return cecse(CECSE_NONE);
+}
+
+uint32_t cecs_component_key(struct cecs *cecs, const char* name)
+{
+	const uint32_t null_mask = 0;
+	uint32_t ret = null_mask;
+	for(int i = 0; i < cecs->num_components; ++i){
+		if(strcmp(name, cecs->components[i].name)){
+			ret = cecs->components[i].key;
+			break;
+		}
+	}
+	return ret;
 }
