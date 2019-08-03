@@ -19,6 +19,10 @@ int main(int argc, char **argv)
 	cecs_reg_component(cecs, &pos, sizeof(ComponentPosition));
 	cecs_reg_component(cecs, &vel, sizeof(ComponentVelocity));
 
+	cecs_start(cecs);
+
+	cecs_free(cecs);
+
 	return 0;
 }
 
