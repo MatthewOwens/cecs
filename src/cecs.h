@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-typedef void (*cecs_sys_func)();
 
 struct cecs_component
 {
@@ -10,13 +9,6 @@ struct cecs_component
 	size_t size;
 	uint32_t key;
 	const char *name;
-};
-
-struct cecs_system
-{
-	cecs_sys_func function;
-	uint32_t inclusion_mask;
-	uint32_t exclusion_mask;
 };
 
 enum cecs_state
@@ -35,6 +27,20 @@ struct cecs{
 	int num_systems;
 };
 
+typedef int (*sys_init_func)(struct cecs* cecs);
+typedef void (*sys_run_func)();
+typedef void (*sys_free_func)();
+
+struct cecs_system
+{
+	sys_init_func init;
+	sys_run_func run;
+	sys_free_func free;
+	uint32_t inclusion_mask;
+	uint32_t exclusion_mask;
+	const char *name;
+};
+
 struct cecs* cecs_init();
 int cecs_free(struct cecs* cecs);
 int cecs_start(struct cecs* cecs);
@@ -47,7 +53,9 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
  * registers a function with cecs, return 0 on success
  * incl_mask and excl_mask are component keys bitwise or'd together
 */
-int cecs_reg_system(struct cecs* cecs, cecs_sys_func func,
-		    uint32_t incl_mask, uint32_t excl_mask);
+int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
+		    uint32_t excl_mask, sys_init_func init, sys_run_func run,
+		    sys_free_func free);
 
 uint32_t cecs_component_key(struct cecs* cecs, const char* name);
+struct cecs_system* cecs_system(struct cecs *cecs, const char* name);
