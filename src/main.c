@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include "string.h"
 #include "components/components.h"
+#include "systems/gravity.h"
 #include "cecs.h"
-
-void testfunc() { }
 
 int main(int argc, char **argv)
 {
@@ -21,7 +20,9 @@ int main(int argc, char **argv)
 	cecs_reg_component(cecs, "position", &pos, sizeof(ComponentPosition));
 	cecs_reg_component(cecs, "velocity", &vel, sizeof(ComponentVelocity));
 
-	cecs_reg_system(cecs, testfunc, 0, 0);
+	cecs_reg_system(cecs, "gravity", cecs_component_key(cecs, "position") |
+			cecs_component_key(cecs, "veloctiy"), 0, gravity_init,
+			gravity_run, gravity_free);
 
 	printf("position key is %d\n", cecs_component_key(cecs, "position"));
 	printf("velocity key is %d\n", cecs_component_key(cecs, "velocity"));
@@ -30,4 +31,3 @@ int main(int argc, char **argv)
 	cecs_free(cecs);
 	return 0;
 }
-
