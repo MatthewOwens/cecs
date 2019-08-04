@@ -6,6 +6,11 @@
 
 int main(int argc, char **argv)
 {
+	ComponentPosition pos = {0};
+	ComponentVelocity vel = {0};
+	int enta;
+	int entb;
+
 	printf("initilising cecs...");
 	struct cecs* cecs = cecs_init();
 	if(cecs == NULL){
@@ -13,8 +18,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	printf("success!\n");
-	ComponentPosition pos = {0};
-	ComponentVelocity vel = {0};
 
 	printf("registering components\n");
 	cecs_reg_component(cecs, "position", &pos, sizeof(ComponentPosition));
@@ -26,6 +29,14 @@ int main(int argc, char **argv)
 
 	printf("position key is %d\n", cecs_component_key(cecs, "position"));
 	printf("velocity key is %d\n", cecs_component_key(cecs, "velocity"));
+
+	// building the entities
+	cecs_add_entitiy(cecs, &enta);
+	cecs_ent_add_component(cecs, enta, "position");
+
+	cecs_add_entitiy(cecs, &entb);
+	cecs_ent_add_component(cecs, enta, "position");
+	cecs_ent_add_component(cecs, enta, "velocity");
 
 	cecs_start(cecs);
 	cecs_free(cecs);
