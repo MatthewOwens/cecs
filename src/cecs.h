@@ -1,15 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
-
-
-struct cecs_component
-{
-	void *data;
-	size_t size;
-	uint32_t key;
-	const char *name;
-};
+#include "cecs_component.h"
 
 enum cecs_state
 {
@@ -45,10 +37,6 @@ struct cecs* cecs_init();
 int cecs_free(struct cecs* cecs);
 int cecs_start(struct cecs* cecs);
 
-// registers data struct with cecs, returns 0 on success
-int cecs_reg_component( struct cecs* cecs, const char* name,
-			void *data, size_t size );
-
 /*
  * registers a function with cecs, return 0 on success
  * incl_mask and excl_mask are component keys bitwise or'd together
@@ -57,5 +45,4 @@ int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
 		    uint32_t excl_mask, sys_init_func init, sys_run_func run,
 		    sys_free_func free);
 
-uint32_t cecs_component_key(struct cecs* cecs, const char* name);
 struct cecs_system* cecs_system(struct cecs *cecs, const char* name);
