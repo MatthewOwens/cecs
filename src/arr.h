@@ -26,14 +26,6 @@
 		array.capacity = 0;				\
 	} while(0)					
 
-//#define array_push(array, element)			\
-//  do {							\
-//      array.data = realloc(array.data,			\
-//                           sizeof(*array.data) *	\
-//                             (array.length + 1));	\
-//      array.data[array.length] = element;		\
-//      array.length++;					\
-//  } while (0)
 #define array_push(array, element)				\
 do {								\
 	if (array.capacity == 0) {				\
