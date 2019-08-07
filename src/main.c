@@ -3,8 +3,29 @@
 #include "components/components.h"
 #include "systems/gravity.h"
 #include "cecs.h"
+#include "arr.h"
+#include <stdlib.h>
+#include <malloc.h>
 
-int main(int argc, char **argv)
+int main()
+{
+	//array(int) arr = array_init();
+	//array(int) arr = { .data = NULL, .length = 0, .capacity = 0 };
+	array(int) arr = {0};
+
+	while(int i = 0; i < 128; ++i){
+		array_push(arr, i);
+	}
+
+	while(int i = 0; i < arr.length; ++i){
+		printf("%d\n", arr.data[i]);
+	}
+	
+	array_free(arr);
+	return 0;
+}
+
+int nomain(int argc, char **argv)
 {
 	ComponentPosition pos = {0};
 	ComponentVelocity vel = {0};
