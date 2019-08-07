@@ -7,29 +7,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-int main()
-{
-	array(float) arr = array_init();
-
-	printf("%p, %ld, %ld\n", arr.data, arr.length, arr.capacity);
-
-	for(int i = 0; i < 128; ++i){
-		array_push(arr, i);
-	}
-
-	for(int i = 0; i < arr.length; ++i){
-		if(i == 0){
-			printf("array contents:\n");
-		}
-		printf("\t%f\n", arr.data[i]);
-	}
-	
-	array_free(arr);
-	printf("%p, %ld, %ld\n", arr.data, arr.length, arr.capacity);
-	return 0;
-}
-
-int nomain(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	ComponentPosition pos = {0};
 	ComponentVelocity vel = {0};
