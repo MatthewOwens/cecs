@@ -9,13 +9,14 @@
 	struct {						\
 		type* data;					\
 		size_t length;					\
-		size_t capacity;
+		size_t capacity;				\
 	}							
 
-#define array_init(){						\
-	.data = NULL;						\
-	.length = 0;						\
-	.capacity = 0;						\
+#define array_init()						\
+{								\
+	.data = NULL,						\
+	.length = 0,						\
+	.capacity = 0						\
 }
 
 #define array_free(array)					\
