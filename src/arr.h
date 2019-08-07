@@ -18,7 +18,6 @@
 	.length = 0,						\
 	.capacity = 0						\
 }
-
 #define array_free(array)					\
 	do {							\
 		free(array.data);				\
@@ -28,18 +27,28 @@
 	} while(0)					
 
 #define array_push(array, element)				\
-do {								\
+({								\
+	printf("cap is %ld len is %ld\n", array.capacity, array.length);\
 	if (array.capacity == 0) {				\
 		array.data = malloc(sizeof(*array.data));	\
 		array.data[0] = element;			\
 		array.capacity = 1;				\
 		array.length = 1;				\
-	} if (array.length == array.capacity) {			\
-		array.capacity *= 2;				\
-		type* tmp = reallocarray(array.data,		\
-			array.capacity, sizeof(*array.data))	\
-		if (tmp == NULL) return				\
-		array.data = tmp;				\
-		array.data[array.length] = element;		\
-		array.length++;					\
-} while(0)
+	} else {						\
+		if (array.length == array.capacity) {		\
+			array.capacity *= 2;				\
+									\
+			void* tmp = reallocarray(array.data,		\
+				array.capacity, sizeof(*array.data));	\
+			if (tmp != NULL) {				\
+				array.data = tmp;			\
+			} else {					\
+				fprintf(stderr, "arr.h - realloc failed!\n");\
+				return 1;				\
+			}						\
+		}							\
+		array.data[array.length] = element;			\
+		array.length += 1;					\
+	}								\
+})
+//} while (0)
