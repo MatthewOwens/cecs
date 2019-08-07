@@ -9,19 +9,23 @@
 
 int main()
 {
-	//array(int) arr = array_init();
-	//array(int) arr = { .data = NULL, .length = 0, .capacity = 0 };
-	array(int) arr = {0};
+	array(float) arr = array_init();
 
-	while(int i = 0; i < 128; ++i){
+	printf("%p, %ld, %ld\n", arr.data, arr.length, arr.capacity);
+
+	for(int i = 0; i < 128; ++i){
 		array_push(arr, i);
 	}
 
-	while(int i = 0; i < arr.length; ++i){
-		printf("%d\n", arr.data[i]);
+	for(int i = 0; i < arr.length; ++i){
+		if(i == 0){
+			printf("array contents:\n");
+		}
+		printf("\t%f\n", arr.data[i]);
 	}
 	
 	array_free(arr);
+	printf("%p, %ld, %ld\n", arr.data, arr.length, arr.capacity);
 	return 0;
 }
 
