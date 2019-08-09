@@ -23,6 +23,7 @@ int cecs_add_entitiy(struct cecs* cecs, int *ent)
 
 	// if there are no inactive entities
 	if(index == -1) {
+		//TODO: resize component arrays accordingly!
 		cecs->num_entities++;
 		tmp = reallocarray(cecs->entities, cecs->num_entities,
 				   sizeof(uint32_t));
