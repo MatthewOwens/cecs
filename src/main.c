@@ -9,6 +9,23 @@
 
 int main(int argc, char **argv)
 {
+
+	array(int) arr = array_init();
+	for(int i = 0; i < 10; ++i){
+		array_push(arr, i);
+	}
+
+	printf("array contents:\n");
+	for(int i = 0; i < 10; ++i){
+		printf("\t(%d)\n", arr.data[i]);
+	}
+
+	return 0;
+}
+
+/*
+int nomain(int argc, char **argv)
+{
 	ComponentPosition pos = {0};
 	ComponentVelocity vel = {0};
 	int enta;
@@ -45,3 +62,5 @@ int main(int argc, char **argv)
 	cecs_free(cecs);
 	return 0;
 }
+
+*/
