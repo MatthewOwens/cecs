@@ -4,7 +4,6 @@
 */
 
 #pragma once
-
 #define array(type)\
 	struct {\
 		type* data;\
@@ -12,27 +11,11 @@
 		size_t capacity;\
 	}
 
-#define varray\
-	struct {\
-		void* data;\
-		size_t length;\
-		size_t capacity;\
-		size_t size;\
-	}
-
 #define array_init()\
 {\
 	.data = NULL,\
 	.length = 0,\
 	.capacity = 0\
-}
-
-#define varray_init(size)\
-{\
-	.data = NULL,\
-	.length = 0,\
-	.capacity = 0,\
-	.size = size\
 }
 
 #define array_free(array)\
@@ -68,5 +51,3 @@ do {\
 		 array.length += 1;\
 	 }\
 })
-
-//TODO: varray_push()
