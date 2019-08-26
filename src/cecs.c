@@ -19,8 +19,8 @@ struct cecs* cecs_init()
 
 	cecs->entities = NULL;
 	cecs->num_entities = 0;
-	cecs->inactive_entities = NULL;
-	cecs->num_inactive_entities = 0;
+
+	cecs->inactive_entities = array_init();
 
 	cecse(CECSE_NONE);
 	return cecs;
@@ -46,7 +46,7 @@ int cecs_free(struct cecs* cecs)
 	}
 
 	if(cecs->entities != NULL)		free(cecs->entities);
-	if(cecs->inactive_entities != NULL)	free(cecs->inactive_entities);
+	array_free(cecs->inactive_entities);
 
 	free(cecs);
 	return cecse(CECSE_NONE);

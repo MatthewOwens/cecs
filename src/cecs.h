@@ -4,6 +4,7 @@
 #include "cecs_entity.h"
 #include "cecs_component.h"
 #include "cecs_system.h"
+#include "arr.h"
 
 enum cecs_state
 {
@@ -23,8 +24,7 @@ struct cecs{
 	uint32_t *entities;
 	int num_entities;
 
-	int *inactive_entities;
-	int num_inactive_entities;
+	array(int) inactive_entities;
 };
 
 struct cecs* cecs_init();
