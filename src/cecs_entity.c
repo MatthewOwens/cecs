@@ -14,6 +14,20 @@ int get_inactive_entity(struct cecs* cecs)
 	}
 }
 
+int extend_components(struct cecs* cecs)
+{
+	int i;
+	for(i = 0; i < cecs->num_components; ++i){
+		// TODO: increment each component data ptr
+
+		// double size of component arrays
+		// set num_inactive_entities to num_entities - 1
+		// extend inactives array to accomodate new entries
+		// populate new inactives
+	}
+	return cecse(CECSE_NONE);
+}
+
 int cecs_add_entitiy(struct cecs* cecs, int *ent)
 {
 	void* tmp = NULL;
