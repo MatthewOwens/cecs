@@ -7,10 +7,11 @@
 // returns -1 if there is none available, index of inactive entity if available
 int get_inactive_entity(struct cecs* cecs)
 {
-	if(cecs->num_inactive_entities == 0){
+	int len = cecs->inactive_entities.length;
+	if(len == 0){
 		return -1;
 	} else {
-		return cecs->inactive_entities[cecs->num_inactive_entities-1];
+		return cecs->inactive_entities.data[len-1];
 	}
 }
 
@@ -47,10 +48,7 @@ int cecs_add_entitiy(struct cecs* cecs, int *ent)
 		index = cecs->num_entities - 1;
 
 	} else {
-		index = cecs->inactive_entities[cecs->num_inactive_entities-1];
-		cecs->num_inactive_entities--;
-		cecs->inactive_entities = realloc(cecs->inactive_entities,
-			cecs->num_inactive_entities * sizeof(int));
+		array_pop(cecs->inactive_entities);
 	}
 
 	// ensuring that no keys are associated with the new entitiy
@@ -65,23 +63,14 @@ int cecs_rem_entity(struct cecs* cecs, int ent)
 	if(ent < 0 || ent > cecs->num_entities - 1)
 		return cecse(CECSE_INVALID_OPERATION);
 
-	for(int i = 0; i < cecs->num_inactive_entities; ++i){
+	for(int i = 0; i < cecs->inactive_entities.length; ++i){
 		// entity is already inactive, can report success
-		if(ent == cecs->inactive_entities[i])
+		if(ent == cecs->inactive_entities.data[i])
 			return cecse(CECSE_NONE);
 	}
 
 	// flagging the entity for removal
-	void* tmp = reallocarray(cecs->inactive_entities,
-		    cecs->num_inactive_entities + 1, sizeof(int));
-	if(tmp == NULL){
-		return cecse(CECSE_NOMEM);
-	} else {
-		cecs->inactive_entities = tmp;
-		cecs->inactive_entities[cecs->num_inactive_entities] = ent;
-		cecs->num_inactive_entities++;
-		cecs->entities[ent] = 0;
-	}
+	array_push(cecs->inactive_entities, ent);
 	return cecse(CECSE_NONE);
 }
 
