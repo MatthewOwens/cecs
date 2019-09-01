@@ -55,3 +55,20 @@ do {\
 		 array.length += 1;\
 	 }\
 })
+
+#define array_pop(array)\
+({\
+	if(array.capacity != 0 && array.length != 0) {\
+		array.length -= 1;\
+	}\
+ })
+
+#define array_pop_at(array, index)\
+({\
+	if(array.capacity != 0 && array.length != 0) {\
+		for(int i = index; i < array.length - 1; ++i){\
+			array.data[i] = array.data[i+1];\
+		}\
+		array_pop(array);\
+	}\
+})
