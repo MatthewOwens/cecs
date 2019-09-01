@@ -11,6 +11,10 @@
 		size_t capacity;\
 	}
 
+/*
+ * Can only be used at array declaration, since the macro is just a wrapper for
+ * a struct {} assignment
+*/
 #define array_init()\
 {\
 	.data = NULL,\

@@ -20,7 +20,14 @@ struct cecs* cecs_init()
 	cecs->entities = NULL;
 	cecs->num_entities = 0;
 
-	cecs->inactive_entities = array_init();
+	/*
+	 * can't use array_init here since inactive_entities has already been
+	 * declared, see arr.h for more.
+	 *
+	*/
+	cecs->inactive_entities.length = 0;
+	cecs->inactive_entities.capacity = 0;
+	cecs->inactive_entities.data = NULL;
 
 	cecse(CECSE_NONE);
 	return cecs;
