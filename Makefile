@@ -13,7 +13,6 @@ all: $(TARGET) $(TEST_TARGET)
 ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
 ORIG_OBJECTS += $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
 
-#OBJECTS = $(ORIG_OBJECTS)
 OBJECTS := $(filter-out src/main.o,$(ORIG_OBJECTS))
 HEADERS = $(wildcard src/*.h) $(wildcard src/**/*.h)
 SRCS = $(wildcard src/*.c) $(wildcard src/**/*.c)
