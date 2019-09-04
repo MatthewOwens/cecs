@@ -1,6 +1,6 @@
 #include <check.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include "runner.h"
+#include "check_check.h"
 
 START_TEST(test_test)
 {
@@ -21,23 +21,4 @@ Suite * test_suite(void)
 	suite_add_tcase(s, tc);
 
 	return s;
-}
-
-int run_suite(Suite *s)
-{
-	int failed_count = 0;
-	SRunner *sr = srunner_create(s);
-	srunner_run_all(sr, CK_NORMAL);
-	failed_count += srunner_ntests_failed(sr);
-	srunner_free(sr);
-	return failed_count;
-}
-
-int main(void)
-{
-	int failed_count = 0;
-
-	failed_count += run_suite(test_suite());
-
-	return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
