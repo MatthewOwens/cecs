@@ -1,4 +1,5 @@
 TARGET = cecs
+TEST_TARGET = check
 LIBS = -lm -D_REENTRANT -std=c11 -lGL -lGLEW -lSDL2 -lSDL2_image
 
 CC = gcc
@@ -7,26 +8,47 @@ CFLAGS = -g -Wall -I/usr/include/SDL2 -Isystems/ -Icomponents/ -Isrc/
 .PHONY: default all clean
 
 default: $(TARGET)
-all: default
+all: $(TARGET) $(TEST_TARGET)
 
-OBJECTS = $(patsubst src/%.c, src/%.o, $(shell find . -name '*.c'))
+ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
+ORIG_OBJECTS += $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
+
+#OBJECTS = $(ORIG_OBJECTS)
+OBJECTS := $(filter-out src/main.o,$(ORIG_OBJECTS))
 HEADERS = $(wildcard src/*.h) $(wildcard src/**/*.h)
 SRCS = $(wildcard src/*.c) $(wildcard src/**/*.c)
 
-.PRECIOUS: $(TARGET) $(OBJECTS)
+TEST_OBJECTS = $(patsubst tests/%.c, tests/%.o, $(wildcard tests/*.c))
+TEST_HEADERS = $(wildcard tests/*.h) $(wildcard tests/**/*.h)
+TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
-$(TARGET): $(OBJECTS)
-		$(CC) $(OBJECTS) $(CFLAGS) $(LIBS) -o $@
+.PRECIOUS: $(TARGET) $(ORIG_OBJECTS) $(TEST_OBJECTS)
+
+$(TARGET): $(OBJECTS) src/main.o
+	$(CC) $(OBJECTS) src/main.o $(CFLAGS) $(LIBS) -o $@
+
+$(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(LIBS) -lcheck -o $@
+	./$(TEST_TARGET)
 
 src/%.o: src/%.c
-		$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+tests/%o: tests/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+
 
 clean:
-		rm -f src/*.o
-		rm -f $(TARGET)
+	rm -f src/*.o
+	rm -f $(TARGET)
+	rm -f $(TEST_TARGET)
 
 output:
-		@echo "==== make ===="
-		@echo "sources: $(SRCS)"
-		@echo "headers: $(HEADERS)"
-		@echo "objects: $(OBJECTS)"
+	@echo "==== $(TARGET) ===="
+	@echo "sources: $(SRCS)"
+	@echo "headers: $(HEADERS)"
+	@echo "objects: $(OBJECTS)"
+	@echo "==== $(TEST_TARGET) ===="
+	@echo "sources: $(TEST_SRCS)"
+	@echo "headers: $(TEST_HEADERS)"
+	@echo "objects: $(TEST_OBJECTS)"
