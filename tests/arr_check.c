@@ -33,6 +33,18 @@ START_TEST(arr_push)
 }
 END_TEST
 
+START_TEST(arr_pop)
+{
+	ck_abort_msg("arr_pop test not written");
+}
+END_TEST
+
+START_TEST(arr_pop_at)
+{
+	ck_abort_msg("arr_pop_at test not written");
+}
+END_TEST
+
 
 Suite * arr_suite(void)
 {
@@ -43,6 +55,8 @@ Suite * arr_suite(void)
 
 	tcase_add_test(tc, arr_init);
 	tcase_add_test(tc, arr_push);
+	tcase_add_test(tc, arr_pop);
+	tcase_add_test(tc, arr_pop_at);
 	suite_add_tcase(s, tc);
 	return s;
 }
