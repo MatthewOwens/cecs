@@ -9,13 +9,6 @@ START_TEST(test_test)
 }
 END_TEST
 
-START_TEST(test_test_two)
-{
-	int i = 3;
-	ck_assert_int_eq(i, 10);
-
-END_TEST
-
 Suite * test_suite(void)
 {
 	Suite *s;
@@ -25,21 +18,6 @@ Suite * test_suite(void)
 	tc = tcase_create("case");
 
 	tcase_add_test(tc, test_test);
-	tcase_add_test(tc, test_test_two);
-	suite_add_tcase(s, tc);
-
-	return s;
-}
-
-Suite * ts_two(void)
-{
-	Suite *s;
-	TCase *tc;
-
-	s = suite_create("test two");
-	tc = tcase_create("case");
-
-	tcase_add_test(tc, test_test_two);
 	suite_add_tcase(s, tc);
 
 	return s;
@@ -60,7 +38,6 @@ int main(void)
 	int failed_count = 0;
 
 	failed_count += run_suite(test_suite());
-	failed_count += run_suite(ts_two());
 
 	return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
