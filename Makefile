@@ -7,7 +7,7 @@ CFLAGS = -g -Wall -I/usr/include/SDL2 -Isystems/ -Icomponents/ -Isrc/
 
 .PHONY: default all clean
 
-default: $(TARGET)
+default: all
 all: $(TARGET) $(TEST_TARGET)
 
 ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
@@ -39,6 +39,7 @@ tests/%o: tests/%.c
 
 clean:
 	rm -f src/*.o
+	rm -f tests/*.o
 	rm -f $(TARGET)
 	rm -f $(TEST_TARGET)
 
