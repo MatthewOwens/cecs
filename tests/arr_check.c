@@ -5,6 +5,8 @@
 #include "arr.h"
 
 static array(int) arr = array_init();
+static const int itr_max = 6;
+
 
 START_TEST(arr_init)
 {
@@ -16,8 +18,6 @@ END_TEST
 
 START_TEST(arr_push)
 {
-	int itr_max = 6;
-
 	for(int i = 0; i < itr_max; ++i){
 		array_push(arr, i);
 	}
@@ -30,18 +30,34 @@ START_TEST(arr_push)
 
 	ck_assert_int_eq(arr.length, itr_max);
 	ck_assert_int_eq(arr.capacity, 8);
+	printf("len: %zu, cap: %zu, itr_max: %d\n", arr.length, arr.capacity, itr_max);
 }
 END_TEST
 
 START_TEST(arr_pop)
 {
-	ck_abort_msg("arr_pop test not written");
+	for(int i = 0; i < itr_max; ++i){
+		array_push(arr, i);
+	}
+
+	array_pop(arr);
+	printf("len: %zu, cap: %zu, itr_max: %d\n", arr.length, arr.capacity, itr_max);
+	ck_assert_int_eq(arr.length, itr_max - 1);
+	ck_assert_int_eq(arr.capacity, 8);
+	ck_assert_int_eq(arr.data[arr.length], itr_max - 1);
 }
 END_TEST
 
 START_TEST(arr_pop_at)
 {
-	ck_abort_msg("arr_pop_at test not written");
+	for(int i = 0; i < itr_max; ++i){
+		array_push(arr, i);
+	}
+
+	array_pop_at(arr, 3);
+	ck_assert_int_eq(arr.length, itr_max - 1);
+	ck_assert_int_eq(arr.capacity, 8);
+	ck_assert_int_eq(arr.data[3], 4);
 }
 END_TEST
 
