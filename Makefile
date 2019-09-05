@@ -5,7 +5,7 @@ LIBS = -lm -D_REENTRANT -std=c11 -lGL -lGLEW -lSDL2 -lSDL2_image
 CC = gcc
 CFLAGS = -g -Wall -I/usr/include/SDL2 -Isystems/ -Icomponents/ -Isrc/
 
-.PHONY: default all clean
+.PHONY: default all clean FORCE
 
 default: all
 all: $(TARGET) $(TEST_TARGET)
@@ -26,7 +26,7 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 $(TARGET): $(OBJECTS) src/main.o
 	$(CC) $(OBJECTS) src/main.o $(CFLAGS) $(LIBS) -o $@
 
-$(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS)
+$(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(LIBS) -lcheck -o $@
 	./$(TEST_TARGET)
 
@@ -42,6 +42,9 @@ clean:
 	rm -f tests/*.o
 	rm -f $(TARGET)
 	rm -f $(TEST_TARGET)
+
+FORCE:
+
 
 output:
 	@echo "==== $(TARGET) ===="
