@@ -32,7 +32,6 @@ do {\
 
 #define array_push(array, element)\
 ({\
-	 printf("cap is %ld len is %ld\n", array.capacity, array.length);\
 	 if (array.capacity == 0) {\
 		 array.data = malloc(sizeof(*array.data));\
 		 array.data[0] = element;\
@@ -47,8 +46,7 @@ do {\
 			 if (tmp != NULL) {\
 				 array.data = tmp;\
 			 } else {\
-				 fprintf(stderr, "arr.h - realloc failed!\n");\
-				 return 1;\
+				 return;\
 			 }\
 		 }\
 		 array.data[array.length] = element;\
