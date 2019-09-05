@@ -24,11 +24,15 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 .PRECIOUS: $(TARGET) $(ORIG_OBJECTS) $(TEST_OBJECTS)
 
 $(TARGET): $(OBJECTS) src/main.o
+	@echo "========== Building $(TARGET) =========="
 	$(CC) $(OBJECTS) src/main.o $(CFLAGS) $(LIBS) -o $@
 
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
+	@echo "========== Building $(TEST_TARGET) =========="
 	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(LIBS) -lcheck -o $@
+	@echo "========== RUNNING TESTS =========="
 	./$(TEST_TARGET)
+	@echo ""
 
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
