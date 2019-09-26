@@ -26,7 +26,6 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 
 	// generating a bit-unique key for this component
 	skey = skey << 1;
-	printf("skey is %d\n" , skey);
 
 	cecs->components[i].data = malloc(size);
 	memcpy(cecs->components[i].data, data, size);
@@ -34,8 +33,6 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 	cecs->components[i].size = size;
 	cecs->components[i].key = skey;
 	cecs->components[i].name = name;
-
-	printf("successfully registered %s component\n", name);
 
 	cecs->num_components += 1;
 	return cecse(CECSE_NONE);
@@ -54,9 +51,6 @@ uint32_t cecs_component_key(struct cecs *cecs, const char* name)
 	for(int i = 0; i < cecs->num_components; ++i){
 		if(strcmp(name, cecs->components[i].name) == 0){
 			ret = cecs->components[i].key;
-			printf("\tsearching for %s, matched %s, returning %"
-				PRId32 "\n", name, cecs->components[i].name,
-				ret);
 			break;
 		}
 	}
