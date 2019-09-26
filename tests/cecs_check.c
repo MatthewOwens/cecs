@@ -80,6 +80,7 @@ START_TEST(cecs_check_add_comp)
 
 	ck_assert_uint_eq(posKey, 2);
 	ck_assert_uint_eq(strKey, 4);
+	ck_assert_uint_eq(comboKey, 8);
 }
 END_TEST
 
