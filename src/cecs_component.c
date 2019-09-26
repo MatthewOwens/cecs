@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
+#include "inttypes.h"
 
 int cecs_reg_component( struct cecs* cecs, const char* name,
 			void *data, size_t size )
@@ -45,6 +46,7 @@ uint32_t cecs_component_key(struct cecs *cecs, const char* name)
 	const uint32_t null_mask = 0;
 	uint32_t ret = null_mask;
 
+
 	if(cecs == NULL || name == NULL) {
 		return null_mask;
 	}
@@ -52,6 +54,9 @@ uint32_t cecs_component_key(struct cecs *cecs, const char* name)
 	for(int i = 0; i < cecs->num_components; ++i){
 		if(strcmp(name, cecs->components[i].name)){
 			ret = cecs->components[i].key;
+			printf("\tsearching for %s, matched %s, returning %"
+				PRId32 "\n", name, cecs->components[i].name,
+				ret);
 			break;
 		}
 	}
