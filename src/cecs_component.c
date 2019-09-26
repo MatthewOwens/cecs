@@ -52,7 +52,7 @@ uint32_t cecs_component_key(struct cecs *cecs, const char* name)
 	}
 
 	for(int i = 0; i < cecs->num_components; ++i){
-		if(strcmp(name, cecs->components[i].name)){
+		if(strcmp(name, cecs->components[i].name) == 0){
 			ret = cecs->components[i].key;
 			printf("\tsearching for %s, matched %s, returning %"
 				PRId32 "\n", name, cecs->components[i].name,
