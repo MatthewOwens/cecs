@@ -49,3 +49,9 @@ struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
 
 	return NULL;
 }
+
+int cecs_free_system(struct cecs* cecs, const char* name)
+{
+	//TODO
+	return -1;
+}
