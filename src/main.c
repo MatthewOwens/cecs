@@ -34,10 +34,10 @@ int main(int argc, char **argv)
 	printf("velocity key is %d\n", cecs_component_key(cecs, "velocity"));
 
 	// building the entities
-	cecs_add_entitiy(cecs, &enta);
+	cecs_add_entity(cecs, &enta);
 	cecs_ent_add_component(cecs, enta, "position");
 
-	cecs_add_entitiy(cecs, &entb);
+	cecs_add_entity(cecs, &entb);
 	cecs_ent_add_component(cecs, enta, "position");
 	cecs_ent_add_component(cecs, enta, "velocity");
 

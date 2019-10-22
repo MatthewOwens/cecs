@@ -1,5 +1,6 @@
 #include "cecs.h"
 #include "cecs_err.h"
+#include "cecs_entity.h"
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -29,7 +30,7 @@ int extend_components(struct cecs* cecs)
 	return cecse(CECSE_NONE);
 }
 
-int cecs_add_entitiy(struct cecs* cecs, int *ent)
+int cecs_add_entity(struct cecs* cecs, int *ent)
 {
 	void* tmp = NULL;
 	if(cecs == NULL) return cecse(CECSE_NULL);
