@@ -6,15 +6,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
-		    uint32_t excl_mask, sys_init_func init, sys_run_func run,
-		    sys_free_func free)
+int cecs_reg_system(struct cecs* cecs, const char* name)
 {
 	printf("registering cecs system %s\n", name);
 	if(cecs == NULL) {
 		return cecse(CECSE_NULL);
 	} else if (cecs->state != CECS_UNINITILISED) {
 		return cecse(CECSE_INVALID_OPERATION);
+	} else if (cecs_system(cecs, name) != NULL) {
+		fprintf(stderr, "system with name %s already exists!\n", name);
+		return cecse(CECSE_INVALID_VALUE);
 	}
 
 	void* tmp = reallocarray(cecs->systems, cecs->num_systems + 1,
@@ -23,14 +24,6 @@ int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
 
 	cecs->systems = tmp;
 	int i = cecs->num_systems;
-
-	cecs->systems[i].init = init;
-	cecs->systems[i].run = run;
-	cecs->systems[i].free = free;
-
-	cecs->systems[i].inclusion_mask = incl_mask;
-	cecs->systems[i].exclusion_mask = excl_mask;
-	cecs->systems[i].name = name;
 
 	cecs->num_systems += 1;
 	return cecse(CECSE_NONE);
