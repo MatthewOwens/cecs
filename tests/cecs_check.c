@@ -140,7 +140,7 @@ END_TEST
 
 START_TEST(cecs_check_add_sys)
 {
-	//TODO
+	ck_abort_msg("STUB - test cecs_check_add_sys not implemented");
 }
 END_TEST
 
