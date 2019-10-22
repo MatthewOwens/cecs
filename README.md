@@ -46,4 +46,21 @@ cecs_reg_component(cecs, "position", &posComp, sizeof(posComp));
 once a component has been registered the original variable and it's associated
 location in memory are no longer required. 
 ### Entities
+entities are clusters of components that represent an object in the game.
+empty entities are registered with:
+```c
+static int ent;
+cecs_add_entity(cecs, &ent);
+```
+here the `ent` parameter is a return parameter, the internal ID of the entitiy.
+from there, entities can be composed using `cecs_ent_add_component`
+```c
+cecs_ent_add_component(cecs, ent, "position");
+cecs_ent_add_component(cecs, ent, "collision");
+```
+`cecs_ent_add_component` takes three parameters
+* a pointer to cecs
+* the internal entitiy ID returned from `cecs_add_entity`
+* a component name to add to the entitiy
+
 ### Systems
