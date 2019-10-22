@@ -36,6 +36,44 @@ int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
 	return cecse(CECSE_NONE);
 }
 
+int cecs_sys_set_incl(struct cecs* cecs, const char* name, uint32_t incl_mask)
+{
+	struct cecs_system* sys = NULL;
+	sys = cecs_system(cecs, name);
+	if(sys == NULL)
+		return cecse(CECSE_INVALID_VALUE);
+
+	sys->inclusion_mask = incl_mask;
+	return cecse(CECSE_NONE);
+}
+
+int cecs_sys_set_excl(struct cecs* cecs, const char* name, uint32_t excl_mask)
+{
+	struct cecs_system* sys = NULL;
+	sys = cecs_system(cecs, name);
+	if(sys == NULL)
+		return cecse(CECSE_INVALID_VALUE);
+
+	sys->exclusion_mask = excl_mask;
+	return cecse(CECSE_NONE);
+}
+
+int cecs_sys_set_funcs(struct cecs* cecs, const char* name,
+			sys_init_func init,
+			sys_run_func run,
+			sys_free_func free)
+{
+	struct cecs_system* sys = NULL;
+	sys = cecs_system(cecs, name);
+	if(sys == NULL)
+		return cecse(CECSE_INVALID_VALUE);
+
+	sys->init = init;
+	sys->run = run;
+	sys->free = free;
+	return cecse(CECSE_NONE);
+}
+
 struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
 {
 	if(cecs == NULL || name == NULL){

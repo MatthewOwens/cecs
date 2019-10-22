@@ -24,6 +24,16 @@ struct cecs_system
 int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
 		    uint32_t excl_mask, sys_init_func init, sys_run_func run,
 		    sys_free_func free);
+
+
+
+int cecs_reg_system(struct cecs* cecs, const char* name);
+int cecs_sys_set_incl(struct cecs* cecs, const char* name, uint32_t incl_mask);
+int cecs_sys_set_excl(struct cecs* cecs, const char* name, uint32_t excl_mask);
+int cecs_sys_set_funcs(struct cecs* cecs, const char* name,
+			sys_init_func init,
+			sys_run_func run,
+			sys_free_func free);
 int cecs_free_system(struct cecs* cecs, const char* name);
 
 struct cecs_system* cecs_system(struct cecs *cecs, const char* name);
