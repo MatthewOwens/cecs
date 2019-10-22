@@ -71,6 +71,31 @@ void ent_teardown()
 	cecs_add_entity(cecs, &entb);
 }
 
+int tsys_init(struct cecs* cecs)
+{
+}
+
+void tsys_run()
+{
+}
+
+void tsys_free()
+{
+}
+
+void sys_setup()
+{
+	cecs_reg_system(cecs, "test-sys");
+	cecs_sys_set_incl(cecs, "test-sys", 0);
+	cecs_sys_set_excl(cecs, "test-sys", 0);
+	cecs_sys_set_funcs(cecs, "test-sys", tsys_init, tsys_run, tsys_free);
+}
+
+void sys_teardown()
+{
+	cecs_free_system(cecs, "test-sys");
+}
+
 START_TEST(cecs_check_init)
 {
 	ck_assert_ptr_nonnull(cecs);
@@ -113,6 +138,12 @@ START_TEST(cecs_check_add_ent)
 }
 END_TEST
 
+START_TEST(cecs_check_add_sys)
+{
+	//TODO
+}
+END_TEST
+
 Suite * cecs_suite(void)
 {
 	Suite *s;
@@ -121,6 +152,7 @@ Suite * cecs_suite(void)
 	TCase * tcinit = tcase_create("cecs init");
 	TCase * tccomp = tcase_create("cecs add components");
 	TCase * tcent = tcase_create("cecs add entities");
+	TCase * tcsys = tcase_create("cecs add systems");
 
 	tcase_add_checked_fixture(tcinit, init_setup, init_teardown);
 	tcase_add_test(tcinit, cecs_check_init);
@@ -134,9 +166,16 @@ Suite * cecs_suite(void)
 	tcase_add_checked_fixture(tcent, ent_setup, ent_teardown);
 	tcase_add_test(tcent, cecs_check_add_ent);
 
+	tcase_add_checked_fixture(tcsys, init_setup, init_teardown);
+	tcase_add_checked_fixture(tcsys, comp_setup, comp_teardown);
+	tcase_add_checked_fixture(tcsys, ent_setup, ent_teardown);
+	tcase_add_checked_fixture(tcsys, sys_setup, sys_teardown);
+	tcase_add_test(tcent, cecs_check_add_sys);
+
 	suite_add_tcase(s, tcinit);
 	suite_add_tcase(s, tccomp);
 	suite_add_tcase(s, tcent);
+	suite_add_tcase(s, tcsys);
 	return s;
 }
 
