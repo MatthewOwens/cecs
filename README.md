@@ -16,7 +16,7 @@ to be installed.
 
 ## Usage
 to use cecs in your project, you can include the following files:
-```c++
+```c
 #include "cecs.h"
 #include "cecs_component.h"
 #include "cecs_entitiy.h"
