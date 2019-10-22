@@ -13,3 +13,15 @@ small entity-component-system written in C. The purpose of this project is 3-fol
 
 make install is currently unsupported, as this project is in no fit state
 to be installed.
+
+## Usage
+to use cecs in your project, you can include the following files:
+```c++
+#include "cecs.h"
+#include "cecs_component.h"
+#include "cecs_entitiy.h"
+#include "cecs_system.h"
+```
+### Components
+### Entities
+### Systems
