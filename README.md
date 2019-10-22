@@ -22,8 +22,10 @@ to use cecs in your project, you can include the following files:
 #include "cecs_entitiy.h"
 #include "cecs_system.h"
 ```
+all cecs functions return a `cecs_errno` enum, defined in `cecs_err.h`
 ### Components
-components are dumb data structures, added to entities and manipulated by systems. For example:
+components are dumb data structures, added to entities and manipulated by systems.
+For example:
 ```c
 typedef struct {
 	float x;
@@ -34,10 +36,12 @@ typedef struct {
 would be registered in cecs like this:
 ```c
 static PosComponent posComp = {0};
-cecs_reg_component(cecs, "pos", &posComp, sizeof(posComp));
+cecs_reg_component(cecs, "position", &posComp, sizeof(posComp));
 ```
-`cecs_reg_component` takes four params, a pointer to cecs, a name to associate
-the component with, a pointer to the original var and the size of the original var.
+`cecs_reg_component` takes four parameters
+* a pointer to cecs
+* a name to associate the component with
+* a pointer to the original var and the size of the original var.
 
 once a component has been registered the original variable and it's associated
 location in memory are no longer required. 
