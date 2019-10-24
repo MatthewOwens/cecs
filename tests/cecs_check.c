@@ -170,7 +170,7 @@ Suite * cecs_suite(void)
 	tcase_add_checked_fixture(tcsys, comp_setup, comp_teardown);
 	tcase_add_checked_fixture(tcsys, ent_setup, ent_teardown);
 	tcase_add_checked_fixture(tcsys, sys_setup, sys_teardown);
-	tcase_add_test(tcent, cecs_check_add_sys);
+	tcase_add_test(tcsys, cecs_check_add_sys);
 
 	suite_add_tcase(s, tcinit);
 	suite_add_tcase(s, tccomp);
