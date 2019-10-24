@@ -154,6 +154,17 @@ START_TEST(cecs_check_system_func)
 }
 END_TEST
 
+START_TEST(cecs_check_system_run)
+{
+	stub();
+}
+END_TEST
+
+START_TEST(cecs_check_system_free)
+{
+	stub();
+}
+
 Suite * cecs_suite(void)
 {
 	Suite *s;
@@ -182,6 +193,8 @@ Suite * cecs_suite(void)
 	tcase_add_checked_fixture(tcsys, sys_setup, sys_teardown);
 	tcase_add_test(tcsys, cecs_check_system_func);
 	tcase_add_test(tcsys, cecs_check_add_sys);
+	tcase_add_test(tcsys, cecs_check_system_run);
+	tcase_add_test(tcsys, cecs_check_system_free);
 
 	suite_add_tcase(s, tcinit);
 	suite_add_tcase(s, tccomp);
