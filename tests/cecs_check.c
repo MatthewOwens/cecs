@@ -119,10 +119,6 @@ START_TEST(cecs_check_add_comp)
 	uint32_t strKey = cecs_component_key(cecs, "string");
 	uint32_t uvKey = cecs_component_key(cecs, "uv");
 
-	printf("\tposKey: %u\n", posKey);
-	printf("\tstrKey: %u\n", strKey);
-	printf("\tuv: %u\n", uvKey);
-
 	ck_assert_uint_eq(posKey, 2);
 	ck_assert_uint_eq(strKey, 4);
 	ck_assert_uint_eq(uvKey, 8);
@@ -131,8 +127,6 @@ END_TEST
 
 START_TEST(cecs_check_add_ent)
 {
-	printf("cecs->num_entitites: %d\n", cecs->num_entities);
-	printf("\tsize: %lu\n", sizeof(cecs->entities) * cecs->num_entities);
 	ck_assert_int_eq(cecs->num_entities, 2);
 	ck_assert_uint_ge(sizeof(cecs->entities) * cecs->num_entities,
 					  sizeof(cecs->entities) * 2);
