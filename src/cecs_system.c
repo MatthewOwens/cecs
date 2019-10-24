@@ -9,6 +9,7 @@
 int cecs_reg_system(struct cecs* cecs, const char* name)
 {
 	printf("registering cecs system %s\n", name);
+	printf("checking if sys with that name already exists...\n\t");
 	if(cecs == NULL) {
 		return cecse(CECSE_NULL);
 	} else if (cecs->state != CECS_UNINITILISED) {
@@ -24,6 +25,15 @@ int cecs_reg_system(struct cecs* cecs, const char* name)
 
 	cecs->systems = tmp;
 	int i = cecs->num_systems;
+
+	// setting defaults
+	cecs->systems[i].inclusion_mask = 0;
+	cecs->systems[i].exclusion_mask = 0;
+	cecs->systems[i].name = name;
+
+	cecs->systems[i].init = NULL;
+	cecs->systems[i].run = NULL;
+	cecs->systems[i].free = NULL;
 
 	cecs->num_systems += 1;
 	return cecse(CECSE_NONE);
@@ -70,14 +80,18 @@ int cecs_sys_set_funcs(struct cecs* cecs, const char* name,
 struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
 {
 	if(cecs == NULL || name == NULL){
+		if(cecs == NULL)
+			printf("cecs is null\n");
+		else
+			printf("name is null\n");
 		return NULL;
 	}
 
 	for(int i = 0; i < cecs->num_systems; ++i){
-		if(strcmp(name, cecs->systems[i].name))
+		if(strcmp(name, cecs->systems[i].name) == 0)
 			return &cecs->systems[i];
 	}
-
+	printf("no system name matched %s\n", name);
 	return NULL;
 }
 

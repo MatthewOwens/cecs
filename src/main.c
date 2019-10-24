@@ -26,9 +26,10 @@ int main(int argc, char **argv)
 	cecs_reg_component(cecs, "position", &pos, sizeof(ComponentPosition));
 	cecs_reg_component(cecs, "velocity", &vel, sizeof(ComponentVelocity));
 
-	cecs_reg_system(cecs, "gravity", cecs_component_key(cecs, "position") |
-			cecs_component_key(cecs, "veloctiy"), 0, gravity_init,
-			gravity_run, gravity_free);
+	cecs_reg_system(cecs, "gravity");
+	cecs_sys_set_incl(cecs, "gravity",
+			cecs_component_key(cecs, "position") |
+			cecs_component_key(cecs, "velocity"));
 
 	printf("position key is %d\n", cecs_component_key(cecs, "position"));
 	printf("velocity key is %d\n", cecs_component_key(cecs, "velocity"));
