@@ -135,7 +135,19 @@ END_TEST
 
 START_TEST(cecs_check_add_sys)
 {
-	ck_abort_msg("STUB - test not implemented");
+	struct cecs_system* sys = cecs_system(cecs, "test-sys");
+	ck_assert_int_eq(cecs->num_systems, 1);
+	ck_assert_ptr_nonnull(cecs->systems);
+	ck_assert_int_eq(sys->inclusion_mask, cecs_component_key(cecs, "position") |
+										  cecs_component_key(cecs, "uv") );
+
+	ck_assert_uint_eq(sys->exclusion_mask, cecs_component_key(cecs, "string"));
+}
+END_TEST
+
+START_TEST(cecs_system_func)
+{
+	stub();
 }
 END_TEST
 
@@ -165,6 +177,7 @@ Suite * cecs_suite(void)
 	tcase_add_checked_fixture(tcsys, comp_setup, comp_teardown);
 	tcase_add_checked_fixture(tcsys, ent_setup, ent_teardown);
 	tcase_add_checked_fixture(tcsys, sys_setup, sys_teardown);
+	tcase_add_test(tcsys, cecs_system_func);
 	tcase_add_test(tcsys, cecs_check_add_sys);
 
 	suite_add_tcase(s, tcinit);
