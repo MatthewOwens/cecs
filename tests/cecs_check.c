@@ -79,16 +79,15 @@ void tsys_run()
 {
 }
 
-void tsys_free()
-{
-}
-
 void sys_setup()
 {
 	cecs_reg_system(cecs, "test-sys");
-	cecs_sys_set_incl(cecs, "test-sys", 0);
-	cecs_sys_set_excl(cecs, "test-sys", 0);
-	cecs_sys_set_funcs(cecs, "test-sys", tsys_init, tsys_run, tsys_free);
+	cecs_sys_set_incl(	cecs, "test-sys",
+						cecs_component_key(cecs, "position") |
+						cecs_component_key(cecs, "uv"));
+	cecs_sys_set_excl(	cecs, "test-sys",
+						cecs_component_key(cecs, "string"));
+	cecs_sys_set_funcs(cecs, "test-sys", tsys_init, tsys_run, free);
 }
 
 void sys_teardown()
