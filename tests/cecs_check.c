@@ -145,9 +145,12 @@ START_TEST(cecs_check_add_sys)
 }
 END_TEST
 
-START_TEST(cecs_system_func)
+START_TEST(cecs_check_system_func)
 {
-	stub();
+	ck_assert_ptr_nonnull(cecs_system(cecs, "test-sys"));
+	ck_assert_ptr_null(cecs_system(NULL, "test-sys"));
+	ck_assert_ptr_null(cecs_system(cecs, "not a real system"));
+	ck_assert_ptr_null(cecs_system(NULL, NULL));
 }
 END_TEST
 
@@ -177,7 +180,7 @@ Suite * cecs_suite(void)
 	tcase_add_checked_fixture(tcsys, comp_setup, comp_teardown);
 	tcase_add_checked_fixture(tcsys, ent_setup, ent_teardown);
 	tcase_add_checked_fixture(tcsys, sys_setup, sys_teardown);
-	tcase_add_test(tcsys, cecs_system_func);
+	tcase_add_test(tcsys, cecs_check_system_func);
 	tcase_add_test(tcsys, cecs_check_add_sys);
 
 	suite_add_tcase(s, tcinit);
