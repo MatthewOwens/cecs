@@ -95,6 +95,8 @@ void sys_teardown()
 	cecs_free_system(cecs, "test-sys");
 }
 
+void stub() { ck_abort_msg("STUB - test not implemented\n"); }
+
 START_TEST(cecs_check_init)
 {
 	ck_assert_ptr_nonnull(cecs);
