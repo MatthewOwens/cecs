@@ -162,7 +162,8 @@ END_TEST
 
 START_TEST(cecs_check_system_free)
 {
-	stub();
+	cecs_free_system(cecs, "test-sys");
+	ck_assert_ptr_null(cecs_system(cecs, "test-sys"));
 }
 
 Suite * cecs_suite(void)
