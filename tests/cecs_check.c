@@ -77,6 +77,13 @@ int tsys_init(struct cecs* cecs)
 
 void tsys_run()
 {
+	struct cecs_system* sys = cecs_system("test-sys");
+	for(int i = 0; i < cecs->num_entities; ++i){
+		/*
+			TODO: manipulate entitiy if something in ent's mask matches
+			system incl mask and nothing in ent's mask matches system excl mask
+		*/
+	}
 }
 
 void sys_setup()
