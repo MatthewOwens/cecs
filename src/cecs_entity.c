@@ -111,3 +111,11 @@ int cecs_ent_rem_component(struct cecs *cecs, int ent, char* name)
 	cecs->entities[ent] = cecs->entities[ent] ^ key;
 	return cecse(CECSE_NONE);
 }
+
+int cecs_ent_get_mask(struct cecs* cecs, int ent, uint32_t* mask)
+{
+	if(cecs == NULL || mask == NULL ent < 0 || ent >= cecs->num_entities)
+		return cecse(CECSE_INVALID_VALUE);
+
+	return(cecs->entities[ent].mask);
+}
