@@ -16,6 +16,15 @@ int get_inactive_entity(struct cecs* cecs)
 	}
 }
 
+int is_inactive(struct cecs* cecs, int ent)
+{
+	for(int i = 0; i < cecs->inactive_entities.length; ++i){
+		if(cecs->entities.id == cecs->inactive_entities.data[i])
+			return 0;
+	}
+	return 1;
+}
+
 int extend_components(struct cecs* cecs)
 {
 	int i;
