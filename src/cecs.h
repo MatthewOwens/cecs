@@ -21,10 +21,10 @@ struct cecs{
 	struct cecs_system *systems;
 	int num_systems;
 
-	uint32_t *entities;
+	struct cecs_entity *entities;
 	int num_entities;
 
-	array(int) inactive_entities;
+	array(struct cecs_entity*) inactive_entities;
 };
 
 struct cecs* cecs_init();
