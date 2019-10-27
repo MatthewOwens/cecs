@@ -21,10 +21,15 @@ static char* cecs_errmsg[] = {
 
 int cecse(enum cecs_errno err)
 {
+	return cecse_msg(err, "");
+}
+
+int cecse_msg(enum cecs_errno err, const char* msg)
+{
 	if (err != CECSE_NONE)
 		fprintf(stderr,
-		ANSI_COLOR_RED "cecs error: %s\n" ANSI_COLOR_RESET,
-		cecs_errmsg[err]);
+		ANSI_COLOR_RED "cecs error: %s %s\n" ANSI_COLOR_RESET,
+		cecs_errmsg[err], msg);
 	return err;
 }
 
