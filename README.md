@@ -1,12 +1,10 @@
 <p align="center">
 <br/>
   <img src="assets/logo.png" width="80px"/><br/>
-  small ecs, written in c.<br/>
+  a small ecs, written in c.<br/>
 <br/>
 <a href="https://github.com/MatthewOwens/cecs/issues"><img alt="Issues" src="https://img.shields.io/github/issues-raw/MatthewOwens/cecs.svg"/></a>
 </p>
-
-# cecs
 
 ## Summary
 small entity-component-system written in C. The purpose of this project is 3-fold:
