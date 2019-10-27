@@ -34,6 +34,7 @@ struct cecs_ent* ent_from_id(struct cecs* cecs, uint32_t id)
 		}
 	}
 	return NULL;
+
 }
 
 int extend_components(struct cecs* cecs)
