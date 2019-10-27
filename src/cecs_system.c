@@ -97,6 +97,19 @@ struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
 
 int cecs_free_system(struct cecs* cecs, const char* name)
 {
+	if(cecs == NULL || name == NULL){
+		cecse_msg(CECSE_INVALID_VALUE,
+			"null param in cecs_free_system");
+	}
+	struct cecs_system* sys NULL;
+	sys = cecs_system(cecs, name);
+	if(sys == NULL){
+		char[80] buf;
+		strcpy(buf, "cecs_free_system called on system ");
+		strcpy(buf, name);
+		strcpy(buf, " but system doesn't exist!");
+		cecse_msg(CECSE_INVALID_VALUE, buf);
+	}
 	//TODO
 	return -1;
 }
