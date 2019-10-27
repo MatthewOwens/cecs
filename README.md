@@ -1,3 +1,12 @@
+<p align="center">
+<br/>
+  <img src="assets/logo.png" width="80px"/><br/>
+  cecs<br/>
+  small ecs, written in c.<br/>
+<br/>|
+<a href="https://github.com/r-lyeh/AVA/issues"><img alt="Issues" src="https://img.shields.io/github/issues-raw/r-lyeh/AVA.svg"/></a>
+</p>
+
 # cecs
 
 ## Summary
