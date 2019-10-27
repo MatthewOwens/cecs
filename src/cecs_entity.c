@@ -54,7 +54,7 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 {
 	void* tmp = NULL;
 	if(cecs == NULL) return cecse(CECSE_NULL);
-	if(ent == NULL) return cecse(CECSE_INVALID_VALUE);
+	if(ent == NULL) return cecse_msg(CECSE_INVALID_VALUE, "cecs_add_entity");
 	ent = get_inactive_entity(cecs);
 
 	// if there are no inactive entities
@@ -67,8 +67,10 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 		if(tmp == NULL) return cecse(CECSE_NOMEM);
 		cecs->entities = tmp;
 		ent = &cecs->entities[cecs->num_entities - 1];
-
-	} else { ent->mask = 0;
+		// setting the identity id to it's position in our array
+		ent->id = cecs->num_entities - 1;
+	} else {
+		ent->mask = 0;
 		array_pop(cecs->inactive_entities);
 	}
 
@@ -99,7 +101,7 @@ int cecs_ent_add_component(struct cecs *cecs, uint32_t id, char* name)
 	struct cecs_entity* ent = NULL;
 	if(cecs == NULL)	 return cecse(CECSE_NULL);
 	ent = ent_from_id(cecs, id);
-	if(ent == NULL)		 return cecse(CECSE_INVALID_VALUE);
+	if(ent == NULL) return cecse(CECSE_INVALID_VALUE);
 	if(is_inactive(cecs, id) == 0) return cecse(CECSE_INVALID_VALUE);
 
 	uint32_t key = cecs_component_key(cecs, name);
