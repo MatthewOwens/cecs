@@ -19,25 +19,31 @@ int cecs_reg_system(struct cecs* cecs, const char* name)
 		return cecse(CECSE_INVALID_VALUE);
 	}
 
-	struct cecs_system* sys;
+	struct cecs_system* sys = NULL;
 	for(int i = 0; i < cecs->num_systems; ++i){
+		if(&cecs->systems[i] == NULL){
+			sys = &cecs->systems[i];
+			break;
+		}
 	}
 
-	void* tmp = reallocarray(cecs->systems, cecs->num_systems + 1,
-				 sizeof(struct cecs_system));
-	if(tmp == NULL) { return cecse(CECSE_NOMEM); }
+	if(sys == NULL){
+		void* tmp = reallocarray(cecs->systems, cecs->num_systems + 1,
+					 sizeof(struct cecs_system));
+		if(tmp == NULL) { return cecse(CECSE_NOMEM); }
 
-	cecs->systems = tmp;
-	int i = cecs->num_systems;
+		cecs->systems = tmp;
+		sys = &cecs->systems[cecs->num_systems];
+	}
 
 	// setting defaults
-	cecs->systems[i].inclusion_mask = 0;
-	cecs->systems[i].exclusion_mask = 0;
-	cecs->systems[i].name = name;
+	sys->inclusion_mask = 0;
+	sys->exclusion_mask = 0;
+	sys->name = name;
 
-	cecs->systems[i].init = NULL;
-	cecs->systems[i].run = NULL;
-	cecs->systems[i].free = NULL;
+	sys->init = NULL;
+	sys->run = NULL;
+	sys->free = NULL;
 
 	cecs->num_systems += 1;
 	return cecse(CECSE_NONE);
