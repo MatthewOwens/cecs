@@ -162,8 +162,7 @@ START_TEST(cecs_check_system_func)
 END_TEST
 
 START_TEST(cecs_check_system_run)
-{
-	stub();
+{ stub();
 }
 END_TEST
 
