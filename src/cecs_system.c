@@ -101,10 +101,10 @@ int cecs_free_system(struct cecs* cecs, const char* name)
 		cecse_msg(CECSE_INVALID_VALUE,
 			"null param in cecs_free_system");
 	}
-	struct cecs_system* sys NULL;
+	struct cecs_system* sys = NULL;
 	sys = cecs_system(cecs, name);
 	if(sys == NULL){
-		char[80] buf;
+		char buf[80];
 		strcpy(buf, "cecs_free_system called on system ");
 		strcpy(buf, name);
 		strcpy(buf, " but system doesn't exist!");
