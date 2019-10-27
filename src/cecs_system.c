@@ -19,6 +19,10 @@ int cecs_reg_system(struct cecs* cecs, const char* name)
 		return cecse(CECSE_INVALID_VALUE);
 	}
 
+	struct cecs_system* sys;
+	for(int i = 0; i < cecs->num_systems; ++i){
+	}
+
 	void* tmp = reallocarray(cecs->systems, cecs->num_systems + 1,
 				 sizeof(struct cecs_system));
 	if(tmp == NULL) { return cecse(CECSE_NOMEM); }
@@ -110,6 +114,9 @@ int cecs_free_system(struct cecs* cecs, const char* name)
 		strcpy(buf, " but system doesn't exist!");
 		cecse_msg(CECSE_INVALID_VALUE, buf);
 	}
+	printf("sys ptr is %p, array ptr is %p\n", sys, &cecs->systems[0]);
 	sys->free(sys);
+	sys = NULL;
+	printf("sys ptr is %p, array ptr is %p\n", sys, &cecs->systems[0]);
 	return cecse(CECSE_NONE);
 }

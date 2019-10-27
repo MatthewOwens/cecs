@@ -8,18 +8,18 @@
 // returns null if there is none available, ptr to inactive entity if available
 struct cecs_entitiy* get_inactive_entity(struct cecs* cecs)
 {
-	int len = cecs->inactive_entities.length;
+	int len = cecs->free_entities.length;
 	if(len == 0){
 		return NULL;
 	} else {
-		return cecs->inactive_entities.data[len-1];
+		return cecs->free_entities.data[len-1];
 	}
 }
 
 int is_inactive(struct cecs* cecs, uint32_t entID)
 {
-	for(uint32_t i = 0; i < cecs->inactive_entities.length; ++i){
-		if(cecs->entities[i].id == cecs->inactive_entities.data[i]->id)
+	for(uint32_t i = 0; i < cecs->free_entities.length; ++i){
+		if(cecs->entities[i].id == cecs->free_entities.data[i]->id)
 			return 0;
 	}
 	return 1;
@@ -44,7 +44,7 @@ int extend_components(struct cecs* cecs)
 		// TODO: increment each component data ptr
 
 		// double size of component arrays
-		// set num_inactive_entities to num_entities - 1
+		// set num_free_entities to num_entities - 1
 		// extend inactives array to accomodate new entries
 		// populate new inactives
 	}
@@ -72,7 +72,7 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 		ent->id = cecs->num_entities - 1;
 	} else {
 		ent->mask = 0;
-		array_pop(cecs->inactive_entities);
+		array_pop(cecs->free_entities);
 	}
 
 	// ensuring that no keys are associated with the new entitiy
@@ -86,14 +86,14 @@ int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
 	if(ent < 0 || ent > cecs->num_entities - 1)
 		return cecse(CECSE_INVALID_OPERATION);
 
-	for(int i = 0; i < cecs->inactive_entities.length; ++i){
+	for(int i = 0; i < cecs->free_entities.length; ++i){
 		// entity is already inactive, can report success
-		if(ent == &cecs->inactive_entities.data[i])
+		if(ent == &cecs->free_entities.data[i])
 			return cecse(CECSE_NONE);
 	}
 
 	// flagging the entity for removal
-	array_push(cecs->inactive_entities, ent);
+	array_push(cecs->free_entities, ent);
 	return cecse(CECSE_NONE);
 }
 
