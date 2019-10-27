@@ -24,7 +24,7 @@ struct cecs{
 	struct cecs_entity *entities;
 	int num_entities;
 
-	array(struct cecs_entity*) inactive_entities;
+	array(struct cecs_entity*) free_entities;
 };
 
 struct cecs* cecs_init();

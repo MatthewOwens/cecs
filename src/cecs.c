@@ -21,13 +21,13 @@ struct cecs* cecs_init()
 	cecs->num_entities = 0;
 
 	/*
-	 * can't use array_init here since inactive_entities has already been
+	 * can't use array_init here since free_entities has already been
 	 * declared, see arr.h for more.
 	 *
 	*/
-	cecs->inactive_entities.length = 0;
-	cecs->inactive_entities.capacity = 0;
-	cecs->inactive_entities.data = NULL;
+	cecs->free_entities.length = 0;
+	cecs->free_entities.capacity = 0;
+	cecs->free_entities.data = NULL;
 
 	cecse(CECSE_NONE);
 	return cecs;
@@ -53,7 +53,7 @@ int cecs_free(struct cecs* cecs)
 	}
 
 	if(cecs->entities != NULL)		free(cecs->entities);
-	array_free(cecs->inactive_entities);
+	array_free(cecs->free_entities);
 
 	free(cecs);
 	return cecse(CECSE_NONE);
