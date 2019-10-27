@@ -110,6 +110,6 @@ int cecs_free_system(struct cecs* cecs, const char* name)
 		strcpy(buf, " but system doesn't exist!");
 		cecse_msg(CECSE_INVALID_VALUE, buf);
 	}
-	//TODO
-	return -1;
+	sys->free(sys);
+	return cecse(CECSE_NONE);
 }
