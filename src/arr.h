@@ -4,6 +4,8 @@
 */
 
 #pragma once
+#include <stdlib.h>
+
 #define array(type)\
 	struct {\
 		type* data;\
