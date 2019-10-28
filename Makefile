@@ -29,7 +29,7 @@ $(TARGET): $(OBJECTS) src/main.o
 
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	@echo "========== Building $(TEST_TARGET) =========="
-	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(LIBS) -lcheck -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(LIBS) -o $@ -lcheck
 	@echo "========== RUNNING TESTS =========="
 	./$(TEST_TARGET)
 	@echo ""
