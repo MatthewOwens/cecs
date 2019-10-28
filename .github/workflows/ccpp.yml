@@ -15,8 +15,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
-        sudo apt update
-        sudo apt install check
+        sudo apt-get update -y
+        sudo apt-get install check -y
     - name: make
       run: make
     - name: make check
