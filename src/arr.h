@@ -5,6 +5,7 @@
 
 #pragma once
 #include <stdlib.h>
+#include <malloc.h>
 
 #define array(type)\
 	struct {\
