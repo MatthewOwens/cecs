@@ -20,7 +20,7 @@ jobs:
     - name: gcc version check
       run: |
         gcc --version
-    - name: make
-      run: make
+    - name: make cecs
+      run: make cecs
     - name: make check
       run: make check
