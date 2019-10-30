@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: test ci
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     - name: install dependencies
       run: |
         sudo apt-get update -y
-        sudo apt-get install check -y
+        sudo apt-get install check gcc -y
     - name: gcc version check
       run: |
         gcc --version
