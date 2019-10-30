@@ -15,8 +15,13 @@ jobs:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
-        sudo apt-get update -y
-        sudo apt-get install check gcc -y
+        git clone git@github.com:libcheck/check.git --branch 0.13.0
+        autoreconf --install
+        ./configure
+        make
+        make check
+        sudo make install
+        sudo ldconfig
     - name: gcc version check
       run: |
         gcc --version
