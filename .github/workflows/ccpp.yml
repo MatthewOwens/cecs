@@ -24,6 +24,7 @@ jobs:
         sudo make install
         sudo ldconfig
         cd ..
+        rm  -rf check
     - name: gcc version check
       run: |
         gcc --version
