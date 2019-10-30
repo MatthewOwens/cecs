@@ -16,12 +16,14 @@ jobs:
     - name: install dependencies
       run: |
         git clone https://github.com/libcheck/check.git --branch 0.13.0
+        cd check
         autoreconf --install
         ./configure
         make
         make check
         sudo make install
         sudo ldconfig
+        cd ..
     - name: gcc version check
       run: |
         gcc --version
