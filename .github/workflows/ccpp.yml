@@ -13,24 +13,25 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        steps:
-        - uses: actions/checkout@v1
-        - name: install dependencies
-          run: |
-            git clone https://github.com/libcheck/check.git --branch 0.13.0
-            cd check
-            autoreconf --install
-            ./configure
-            make
-            make check
-            sudo make install
-            sudo ldconfig
-            cd ..
-            rm  -rf check
-        - name: gcc version check
-          run: |
-            gcc --version
-        - name: make cecs
-          run: make cecs
-        - name: make check
-          run: make check
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: install dependencies
+      run: |
+        git clone https://github.com/libcheck/check.git --branch 0.13.0
+        cd check
+        autoreconf --install
+        ./configure
+        make
+        make check
+        sudo make install
+        sudo ldconfig
+        cd ..
+        rm  -rf check
+    - name: gcc version check
+      run: |
+        gcc --version
+    - name: make cecs
+      run: make cecs
+    - name: make check
+      run: make check
