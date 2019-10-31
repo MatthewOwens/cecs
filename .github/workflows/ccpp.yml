@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - actions
+      - matrix
 
 jobs:
   ubuntu-build:
