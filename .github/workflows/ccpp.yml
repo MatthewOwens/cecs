@@ -42,7 +42,7 @@ jobs:
         brew install autoconf automake libtool
         git clone https://github.com/libcheck/check.git --branch 0.13.0
         cd check
-        autoreconf --install
+        #autoreconf --install
         ./configure
         make
         make check
