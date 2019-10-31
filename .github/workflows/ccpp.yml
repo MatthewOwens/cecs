@@ -13,11 +13,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
+        install-cmd: ["apt-get install -y","brew install -y"]
 
     steps:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
+        ${{ install-cmd }} autoconf automake libtool
         git clone https://github.com/libcheck/check.git --branch 0.13.0
         cd check
         autoreconf --install
