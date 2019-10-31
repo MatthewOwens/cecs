@@ -3,7 +3,6 @@
 #include "cecs_entity.h"
 
 #include <stdlib.h>
-#include <malloc.h>
 
 // returns -1 if there is none available, index of inactive entity if available
 int get_inactive_entity(struct cecs* cecs)

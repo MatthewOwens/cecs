@@ -2,7 +2,6 @@
 #include "cecs_err.h"
 #include "cecs.h"
 #include <stdio.h>
-#include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
 
