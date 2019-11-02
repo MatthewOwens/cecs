@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "inttypes.h"
+#include "openbsd-reallocarray.h"
 
 int cecs_reg_component( struct cecs* cecs, const char* name,
 			void *data, size_t size )
@@ -16,7 +17,7 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 		return cecse(CECSE_INVALID_OPERATION);
 	}
 
-	void* tmp  = reallocarray(cecs->components, cecs->num_components + 1,
+	void* tmp  = obsdreallocarray(cecs->components, cecs->num_components + 1,
 				sizeof(struct cecs_component));
 	if (tmp == NULL) { return cecse(CECSE_NOMEM); }
 
