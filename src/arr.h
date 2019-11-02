@@ -5,7 +5,7 @@
 
 #pragma once
 #include <stdlib.h>
-#include "obsdreallocarray.h"
+#include "openbsd-reallocarray.h"
 
 #define array(type)\
 	struct {\
