@@ -44,6 +44,8 @@ jobs:
       run: |
         which gcc
         file /usr/bin/gcc
+        cd /
+        sudo find . | grep gcc
         gcc --version
     - name: make cecs
       run: make cecs
