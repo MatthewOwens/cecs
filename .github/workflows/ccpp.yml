@@ -40,6 +40,7 @@ jobs:
     - name: install dependencies
       run: |
         brew install autoconf automake libtool check gcc
+        which gcc
     - name: gcc version check
       run: |
         gcc --version
