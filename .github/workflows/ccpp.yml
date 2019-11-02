@@ -43,7 +43,7 @@ jobs:
     - name: gcc version check
       run: |
         which gcc
-        file | which gcc
+        file /usr/bin/gcc
         gcc --version
     - name: make cecs
       run: make cecs
