@@ -40,9 +40,10 @@ jobs:
     - name: install dependencies
       run: |
         brew install autoconf automake libtool check gcc
-        which gcc
     - name: gcc version check
       run: |
+        which gcc
+        file | which gcc
         gcc --version
     - name: make cecs
       run: make cecs
