@@ -4,4 +4,4 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-void * reallocarray(void *optr, size_t nmemb, size_t size);
+void * obsdreallocarray(void *optr, size_t nmemb, size_t size);
