@@ -48,7 +48,7 @@ jobs:
         echo "ln -s g++-9 g++"
         ln -s g++-9 g++
         cd
-        brew unink gcc && link gcc
+        brew unink gcc && brew link gcc
         gcc --version
     - name: make cecs
       run: make cecs
