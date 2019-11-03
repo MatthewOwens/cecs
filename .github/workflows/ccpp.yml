@@ -42,13 +42,8 @@ jobs:
         brew install autoconf automake libtool check gcc
     - name: gcc version check
       run: |
-        cd /usr/local/Cellar/gcc/9.2.0_1/bin/
-        echo "ln -s gcc-9 gcc"
-        ln -s gcc-9 gcc
-        echo "ln -s g++-9 g++"
-        ln -s g++-9 g++
-        cd
-        brew unink gcc && brew link gcc
+        export PATH=/usr/local/bin:$PATH
+        hash -r
         gcc --version
     - name: make cecs
       run: make cecs
