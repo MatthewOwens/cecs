@@ -42,10 +42,11 @@ jobs:
         brew install autoconf automake libtool check gcc
     - name: gcc version check
       run: |
-        which gcc
-        file /usr/bin/gcc
-        cd /
-        sudo find . | grep gcc
+        cd /usr/local/Cellar/gcc/9.2.0_1/bin/gcc-9
+        ln -s gcc-9 gcc
+        ln -s g++-9 g++
+        cd
+        brew link gcc
         gcc --version
     - name: make cecs
       run: make cecs
