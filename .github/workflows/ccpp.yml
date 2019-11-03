@@ -43,10 +43,12 @@ jobs:
     - name: gcc version check
       run: |
         cd /usr/local/Cellar/gcc/9.2.0_1/bin/
+        echo "ln -s gcc-9 gcc"
         ln -s gcc-9 gcc
+        echo "ln -s g++-9 g++"
         ln -s g++-9 g++
         cd
-        brew link gcc
+        brew unink gcc && link gcc
         gcc --version
     - name: make cecs
       run: make cecs
