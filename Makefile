@@ -1,6 +1,7 @@
 TARGET = cecs
 TEST_TARGET = check
 LIBS = -lm -D_REENTRANT -std=c11
+TEST_LIBS = $(LIBS) -lcheck
 
 CC = gcc
 CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/
@@ -29,7 +30,7 @@ $(TARGET): $(OBJECTS) src/main.o
 
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	@echo "========== Building $(TEST_TARGET) =========="
-	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(LIBS) -o $@ -lcheck
+	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING TESTS =========="
 	./$(TEST_TARGET)
 	@echo ""
