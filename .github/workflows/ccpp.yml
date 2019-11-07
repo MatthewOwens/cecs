@@ -51,8 +51,6 @@ jobs:
       run: |
         echo "checking /usr/local/include"
         ls /usr/local/include | grep check
-        echo "checking brew prefix -- $(brew --prefix)"
-        ls $(brew --prefix) | grep check
     - name: make cecs
       run: make cecs
     - name: make check
