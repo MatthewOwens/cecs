@@ -6,6 +6,11 @@ TEST_LIBS = $(LIBS) -lcheck
 CC = gcc
 CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/
 
+ifeq ($(UNAME_S),Darwin)
+	@echo "macos detected, adding brew include dir"
+	CFLAGS += -I/usr/local/include
+endif
+
 .PHONY: default all clean FORCE
 
 default: all
