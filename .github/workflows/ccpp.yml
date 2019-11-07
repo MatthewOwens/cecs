@@ -47,6 +47,13 @@ jobs:
         export PATH=/usr/local/bin:$PATH
         hash -r
         gcc --version
+        export PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig
+    - name: finding libcheck include
+      run: |
+        echo "checking /usr/local/include"
+        ls /usr/local/include | grep check
+        echo "checking brew prefix -- $(brew --prefix)"
+        ls $(brew --prefix) | grep check
     - name: make cecs
       run: make cecs
     - name: make check
