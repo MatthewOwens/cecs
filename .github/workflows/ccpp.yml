@@ -52,8 +52,11 @@ jobs:
       run: |
         echo "checking for default include dirs"
         gcc -xc -E -v -
+        echo "======================"
         echo "checking /usr/local/include"
         ls /usr/local/include | grep check
+        echo "checking /usr/include"
+        ls /usr/include | grep check
     - name: make cecs
       run: make cecs
     - name: make check
