@@ -50,7 +50,7 @@ jobs:
     - name: finding libcheck include
       run: |
         echo "checking for default include dirs"
-        gcc -xc -E -V -
+        gcc -xc -E -v -
         echo "checking /usr/local/include"
         ls /usr/local/include | grep check
     - name: make cecs
