@@ -51,8 +51,8 @@ jobs:
     - name: finding libcheck include
       run: |
         echo "================================================================"
-        echo "/usr/ dir:"
         echo "ls /usr/ | grep include"
+        ls /usr/ | grep include
         echo "================================================================"
         echo "checking for default include dirs"
         gcc -xc -E -v -
