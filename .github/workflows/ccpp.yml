@@ -49,6 +49,8 @@ jobs:
         gcc --version
     - name: finding libcheck include
       run: |
+        echo "checking for default include dirs"
+        gcc -xc -E -V -
         echo "checking /usr/local/include"
         ls /usr/local/include | grep check
     - name: make cecs
