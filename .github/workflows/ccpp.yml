@@ -52,7 +52,7 @@ jobs:
       run: |
         echo "================================================================"
         echo "ls /usr/ | grep include"
-        ls /usr/ | grep include
+        ls /usr/
         echo "================================================================"
         echo "checking for default include dirs"
         gcc -xc -E -v -
