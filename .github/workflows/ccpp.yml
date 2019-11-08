@@ -39,7 +39,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
-        ln -s /usr/include /usr/local/include
+        ln -s /usr/local/include /usr/include
         brew install autoconf automake libtool check gcc
     - name: gcc version check
       run: |
