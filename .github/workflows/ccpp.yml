@@ -57,7 +57,7 @@ jobs:
         ls /usr/local/include | grep check
         echo "================================================================"
         echo "adding CPATH. Was $CPATH"
-        export CPATH=/usr/include
+        export CPATH=/usr/local/include
         echo "is now $CPATH"
         echo "================================================================"
         echo "checking for default include dirs"
