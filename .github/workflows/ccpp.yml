@@ -39,7 +39,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
-        sudo ln -s /usr/include /usr/local/include
         brew install autoconf automake libtool check gcc
     - name: gcc version check
       run: |
@@ -56,10 +55,12 @@ jobs:
         echo "================================================================"
         echo "checking for default include dirs"
         gcc -xc -E -v -
+        echo "================================================================"
         echo "checking /usr/local/include"
         ls /usr/local/include | grep check
-        echo "checking /usr/include"
-        ls /usr/include | grep check
+        echo "================================================================"
+        echo "without grep:"
+        ls /usr/local/include
     - name: make cecs
       run: make cecs
     - name: make check
