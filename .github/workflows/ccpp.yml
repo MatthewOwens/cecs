@@ -53,18 +53,15 @@ jobs:
         echo "ls /usr/ | grep include"
         ls /usr/
         echo "================================================================"
-        echo "checking for default include dirs"
-        gcc -xc -E -v -
-        echo "================================================================"
         echo "checking /usr/local/include"
         ls /usr/local/include | grep check
-        echo "================================================================"
-        echo "without grep:"
-        ls /usr/local/include
         echo "================================================================"
         echo "adding CPATH. Was $CPATH"
         export CPATH=/usr/include
         echo "is now $CPATH"
+        echo "================================================================"
+        echo "checking for default include dirs"
+        gcc -xc -E -v -
     - name: make cecs
       run: make cecs
     - name: make check
