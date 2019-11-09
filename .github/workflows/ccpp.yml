@@ -62,9 +62,9 @@ jobs:
         echo "without grep:"
         ls /usr/local/include
         echo "================================================================"
-        echo "adding C_INCLUDE_PATH. Was $C_INCLUDE_PATH"
-        export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/include
-        echo "is now $C_INCLUDE_PATH"
+        echo "adding CPATH. Was $CPATH"
+        export CPATH=/usr/include
+        echo "is now $CPATH"
     - name: make cecs
       run: make cecs
     - name: make check
