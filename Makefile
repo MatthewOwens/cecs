@@ -4,7 +4,7 @@ LIBS = -lm -D_REENTRANT -std=c11
 TEST_LIBS = $(LIBS) -lcheck
 
 CC = gcc
-CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/
+CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include
 
 ifeq ($(UNAME_S),Darwin)
 	@echo "macos detected, adding brew include dir"
