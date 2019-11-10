@@ -63,7 +63,8 @@ jobs:
         echo "checking for default include dirs"
         gcc -xc -E -v -
     - name: finding libcheck library
-      run: echo "test"
+      run: |
+      echo "checking /usr/lib"
     - name: make cecs
       run: make cecs
     - name: make check
