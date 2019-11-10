@@ -54,7 +54,7 @@ jobs:
         echo "================================================================"
         echo "adding /usr/local/Cellar/check/0.13.0/lib/ to DYLD_LIBRARY_PATH"
         echo "DYLD_LIBRARY_PATH is '$DYLD_LIBRARY_PATH'"
-        echo export DYLD_LIBRARY_PATH = $DYLD_LIBRARY_PATH:/usr/local/Cellar/check/0.13.0/lib
+        export DYLD_LIBRARY_PATH = $DYLD_LIBRARY_PATH:/usr/local/Cellar/check/0.13.0/lib
         echo "DYLD_LIBRARY_PATH is '$DYLD_LIBRARY_PATH'"
     - name: make cecs
       run: make cecs
