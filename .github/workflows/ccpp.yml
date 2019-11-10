@@ -62,6 +62,16 @@ jobs:
         echo "================================================================"
         echo "checking for default include dirs"
         gcc -xc -E -v -
+    - name: finding libcheck library
+      run: |
+      echo "checking /usr/lib"
+      ls /usr/lib | grep check
+      echo "================================================================"
+      echo "checking from root"
+      DIR=$(pwd)
+      cd /
+      sudo find . | grep libcheck
+      cd $DIR
     - name: make cecs
       run: make cecs
     - name: make check
