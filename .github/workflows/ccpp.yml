@@ -47,31 +47,15 @@ jobs:
         export PATH=/usr/local/bin:$PATH
         hash -r
         gcc --version
-    - name: finding libcheck include
-      run: |
-        echo "================================================================"
-        echo "ls /usr/ | grep include"
-        ls /usr/
-        echo "================================================================"
-        echo "checking /usr/local/include"
-        ls /usr/local/include | grep check
-        echo "================================================================"
-        echo "adding CPATH. Was $CPATH"
-        export CPATH=/usr/local/include
-        echo "is now $CPATH"
-        echo "================================================================"
-        echo "checking for default include dirs"
-        gcc -xc -E -v -
     - name: finding libcheck library
       run: |
         echo "checking /usr/lib"
         ls /usr/lib | grep check
         echo "================================================================"
-        echo "checking from root"
-        DIR=$(pwd)
-        cd /
-        sudo find . | grep libcheck
-        cd $DIR
+        echo "adding /usr/local/Cellar/check/0.13.0/lib/ to DYLD_LIBRARY_PATH"
+        echo "DYLD_LIBRARY_PATH is '$DYLD_LIBRARY_PATH'"
+        echo export DYLD_LIBRARY_PATH = $DYLD_LIBRARY_PATH:/usr/local/Cellar/check/0.13.0/lib
+        echo "DYLD_LIBRARY_PATH is '$DYLD_LIBRARY_PATH'"
     - name: make cecs
       run: make cecs
     - name: make check
