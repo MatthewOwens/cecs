@@ -51,6 +51,10 @@ jobs:
       run: |
         echo "checking /usr/lib"
         ls /usr/lib | grep check
+        echo "checking /usr/local/lib"
+        ls /usr/local/lib | grep check
+        echo "checking /usr/local/Cellar/check/0.13.0/lib"
+        ls /usr/local/Cellar/check/0.13.0/lib
         echo "================================================================"
         echo "adding /usr/local/Cellar/check/0.13.0/lib/ to DYLD_LIBRARY_PATH"
         echo "DYLD_LIBRARY_PATH is '$DYLD_LIBRARY_PATH'"
