@@ -39,7 +39,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
-        brew install autoconf automake libtool check gcc
+        brew install autoconf automake libtool check gcc pkg-config
     - name: gcc version check
       run: |
         ln -s /usr/local/Cellar/gcc/9.2.0_1/bin/gcc-9 /usr/local/bin/gcc
