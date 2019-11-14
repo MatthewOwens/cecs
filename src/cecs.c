@@ -3,7 +3,6 @@
 #include "cecs_component.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <malloc.h>
 
 struct cecs* cecs_init()
 {

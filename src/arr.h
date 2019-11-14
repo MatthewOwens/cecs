@@ -5,7 +5,7 @@
 
 #pragma once
 #include <stdlib.h>
-#include <malloc.h>
+#include "openbsd-reallocarray.h"
 
 #define array(type)\
 	struct {\
@@ -44,7 +44,7 @@ do {\
 		 if (array.length == array.capacity) {\
 		 array.capacity *= 2;\
 		 \
-		 void* tmp = reallocarray(array.data,\
+		 void* tmp = obsdreallocarray(array.data,\
 			 array.capacity, sizeof(*array.data));\
 			 if (tmp != NULL) {\
 				 array.data = tmp;\

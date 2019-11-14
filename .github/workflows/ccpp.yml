@@ -1,14 +1,13 @@
-name: test ci
+name: ci
 
 on:
   push:
     branches:
       - master
-      - actions
+      - matrix
 
 jobs:
-  build:
-
+  ubuntu-build:
     runs-on: ubuntu-latest
     
     steps:
@@ -28,6 +27,42 @@ jobs:
     - name: gcc version check
       run: |
         gcc --version
+    - name: make cecs
+      run: make cecs
+    - name: make check
+      run: make check
+
+  macos-build:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: install dependencies
+      run: |
+        brew install autoconf automake libtool check gcc pkg-config
+    - name: gcc version check
+      run: |
+        ln -s /usr/local/Cellar/gcc/9.2.0_1/bin/gcc-9 /usr/local/bin/gcc
+        ln -s /usr/local/Cellar/gcc/9.2.0_1/bin/g++-9 /usr/local/bin/g++
+        export PATH=/usr/local/bin:$PATH
+        hash -r
+        gcc --version
+    - name: finding libcheck library
+      run: |
+        echo "checking /usr/lib"
+        ls /usr/lib | grep check
+        echo "checking /usr/local/lib"
+        ls /usr/local/lib | grep check
+        echo "checking /usr/local/Cellar/check/0.13.0/lib"
+        ls /usr/local/Cellar/check/0.13.0/lib
+        echo "================================================================"
+        echo "adding /usr/local/Cellar/check/0.13.0/lib/ to DYLD_LIBRARY_PATH"
+        echo "DYLD_LIBRARY_PATH is '$DYLD_LIBRARY_PATH'"
+        export DYLD_LIBRARY_PATH=/usr/local/Cellar/check/0.13.0/lib:$DYLD_LIBRARY_PATH
+        echo "DYLD_LIBRARY_PATH is '$DYLD_LIBRARY_PATH'"
+        export DYLD_LIBRARY_PATH=/usr/local/Cellar/check/0.13.0/lib:$DYLD_LIBRARY_PATH
+        export LD_LIBRARY_PATH=/usr/local/Cellar/check/0.13.0/lib:$LD_LIBRARY_PATH
+        export LIBRARY_PATH=/usr/local/lib
     - name: make cecs
       run: make cecs
     - name: make check

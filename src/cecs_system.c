@@ -2,9 +2,9 @@
 #include "cecs_err.h"
 #include "cecs.h"
 #include <stdio.h>
-#include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
+#include "openbsd-reallocarray.h"
 
 int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
 		    uint32_t excl_mask, sys_init_func init, sys_run_func run,
@@ -17,7 +17,7 @@ int cecs_reg_system(struct cecs* cecs, const char* name, uint32_t incl_mask,
 		return cecse(CECSE_INVALID_OPERATION);
 	}
 
-	void* tmp = reallocarray(cecs->systems, cecs->num_systems + 1,
+	void* tmp = obsdreallocarray(cecs->systems, cecs->num_systems + 1,
 				 sizeof(struct cecs_system));
 	if(tmp == NULL) { return cecse(CECSE_NOMEM); }
 
