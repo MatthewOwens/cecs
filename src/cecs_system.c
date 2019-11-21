@@ -9,13 +9,13 @@
 int cecs_reg_system(struct cecs* cecs, const char* name)
 {
 	printf("registering cecs system %s\n", name);
-	printf("checking if sys with that name already exists...\n\t");
+	printf("checking if sys with that name already exists...\n");
 	if(cecs == NULL) {
 		return cecse(CECSE_NULL);
 	} else if (cecs->state != CECS_UNINITILISED) {
 		return cecse(CECSE_INVALID_OPERATION);
 	} else if (cecs_system(cecs, name) != NULL) {
-		fprintf(stderr, "system with name %s already exists!\n", name);
+		fprintf(stderr, "\tsystem with name %s already exists!\n", name);
 		return cecse(CECSE_INVALID_VALUE);
 	}
 
