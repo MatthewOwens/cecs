@@ -1,6 +1,6 @@
 TARGET = cecs
 TEST_TARGET = check
-LIBS = -lm -D_REENTRANT -std=c11 -lGL -lGLEW -lSDL2 -lSDL2_image
+LIBS = -lm -D_REENTRANT -std=c11
 
 CC = gcc
 CFLAGS = -g -Wall -I/usr/include/SDL2 -Isystems/ -Icomponents/ -Isrc/
