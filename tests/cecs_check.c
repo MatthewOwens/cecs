@@ -67,8 +67,8 @@ void ent_setup()
 
 void ent_teardown()
 {
-	cecs_add_entity(cecs, &enta);
-	cecs_add_entity(cecs, &entb);
+	cecs_rem_entity(cecs, &enta);
+	cecs_rem_entity(cecs, &entb);
 }
 
 int tsys_init(struct cecs* cecs)
