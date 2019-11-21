@@ -83,8 +83,9 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
 {
 	if(cecs == NULL) return cecse(CECSE_NULL);
-	if(ent < 0 || ent > cecs->num_entities - 1)
-		return cecse(CECSE_INVALID_OPERATION);
+	if(ent == NULL){
+		fprintf(stderr, "can't free null entitiy");
+	}
 
 	for(int i = 0; i < cecs->free_entities.length; ++i){
 		// entity is already inactive, can report success
