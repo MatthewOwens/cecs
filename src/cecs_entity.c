@@ -51,7 +51,7 @@ int extend_components(struct cecs* cecs)	//TODO: stub
 	return cecse(CECSE_NONE);
 }
 
-int need_components_extended(struct* cecs)	//TODO: stub
+int need_components_extended(struct cecs* cecs)	//TODO: stub
 {
 	return cecse(CECSE_NONE);
 }
@@ -65,7 +65,7 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 
 	// if there are no inactive entities
 	if(ent == NULL) {
-		if(need_components_extended(cecs)) extend_components();
+		if(need_components_extended(cecs)) extend_components(cecs);
 
 		cecs->num_entities++;
 		tmp = obsdreallocarray(cecs->entities, cecs->num_entities,
