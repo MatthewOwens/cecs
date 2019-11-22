@@ -5,6 +5,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 int cecs_reg_system(struct cecs* cecs, const char* name)
 {
@@ -44,6 +45,7 @@ int cecs_reg_system(struct cecs* cecs, const char* name)
 	sys->init = NULL;
 	sys->run = NULL;
 	sys->free = NULL;
+	sys->registered = true;
 
 	cecs->num_systems += 1;
 	return cecse(CECSE_NONE);
@@ -98,31 +100,45 @@ struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
 	}
 
 	for(int i = 0; i < cecs->num_systems; ++i){
-		if(strcmp(name, cecs->systems[i].name) == 0)
+		if(strcmp(name, cecs->systems[i].name) != 0){
+			printf("continuing...");
+			continue;
+		}
+		if(cecs->systems[i].registered == true)
 			return &cecs->systems[i];
+		else
+		{
+			printf("%s.registered is %d\n", cecs->systems[i].name, cecs->systems[i].registered);
+			return NULL;
+		}
 	}
 	printf("no system name matched %s\n", name);
 	return NULL;
 }
 
-int cecs_free_system(struct cecs* cecs, const char* name)
+int cecs_rem_system(struct cecs* cecs, const char* name)
 {
 	if(cecs == NULL || name == NULL){
 		cecse_msg(CECSE_INVALID_VALUE,
-			"null param in cecs_free_system");
+			"null param in cecs_rem_system");
 	}
 	struct cecs_system* sys = NULL;
 	sys = cecs_system(cecs, name);
 	if(sys == NULL){
 		char buf[80];
-		strcpy(buf, "cecs_free_system called on system ");
-		strcpy(buf, name);
-		strcpy(buf, " but system doesn't exist!");
+		const char* x = "- cecs_rem_system called on system ";
+		const char* y = " but system doesn't exist!";
+		strcpy(buf, x);
+		strcpy(buf+strlen(x), name);
+		strcpy(buf+strlen(x)+strlen(name), y);
 		cecse_msg(CECSE_INVALID_VALUE, buf);
 	}
-	printf("sys ptr is %p, array ptr is %p\n", sys, &cecs->systems[0]);
+
+	sys->registered = false;
+	printf("removed system %s\n", sys->name);
 	sys->free(sys);
-	sys = NULL;
-	printf("sys ptr is %p, array ptr is %p\n", sys, &cecs->systems[0]);
+	sys->free = NULL;
+	sys->run = NULL;
+	sys->init = NULL;
 	return cecse(CECSE_NONE);
 }

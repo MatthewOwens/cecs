@@ -1,5 +1,6 @@
 #pragma once
 #include "cecs.h"
+#include <stdbool.h>
 
 struct cecs;
 
@@ -15,6 +16,7 @@ struct cecs_system
 	uint32_t inclusion_mask;
 	uint32_t exclusion_mask;
 	const char *name;
+	bool registered;
 };
 
 int cecs_reg_system(struct cecs* cecs, const char* name);
@@ -24,6 +26,6 @@ int cecs_sys_set_funcs(struct cecs* cecs, const char* name,
 			sys_init_func init,
 			sys_run_func run,
 			sys_free_func free);
-int cecs_free_system(struct cecs* cecs, const char* name);
+int cecs_rem_system(struct cecs* cecs, const char* name);
 
 struct cecs_system* cecs_system(struct cecs *cecs, const char* name);
