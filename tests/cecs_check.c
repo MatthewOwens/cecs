@@ -90,7 +90,6 @@ void tsys_run()
 
 void sys_setup()
 {
-	printf("\t\tsys_setup\n");
 	cecs_reg_system(cecs, "test-sys");
 	cecs_sys_set_incl(	cecs, "test-sys",
 						cecs_component_key(cecs, "position") |
@@ -102,7 +101,6 @@ void sys_setup()
 
 void sys_teardown()
 {
-	printf("\t\tsys_teardown\n");
 	cecs_rem_system(cecs, "test-sys");
 }
 
@@ -146,7 +144,6 @@ END_TEST
 
 START_TEST(cecs_check_add_sys)
 {
-	printf("\t\tcecs_check_system_add\n");
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
 	ck_assert_int_eq(cecs->num_systems, 1);
 	ck_assert_ptr_nonnull(cecs->systems);
@@ -159,7 +156,6 @@ END_TEST
 
 START_TEST(cecs_check_system_func)
 {
-	printf("\t\tcecs_check_system_func\n");
 	ck_assert_ptr_nonnull(cecs_system(cecs, "test-sys"));
 	ck_assert_ptr_null(cecs_system(NULL, "test-sys"));
 	ck_assert_ptr_null(cecs_system(cecs, "not a real system"));
@@ -169,14 +165,12 @@ END_TEST
 
 START_TEST(cecs_check_system_run)
 {
-	printf("\t\tcecs_check_system_run\n");
 	stub();
 }
 END_TEST
 
 START_TEST(cecs_check_system_rem)
 {
-	printf("\t\tcecs_check_system_rem\n");
 	cecs_rem_system(cecs, "test-sys");
 	ck_assert_ptr_null(cecs_system(cecs, "test-sys"));
 }
