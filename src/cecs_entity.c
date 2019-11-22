@@ -2,7 +2,7 @@
 #include "cecs_err.h"
 #include "cecs_entity.h"
 #include "openbsd-reallocarray.h"
-
+#include <stdio.h>
 #include <stdlib.h>
 
 // returns null if there is none available, ptr to inactive entity if available
