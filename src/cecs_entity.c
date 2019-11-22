@@ -37,7 +37,7 @@ struct cecs_ent* ent_from_id(struct cecs* cecs, uint32_t id)
 
 }
 
-int extend_components(struct cecs* cecs)
+int extend_components(struct cecs* cecs)	//TODO: stub
 {
 	int i;
 	for(i = 0; i < cecs->num_components; ++i){
@@ -51,6 +51,11 @@ int extend_components(struct cecs* cecs)
 	return cecse(CECSE_NONE);
 }
 
+int need_components_extended(struct* cecs)	//TODO: stub
+{
+	return cecse(CECSE_NONE);
+}
+
 int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 {
 	void* tmp = NULL;
@@ -60,7 +65,8 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 
 	// if there are no inactive entities
 	if(ent == NULL) {
-		//TODO: resize component arrays accordingly!
+		if(need_components_extended(cecs)) extend_components();
+
 		cecs->num_entities++;
 		tmp = obsdreallocarray(cecs->entities, cecs->num_entities,
 				   sizeof(struct cecs_entity));
