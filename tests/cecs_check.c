@@ -34,13 +34,11 @@ static testUVComponent uvComp = {0};
 void init_setup()
 {
 	cecs = cecs_init();
-	printf("init_setup\n");
 }
 
 void init_teardown()
 {
 	cecs_free(cecs);
-	printf("init_teardown\n");
 }
 
 void comp_setup()
@@ -75,6 +73,10 @@ int tsys_init(struct cecs* cecs)
 {
 }
 
+int tsys_free(struct cecs* cecs)
+{
+}
+
 void tsys_run()
 {
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
@@ -88,18 +90,20 @@ void tsys_run()
 
 void sys_setup()
 {
+	printf("\t\tsys_setup\n");
 	cecs_reg_system(cecs, "test-sys");
 	cecs_sys_set_incl(	cecs, "test-sys",
 						cecs_component_key(cecs, "position") |
 						cecs_component_key(cecs, "uv"));
 	cecs_sys_set_excl(	cecs, "test-sys",
 						cecs_component_key(cecs, "string"));
-	cecs_sys_set_funcs(cecs, "test-sys", tsys_init, tsys_run, free);
+	cecs_sys_set_funcs(cecs, "test-sys", tsys_init, tsys_run, tsys_free);
 }
 
 void sys_teardown()
 {
-	cecs_free_system(cecs, "test-sys");
+	printf("\t\tsys_teardown\n");
+	cecs_rem_system(cecs, "test-sys");
 }
 
 void stub() { ck_abort_msg("STUB - test not implemented\n"); }
@@ -142,6 +146,7 @@ END_TEST
 
 START_TEST(cecs_check_add_sys)
 {
+	printf("\t\tcecs_check_system_add\n");
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
 	ck_assert_int_eq(cecs->num_systems, 1);
 	ck_assert_ptr_nonnull(cecs->systems);
@@ -154,6 +159,7 @@ END_TEST
 
 START_TEST(cecs_check_system_func)
 {
+	printf("\t\tcecs_check_system_func\n");
 	ck_assert_ptr_nonnull(cecs_system(cecs, "test-sys"));
 	ck_assert_ptr_null(cecs_system(NULL, "test-sys"));
 	ck_assert_ptr_null(cecs_system(cecs, "not a real system"));
@@ -162,13 +168,16 @@ START_TEST(cecs_check_system_func)
 END_TEST
 
 START_TEST(cecs_check_system_run)
-{ stub();
+{
+	printf("\t\tcecs_check_system_run\n");
+	stub();
 }
 END_TEST
 
-START_TEST(cecs_check_system_free)
+START_TEST(cecs_check_system_rem)
 {
-	cecs_free_system(cecs, "test-sys");
+	printf("\t\tcecs_check_system_rem\n");
+	cecs_rem_system(cecs, "test-sys");
 	ck_assert_ptr_null(cecs_system(cecs, "test-sys"));
 }
 
@@ -185,23 +194,23 @@ Suite * cecs_suite(void)
 	tcase_add_checked_fixture(tcinit, init_setup, init_teardown);
 	tcase_add_test(tcinit, cecs_check_init);
 
-	tcase_add_checked_fixture(tccomp, init_setup, init_teardown);
+	tcase_add_unchecked_fixture(tccomp, init_setup, init_teardown);
 	tcase_add_checked_fixture(tccomp, comp_setup, comp_teardown);
 	tcase_add_test(tccomp, cecs_check_add_comp);
 
-	tcase_add_checked_fixture(tcent, init_setup, init_teardown);
-	tcase_add_checked_fixture(tcent, comp_setup, comp_teardown);
+	tcase_add_unchecked_fixture(tcent, init_setup, init_teardown);
+	tcase_add_unchecked_fixture(tcent, comp_setup, comp_teardown);
 	tcase_add_checked_fixture(tcent, ent_setup, ent_teardown);
 	tcase_add_test(tcent, cecs_check_add_ent);
 
-	tcase_add_checked_fixture(tcsys, init_setup, init_teardown);
-	tcase_add_checked_fixture(tcsys, comp_setup, comp_teardown);
-	tcase_add_checked_fixture(tcsys, ent_setup, ent_teardown);
-	tcase_add_checked_fixture(tcsys, sys_setup, sys_teardown);
+	tcase_add_unchecked_fixture(tcsys, init_setup, init_teardown);
+	tcase_add_unchecked_fixture(tcsys, comp_setup, comp_teardown);
+	tcase_add_unchecked_fixture(tcsys, ent_setup, ent_teardown);
+	tcase_add_unchecked_fixture(tcsys, sys_setup, sys_teardown);
 	tcase_add_test(tcsys, cecs_check_system_func);
 	tcase_add_test(tcsys, cecs_check_add_sys);
 	tcase_add_test(tcsys, cecs_check_system_run);
-	tcase_add_test(tcsys, cecs_check_system_free);
+	tcase_add_test(tcsys, cecs_check_system_rem);
 
 	suite_add_tcase(s, tcinit);
 	suite_add_tcase(s, tccomp);
