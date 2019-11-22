@@ -5,7 +5,6 @@
 #include "cecs.h"
 #include "arr.h"
 #include <stdlib.h>
-#include <malloc.h>
 
 int main(int argc, char **argv)
 {

@@ -1,4 +1,11 @@
-# cecs
+<p align="center">
+<br/>
+  <img src="assets/logo.png" width="160px"/><br/>
+  (sɛks)<br/><br/>
+  a small ecs, written in c.<br/>
+<br/>
+<a href="https://github.com/MatthewOwens/cecs/issues"><img alt="Issues" src="https://img.shields.io/github/issues-raw/MatthewOwens/cecs.svg"/></a>
+</p>
 
 ## Summary
 small entity-component-system written in C. The purpose of this project is 3-fold:
@@ -7,6 +14,7 @@ small entity-component-system written in C. The purpose of this project is 3-fol
 * work using [github flow](https://guides.github.com/introduction/flow/)
 
 ## Building
+0. ensure that make, gcc, pkg-config and libcheck are installed
 1. clone the repo
 2. run `make`
 3. run `make check` to run unit tests

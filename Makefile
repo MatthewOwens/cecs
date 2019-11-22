@@ -1,9 +1,11 @@
 TARGET = cecs
 TEST_TARGET = check
 LIBS = -lm -D_REENTRANT -std=c11
+TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = gcc
-CFLAGS = -g -Wall -I/usr/include/SDL2 -Isystems/ -Icomponents/ -Isrc/
+CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include
+TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
 
@@ -29,7 +31,7 @@ $(TARGET): $(OBJECTS) src/main.o
 
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	@echo "========== Building $(TEST_TARGET) =========="
-	$(CC) $(CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(LIBS) -lcheck -o $@
+	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING TESTS =========="
 	./$(TEST_TARGET)
 	@echo ""
@@ -38,7 +40,7 @@ src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 tests/%o: tests/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(TEST_CFLAGS) -c $^ -o $@
 
 
 clean:

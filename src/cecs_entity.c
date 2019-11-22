@@ -1,9 +1,9 @@
 #include "cecs.h"
 #include "cecs_err.h"
 #include "cecs_entity.h"
+#include "openbsd-reallocarray.h"
 
 #include <stdlib.h>
-#include <malloc.h>
 
 // returns null if there is none available, ptr to inactive entity if available
 struct cecs_entitiy* get_inactive_entity(struct cecs* cecs)
@@ -62,7 +62,7 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 	if(ent == NULL) {
 		//TODO: resize component arrays accordingly!
 		cecs->num_entities++;
-		tmp = reallocarray(cecs->entities, cecs->num_entities,
+		tmp = obsdreallocarray(cecs->entities, cecs->num_entities,
 				   sizeof(struct cecs_entity));
 
 		if(tmp == NULL) return cecse(CECSE_NOMEM);
