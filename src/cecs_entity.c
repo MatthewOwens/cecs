@@ -4,6 +4,7 @@
 #include "openbsd-reallocarray.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 // returns null if there is none available, ptr to inactive entity if available
 struct cecs_entitiy* get_inactive_entity(struct cecs* cecs)
@@ -51,9 +52,13 @@ int extend_components(struct cecs* cecs)	//TODO: stub
 	return cecse(CECSE_NONE);
 }
 
-int need_components_extended(struct cecs* cecs)	//TODO: stub
+int need_components_extended(struct cecs* cecs)
 {
-	return cecse(CECSE_NONE);
+	if(cecs == NULL){
+		cecse_msg(CECSE_NULL, "need_components_extended");
+		return false;
+	}
+	return (cecs->free_entities.length == 0);
 }
 
 int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
