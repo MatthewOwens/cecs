@@ -80,11 +80,25 @@ int tsys_free(struct cecs* cecs)
 void tsys_run()
 {
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
-	for(int i = 0; i < cecs->num_entities; ++i){
-		/*
-			TODO: manipulate entitiy if something in ent's mask matches
-			system incl mask and nothing in ent's mask matches system excl mask
-		*/
+	int posKey = cecs_component_key(cecs, "position");
+	int uvKey = cecs_component_key(cecs, "uv");
+	for(int i = 0; i < cecs->num_components; ++i){
+		uint32_t compKey = cecs->components[i].key;
+		void* data = cecs->components[i].data;
+		const uint32_t included = sys->inclusion_mask & compKey;
+		const uint32_t excluded = sys->exclusion_mask & compKey;
+		if(included == 0 && excluded == 1)	return;
+
+		if(compKey == posKey){
+			testPosComponent* comp = (testPosComponent*)data;
+			comp->x += 1.f;
+			comp->y += 1.5f;
+			comp->z += 2.f;
+		} else {	// uv key
+			testUVComponent* comp = (testUVComponent*)data;
+			comp->u = 1;
+			comp->v = 0.5f;
+		}
 	}
 }
 
