@@ -29,8 +29,9 @@ int cecs_reg_system(struct cecs* cecs, const char* name)
 	}
 
 	if(sys == NULL){
-		void* tmp = obsdreallocarray(cecs->systems, cecs->num_systems + 1,
-					 sizeof(struct cecs_system));
+		void* tmp = obsdreallocarray(cecs->systems, cecs->num_systems+1,
+		sizeof(struct cecs_system));
+
 		if(tmp == NULL) { return cecse(CECSE_NOMEM); }
 
 		cecs->systems = tmp;
