@@ -14,8 +14,9 @@ int registered_count = 0;
 int cecs_extend_components(struct cecs* cecs)
 {
 	if(cecs == NULL) { return cecse_msg(CECSE_NULL, "extend components"); }
-	void* tmp = obsdreallocarray(cecs->components,
-			(cecs->num_components+1) * comp_size);
+	struct cecs_component* tmp = obsdreallocarray(cecs->components,
+			(registered_count * cecs->num_entities),
+			sizeof(struct cecs_component));
 	if(tmp == NULL) { return cecse(CECSE_NOMEM); }
 
 	// ensuring that values in existing components aren't overwritten
@@ -27,6 +28,8 @@ int cecs_extend_components(struct cecs* cecs)
 	for(int i = 0; i < registered_count; ++i){
 		tmp[cecs->num_components + i] = model[i];
 	}
+
+	cecs->components = tmp;
 }
 
 /*
