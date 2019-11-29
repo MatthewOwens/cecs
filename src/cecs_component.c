@@ -47,7 +47,7 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 		return cecse(CECSE_INVALID_OPERATION);
 	}
 
-	void* tmp  = obsdreallocarray(cecs->components, cecs->num_components + 1,
+	void* tmp  = obsdreallocarray(cecs->components, cecs->num_components+1,
 				sizeof(struct cecs_component));
 	if (tmp == NULL) { return cecse(CECSE_NOMEM); }
 
