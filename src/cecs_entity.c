@@ -38,16 +38,27 @@ struct cecs_ent* ent_from_id(struct cecs* cecs, uint32_t id)
 
 }
 
-int extend_components(struct cecs* cecs)	//TODO: stub
+int extend_components(struct cecs* cecs)
 {
+	void* tmp = NULL;
+	const char* err = "can't extend component array!\n";
 	int i;
 	for(i = 0; i < cecs->num_components; ++i){
-		// TODO: increment each component data ptr
-
 		// double size of component arrays
-		// set num_free_entities to num_entities - 1
-		// extend inactives array to accomodate new entries
-		// populate new inactives
+		tmp = obsdreallocarray(cecs->components[i].data,
+					cecs->num_entities * 2,
+					cecs->components[i].size);
+
+		if(tmp == NULL)
+			return cecse_msg(CECSE_NOMEM, err);
+		cecs->components[i].data = tmp;
+
+	}
+	cecs->num_free_entities += cecs->num_entities - 1;
+
+	// extend inactives array to accomodate new entries
+	for(i = 1; i < cecs->num_entities; ++i){
+		array_push(free_entities, cecs->num_entities + i);
 	}
 	return cecse(CECSE_NONE);
 }
