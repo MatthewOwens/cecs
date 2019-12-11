@@ -6,36 +6,6 @@
 #include "inttypes.h"
 #include "openbsd-reallocarray.h"
 
-// model for one set of components, updated in cecs_reg_component
-struct cecs_component* model = NULL;
-const uint32_t comp_size = sizeof(struct cecs_component);
-int registered_count = 0;
-
-int cecs_extend_components(struct cecs* cecs)
-{
-	if(cecs == NULL) { return cecse_msg(CECSE_NULL, "extend components"); }
-	struct cecs_component* tmp = obsdreallocarray(cecs->components,
-			(registered_count * cecs->num_entities),
-			sizeof(struct cecs_component));
-	if(tmp == NULL) { return cecse(CECSE_NOMEM); }
-
-	// ensuring that values in existing components aren't overwritten
-	for(int i = 0; i < cecs->num_components; ++i){
-		tmp[i] = cecs->components[i];
-	}
-
-	// adding a new component set based on our model
-	for(int i = 0; i < registered_count; ++i){
-		tmp[cecs->num_components + i] = model[i];
-	}
-
-	cecs->components = tmp;
-}
-
-/*
- * TODO: update to edit model pointer, accessable components shouldn't be
- * added outside of entity creation
- */
 int cecs_reg_component( struct cecs* cecs, const char* name,
 			void *data, size_t size )
 {
@@ -65,7 +35,6 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 	cecs->components[i].name = name;
 
 	cecs->num_components += 1;
-	registered_count++;
 	return cecse(CECSE_NONE);
 }
 
