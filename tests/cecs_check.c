@@ -79,61 +79,6 @@ int tsys_free(struct cecs* cecs)
 
 void tsys_run()
 {
-	printf("\t\ttsys_run()\n");
-	struct cecs_system* sys = cecs_system(cecs, "test-sys");
-	int posKey = cecs_component_key(cecs, "position");
-	int uvKey = cecs_component_key(cecs, "uv");
-	int ent_index = 0;
-	uint32_t compKey = 0;
-	bool interested = true;
-	void* data = NULL;
-
-	for(int i = 0; i < cecs->num_components; ){
-		printf("\t\ti is %d\n", i);
-		/*
-		 * if we're at a new component, check if the system is
-		 * interested using the component mask
-		 */
-		if(i % cecs->num_components == 0){
-			if(i != 0) ent_index = cecs->num_components / i;
-			uint32_t included = sys->inclusion_mask & cecs->entities[ent_index].mask;
-			uint32_t excluded = sys->exclusion_mask & cecs->entities[ent_index].mask;
-			interested = (included == 0 && excluded != 0);
-		}
-		printf("\t\tA\n");
-
-		if(!interested){
-			// skip to next entity
-			printf("\t\tadding %d to %d\n", (cecs->num_entities/cecs->num_components), i);
-			printf("\t\tnum_entities: %d, num_components %d\n", cecs->num_entities, cecs->num_components);
-			i += (cecs->num_entities / cecs->num_components);
-			data = NULL;
-			continue;
-		} else {
-			data = cecs->components[i].data;
-			compKey = cecs->components[i].key;
-		}
-		printf("\t\tB\n");
-		
-		/*
-		 * TODO: remove boilerplate code
-		 * Everything above here is boilerplate. This should be
-		 * abstracted so that systems implementation is less painful
-		 */
-
-		if(compKey == posKey){
-			testPosComponent* comp = (testPosComponent*)data;
-			comp->x += 1.f;
-			comp->y += 1.5f;
-			comp->z += 2.f;
-		} else {	// uv key
-			testUVComponent* comp = (testUVComponent*)data;
-			comp->u = 1;
-			comp->v = 0.5f;
-		}
-		printf("\t\tC\n");
-	++i;
-	}
 }
 
 void sys_setup()
