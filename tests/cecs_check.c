@@ -79,7 +79,25 @@ int tsys_free(struct cecs* cecs)
 
 void tsys_run()
 {
+	//  getting the system
+	struct cecs_system* sys = cecs_system("test-sys");
+	uint32_t key;
+	const uint32_t incl = sys->inclusion_mask;
+	const uint32_t excl = sys->exclusion_mask;
+
 	//TODO: iterate without blowing cache
+	for(int i = 0; i < cecs->num_components; ++i){
+		// if i is in free_entities, continue
+		if(cecs->free_entities.length != 0){
+			for(int j = 0; j < cecs->free_entities.length; ++i){
+				if(i == cecs->free_entities.data[i])
+					continue;
+			}
+		}
+
+		uint32_t key = cecs->entities[i].key;
+		//TODO the thing
+	}
 }
 
 void sys_setup()
