@@ -43,10 +43,15 @@ int extend_components(struct cecs* cecs)
 	void* tmp = NULL;
 	const char* err = "can't extend component array!\n";
 	int i;
+	int target_size = cecs->num_entities * 2;
+
+	if(target_size == 0)
+		target_size = 1;
+
 	for(i = 0; i < cecs->num_components; ++i){
 		// double size of component arrays
 		tmp = obsdreallocarray(cecs->components[i].data,
-					cecs->num_entities * 2,
+					target_size,
 					cecs->components[i].size);
 
 		if(tmp == NULL)
@@ -54,11 +59,10 @@ int extend_components(struct cecs* cecs)
 		cecs->components[i].data = tmp;
 
 	}
-	cecs->num_free_entities += cecs->num_entities - 1;
 
 	// extend inactives array to accomodate new entries
 	for(i = 1; i < cecs->num_entities; ++i){
-		array_push(free_entities, cecs->num_entities + i);
+		array_push(cecs->free_entities, cecs->num_entities + i);
 	}
 	return cecse(CECSE_NONE);
 }
