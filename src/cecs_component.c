@@ -56,3 +56,24 @@ uint32_t cecs_component_key(struct cecs *cecs, const char* name)
 	}
 	return ret;
 }
+
+struct cecs_component* cecs_component(struct cecs* cecs, const char* name)
+{
+	const char* nVal = "cecs_component - null name param!\n";
+	const char* bVal = "cecs_component - requested compo doesn't exist\n";
+
+	if(cecs == NULL){
+		cecse(CECSE_NULL);
+		return NULL;
+	} else if (name == NULL){
+		cecse_msg(CECSE_INVALID_VALUE, nVal);
+		return NULL;
+	}
+
+	for(int i = 0; i < cecs->num_components; ++i){
+		if(strcmp(name, cecs->components[i].name == 0)
+			return &cecs->components[i];
+	}
+
+	return NULL;
+}
