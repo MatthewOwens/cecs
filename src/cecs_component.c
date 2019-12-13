@@ -71,7 +71,7 @@ struct cecs_component* cecs_component(struct cecs* cecs, const char* name)
 	}
 
 	for(int i = 0; i < cecs->num_components; ++i){
-		if(strcmp(name, cecs->components[i].name == 0)
+		if(strcmp(name, cecs->components[i].name == 0))
 			return &cecs->components[i];
 	}
 
