@@ -80,12 +80,16 @@ int tsys_free(struct cecs* cecs)
 void tsys_run()
 {
 	//  getting the system
-	struct cecs_system* sys = cecs_system("test-sys");
+	struct cecs_system* sys = cecs_system(cecs, "test-sys");
 	uint32_t key;
-	const uint32_t incl = sys->inclusion_mask;
-	const uint32_t excl = sys->exclusion_mask;
 
-	//TODO: iterate without blowing cache
+	printf("\t\ttsys_run()");
+
+	testPosComponent* positions = cecs_component(cecs, "position")->data;
+	testUVComponent* uvs = cecs_component(cecs, "position")->data;
+
+	printf("\t\tL O O P\n");
+
 	for(int i = 0; i < cecs->num_components; ++i){
 		// if i is in free_entities, continue
 		if(cecs->free_entities.length != 0){
@@ -95,8 +99,16 @@ void tsys_run()
 			}
 		}
 
-		uint32_t key = cecs->entities[i].key;
-		//TODO the thing
+		if(cecs->entities[i].mask & sys->exclusion_mask)
+			continue;
+
+		// Actual data transformation
+		positions[i].x += 1.f;
+		positions[i].y += 1.5f;
+		positions[i].z += 2.f;
+
+		uvs[i].u = 5.f;
+		uvs[i].v = 5.f;
 	}
 }
 
