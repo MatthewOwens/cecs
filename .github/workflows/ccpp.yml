@@ -41,10 +41,10 @@ jobs:
         brew install autoconf automake libtool check gcc pkg-config
     - name: gcc version check
       run: |
-        echo "========= finding gcc =========="
+	GCC_VER=$(ls /usr/local/Cellar/gcc)
         ls /usr/local/Cellar/gcc
-        ln -s /usr/local/Cellar/gcc/9.2.0_1/bin/gcc-9 /usr/local/bin/gcc
-        ln -s /usr/local/Cellar/gcc/9.2.0_1/bin/g++-9 /usr/local/bin/g++
+        ln -s /usr/local/Cellar/gcc/$GCC_VER/bin/gcc-9 /usr/local/bin/gcc
+        ln -s /usr/local/Cellar/gcc/$GCC_VER/bin/g++-9 /usr/local/bin/g++
         export PATH=/usr/local/bin:$PATH
         hash -r
         gcc --version
