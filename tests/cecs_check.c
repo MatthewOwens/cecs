@@ -28,7 +28,7 @@ typedef struct {
 } testUVComponent;
 
 static testPosComponent posComp = {0};
-static testStrComponent strComp = {0};
+static testStrComponent strComp = {NULL};
 static testUVComponent uvComp = {0};
 
 void init_setup()
