@@ -111,6 +111,7 @@ int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
 	if(cecs == NULL) return cecse(CECSE_NULL);
 	if(ent == NULL){
 		fprintf(stderr, "can't free null entitiy");
+		return cecse(CECSE_INVALID_VALUE);
 	}
 
 	for(int i = 0; i < cecs->free_entities.length; ++i){
