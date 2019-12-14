@@ -83,12 +83,8 @@ void tsys_run()
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
 	uint32_t key;
 
-	printf("\t\ttsys_run()");
-
 	testPosComponent* positions = cecs_component(cecs, "position")->data;
 	testUVComponent* uvs = cecs_component(cecs, "position")->data;
-
-	printf("\t\tL O O P\n");
 
 	for(int i = 0; i < cecs->num_components; ++i){
 		// if i is in free_entities, continue
