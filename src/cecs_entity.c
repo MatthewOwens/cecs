@@ -26,7 +26,7 @@ int is_inactive(struct cecs* cecs, uint32_t entID)
 	return 1;
 }
 
-struct cecs_ent* ent_from_id(struct cecs* cecs, uint32_t id)
+struct cecs_entity* ent_from_id(struct cecs* cecs, uint32_t id)
 {
 	// finding the entitiy with that id
 	for(int i = 0; i < cecs->num_entities; ++i) {
