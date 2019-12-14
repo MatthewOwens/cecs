@@ -182,15 +182,64 @@ START_TEST(cecs_check_system_func)
 }
 END_TEST
 
+void check_ent_untouched(testPosComponent* pos, testUVComponent* uv)
+{
+	ck_assert_float_eq(pos->x, 0.f);
+	ck_assert_float_eq(pos->y, 0.f);
+	ck_assert_float_eq(pos->z, 0.f);
+	ck_assert_float_eq(uv->u, 0.f);
+	ck_assert_float_eq(uv->v, 0.f);
+}
+
 START_TEST(cecs_check_system_run)
 {
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
-	struct cecs_entity enta = cecs->entities[0];
-	struct cecs_entity entb = cecs->entities[1];
+	testPosComponent* positions = cecs_component(cecs, "position")->data;
+	testStrComponent* strs = cecs_component(cecs, "string")->data;
+	testUVComponent* uvs = cecs_component(cecs, "uv")->data;
 
 	sys->run();
 
-	stub();
+	for(int i = 0; i < cecs->num_components; ++i){
+		// if i is in free_entities, should have been ignored
+		if(cecs->free_entities.length != 0){
+			for(int j = 0; j < cecs->free_entities.length; ++i){
+				if(i == cecs->free_entities.data[i])
+					check_ent_untouched(&positions[i],&uvs[i]);
+			}
+		}
+
+		/*
+		 * A component in this ent has been specifically excluded, it
+		 * should have been ignored
+		*/
+		if(cecs->entities[i].mask & sys->exclusion_mask == 0) {
+			check_ent_untouched(&positions[i],&uvs[i]);
+		/*
+		 * Entity contains both required components for system to be
+		 * interested, values should have been set.
+		*/
+		} else if (cecs->entities[i].mask & sys->inclusion_mask ==
+			  sys->inclusion_mask){
+			/*
+			 * Posiitions were incremented with '+=', but the sys
+			 * has only been run once
+			*/
+			ck_assert_float_eq(positions[i].x, 1.f);
+			ck_assert_float_eq(positions[i].y, 1.5f);
+			ck_assert_float_eq(positions[i].z, 2.f);
+
+			// UVs were set, with '=' so should be 5.f
+			ck_assert_float_eq(uvs[i].u, 5.f);
+			ck_assert_float_eq(uvs[i].v, 5.f);
+		}
+
+		/*
+		 * test sys doesn't care about strings, so they should always
+		 * be NULL
+		*/
+		ck_assert_ptr_null(strs[i].str);
+	}
 }
 END_TEST
 
