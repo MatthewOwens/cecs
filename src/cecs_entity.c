@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 // returns null if there is none available, ptr to inactive entity if available
-struct cecs_entitiy* get_inactive_entity(struct cecs* cecs)
+struct cecs_entity* get_inactive_entity(struct cecs* cecs)
 {
 	int len = cecs->free_entities.length;
 	if(len == 0){
@@ -115,7 +115,7 @@ int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
 
 	for(int i = 0; i < cecs->free_entities.length; ++i){
 		// entity is already inactive, can report success
-		if(ent == &cecs->free_entities.data[i])
+		if(ent == cecs->free_entities.data[i])
 			return cecse(CECSE_NONE);
 	}
 
