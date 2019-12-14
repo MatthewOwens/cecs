@@ -81,10 +81,9 @@ void tsys_run()
 {
 	//  getting the system
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
-	uint32_t key;
 
 	testPosComponent* positions = cecs_component(cecs, "position")->data;
-	testUVComponent* uvs = cecs_component(cecs, "position")->data;
+	testUVComponent* uvs = cecs_component(cecs, "uv")->data;
 
 	for(int i = 0; i < cecs->num_components; ++i){
 		// if i is in free_entities, continue
