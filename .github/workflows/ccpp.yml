@@ -13,8 +13,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get upgrade gcc
         git clone https://github.com/libcheck/check.git --branch 0.13.0
         cd check
         autoreconf --install
@@ -43,6 +41,8 @@ jobs:
         brew install autoconf automake libtool check gcc pkg-config
     - name: gcc version check
       run: |
+	echo "========= finding gcc =========="
+	ls /usr/local/Cellar/gcc
         ln -s /usr/local/Cellar/gcc/9.2.0_1/bin/gcc-9 /usr/local/bin/gcc
         ln -s /usr/local/Cellar/gcc/9.2.0_1/bin/g++-9 /usr/local/bin/g++
         export PATH=/usr/local/bin:$PATH
