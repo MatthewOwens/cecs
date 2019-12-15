@@ -18,9 +18,9 @@ jobs:
           ubuntu-latest-gcc-7,
           ubuntu-latest-gcc-8,
           ubuntu-latest-gcc-9,
-					macOS-latest-gcc-7,
-					macOS-latest-gcc-8,
-					macOS-latest-gcc-9
+          macOS-latest-gcc-7,
+          macOS-latest-gcc-8,
+          macOS-latest-gcc-9
         ]
 
     steps:
