@@ -23,6 +23,32 @@ jobs:
           macOS-latest-gcc-9
         ]
 
+        include:
+          - name: ubuntu-latest-gcc-7
+            os: ubuntu-latest
+            compiler: gcc
+            version: "7"
+          - name: ubuntu-latest-gcc-8
+            os: ubuntu-latest
+            compiler: gcc
+            version: "8"
+          - name: ubuntu-latest-gcc-9
+            os: ubuntu-latest
+            compiler: gcc
+            version: "9"
+          - name: macOS-latest-gcc-7
+            os: macOS-latest
+            compiler: gcc
+            version: "7"
+          - name: macOS-latest-gcc-8
+            os: macOS-latest
+            compiler: gcc
+            version: "8"
+          - name: macOS-latest-gcc-9
+            os: macOS-latest
+            compiler: gcc
+            version: "9"
+
     steps:
       - uses: actions/checkout@v1
       - name: install dependencies (ubuntu)
