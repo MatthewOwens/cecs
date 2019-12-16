@@ -70,6 +70,6 @@ jobs:
         run: |
           brew install autoconf automake libtool check pkg-config
       - name: cecs
-        run: make cecs CC=${{ matrix.CC }}
+        run: make cecs CC=${{ matrix.compiler }}
       - name: checks
-        run: make check CC=${{ matrix.CC }}
+        run: make check CC=${{ matrix.compiler }}
