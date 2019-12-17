@@ -15,31 +15,19 @@ jobs:
         # Github Actions requires a single row to be added to the build matrix.
         # See https://help.github.com/en/articles/workflow-syntax-for-github-actions.
         name: [
-          ubuntu-latest-gcc-7,
-          ubuntu-latest-gcc-8,
-          ubuntu-latest-gcc-9,
-          macOS-latest-clang-7,
-          macOS-latest-clang-8,
-          macOS-latest-clang-9
+          ubuntu-latest-clang,
+          ubuntu-latest-gcc,
+          macOS-latest-clang
         ]
 
         include:
-          - name: ubuntu-latest-gcc-7
+          - name: ubuntu-latest-clang
             os: ubuntu-latest
-            compiler: gcc-7
-          - name: ubuntu-latest-gcc-8
-            os: ubuntu-latest
-            compiler: gcc-8
-          - name: ubuntu-latest-gcc-9
+            compiler: clang
+          - name: ubuntu-latest-gcc
             os: ubuntu-latest
             compiler: gcc
-          - name: macOS-latest-clang-7
-            os: macOS-latest
-            compiler: clang-7
-          - name: macOS-latest-clang-8
-            os: macOS-latest
-            compiler: clang-8
-          - name: macOS-latest-clang-9
+          - name: macOS-latest-clang
             os: macOS-latest
             compiler: clang
 
@@ -48,8 +36,8 @@ jobs:
       - name: install dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          apt update
-          apt install ${{ matrix.compiler }} --yes
+          sudo apt update
+          sudo apt install ${{ matrix.compiler }} --yes
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
           autoreconf --install
