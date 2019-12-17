@@ -34,7 +34,7 @@ do {\
 } while(0)
 
 #define array_push(array, element)\
-({\
+do {\
 	 if (array.capacity == 0) {\
 		 array.data = malloc(sizeof(*array.data));\
 		 array.data[0] = element;\
@@ -49,27 +49,27 @@ do {\
 			 if (tmp != NULL) {\
 				 array.data = tmp;\
 			 } else {\
-				 return;\
+				 break;\
 			 }\
 		 }\
 		 array.data[array.length] = element;\
 		 array.length += 1;\
 	 }\
-})
+} while(0)
 
 #define array_pop(array)\
-({\
+do {\
 	if(array.capacity != 0 && array.length != 0) {\
 		array.length -= 1;\
 	}\
- })
+} while(0)
 
 #define array_pop_at(array, index)\
-({\
+do {\
 	if(array.capacity != 0 && array.length != 0) {\
 		for(int i = index; i < array.length - 1; ++i){\
 			array.data[i] = array.data[i+1];\
 		}\
 		array_pop(array);\
 	}\
-})
+} while(0)
