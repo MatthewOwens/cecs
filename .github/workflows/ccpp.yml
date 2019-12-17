@@ -18,9 +18,9 @@ jobs:
           ubuntu-latest-gcc-7,
           ubuntu-latest-gcc-8,
           ubuntu-latest-gcc-9,
-          macOS-latest-gcc-7,
-          macOS-latest-gcc-8,
-          macOS-latest-gcc-9
+          macOS-latest-clang-7,
+          macOS-latest-clang-8,
+          macOS-latest-clang-9
         ]
 
         include:
@@ -35,13 +35,13 @@ jobs:
             compiler: gcc-9
           - name: macOS-latest-clang-7
             os: macOS-latest
-            compiler: clang
+            compiler: clang-7
           - name: macOS-latest-clang-8
             os: macOS-latest
-            compiler: clang
+            compiler: clang-8
           - name: macOS-latest-clang-9
             os: macOS-latest
-            compiler: clang
+            compiler: clang-9
 
     steps:
       - uses: actions/checkout@v1
