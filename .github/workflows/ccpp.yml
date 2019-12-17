@@ -69,6 +69,8 @@ jobs:
         if: startsWith(matrix.os, 'macOS')
         run: |
           brew install autoconf automake libtool check pkg-config
+      - name: gcc version check
+        run: gcc --version
       - name: cecs
         run: make cecs CC=${{ matrix.compiler }}
       - name: checks
