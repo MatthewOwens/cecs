@@ -26,28 +26,22 @@ jobs:
         include:
           - name: ubuntu-latest-gcc-7
             os: ubuntu-latest
-            compiler: gcc
-            version: "7"
+            compiler: gcc-7
           - name: ubuntu-latest-gcc-8
             os: ubuntu-latest
-            compiler: gcc
-            version: "8"
+            compiler: gcc-8
           - name: ubuntu-latest-gcc-9
             os: ubuntu-latest
-            compiler: gcc
-            version: "9"
-          - name: macOS-latest-gcc-7
+            compiler: gcc-9
+          - name: macOS-latest-clang-7
             os: macOS-latest
-            compiler: gcc
-            version: "7"
-          - name: macOS-latest-gcc-8
+            compiler: clang
+          - name: macOS-latest-clang-8
             os: macOS-latest
-            compiler: gcc
-            version: "8"
-          - name: macOS-latest-gcc-9
+            compiler: clang
+          - name: macOS-latest-clang-9
             os: macOS-latest
-            compiler: gcc
-            version: "9"
+            compiler: clang
 
     steps:
       - uses: actions/checkout@v1
@@ -69,8 +63,8 @@ jobs:
         if: startsWith(matrix.os, 'macOS')
         run: |
           brew install autoconf automake libtool check pkg-config
-      - name: gcc version check
-        run: gcc --version
+      - name: compiler version check
+        run: ${{ matrix.compiler }} --version
       - name: cecs
         run: make cecs CC=${{ matrix.compiler }}
       - name: checks
