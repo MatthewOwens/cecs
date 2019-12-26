@@ -36,7 +36,6 @@ jobs:
       - name: install dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          sudo apt-get update
           sudo apt-get install ${{ matrix.compiler }} --yes
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
