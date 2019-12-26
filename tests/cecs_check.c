@@ -85,7 +85,7 @@ void tsys_run()
 	testPosComponent* positions = cecs_component(cecs, "position")->data;
 	testUVComponent* uvs = cecs_component(cecs, "uv")->data;
 
-	for(int i = 0; i < cecs->num_components; ++i){
+	for(int i = 0; i < cecs->num_entities; ++i){
 		// if i is in free_entities, continue
 		if(cecs->free_entities.length != 0){
 			for(int j = 0; j < cecs->free_entities.length; ++i){
@@ -94,8 +94,10 @@ void tsys_run()
 			}
 		}
 
-		if(cecs->entities[i].mask & sys->exclusion_mask)
+		// Skipping if the entity contains an excluded component
+		if((cecs->entities[i].mask & sys->exclusion_mask) != 0)
 			continue;
+
 
 		// Actual data transformation
 		positions[i].x += 1.f;
@@ -200,7 +202,7 @@ START_TEST(cecs_check_system_run)
 
 	sys->run();
 
-	for(int i = 0; i < cecs->num_components; ++i){
+	for(int i = 0; i < cecs->num_entities; ++i){
 		// if i is in free_entities, should have been ignored
 		if(cecs->free_entities.length != 0){
 			for(int j = 0; j < cecs->free_entities.length; ++i){
@@ -211,15 +213,18 @@ START_TEST(cecs_check_system_run)
 
 		/*
 		 * A component in this ent has been specifically excluded, it
-		 * should have been ignored
+		 * should have been ignored.
+		 *
+		 * bitwise & will return 0 only if no bit in the ent mask matches
+		 * the exclusion mask
 		*/
-		if(cecs->entities[i].mask & sys->exclusion_mask == 0) {
+		if((cecs->entities[i].mask & sys->exclusion_mask) != 0) {
 			check_ent_untouched(&positions[i],&uvs[i]);
 		/*
 		 * Entity contains both required components for system to be
 		 * interested, values should have been set.
 		*/
-		} else if (cecs->entities[i].mask & sys->inclusion_mask ==
+		} else if ((cecs->entities[i].mask & sys->inclusion_mask) ==
 			  sys->inclusion_mask){
 			/*
 			 * Posiitions were incremented with '+=', but the sys
