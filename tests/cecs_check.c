@@ -238,6 +238,7 @@ START_TEST(cecs_check_system_run)
 		 * test sys doesn't care about strings, so they should always
 		 * be NULL
 		*/
+		printf("strs[%d].str is %s\n", i, strs[i].str);
 		ck_assert_ptr_null(strs[i].str);
 	}
 }
