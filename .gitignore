@@ -27,7 +27,7 @@
 *.out
 *.app
 check
-cecs
+libcecs.a
 
 # Subdirectories
 obj/
