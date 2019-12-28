@@ -30,13 +30,13 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 #	$(CC) $(CFLAGS) -o $@ $^ -L. -lcecs
 
 $(TARGET): $(OBJECTS)
-	@echo "========== Building $(TARGET) =========="
+	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs libcecs.a $(OBJECTS)
 
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
-	@echo "========== Building $(TEST_TARGET) =========="
+	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
 	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
-	@echo "========== RUNNING TESTS =========="
+	@echo "========== RUNNING CECS TESTS =========="
 	./$(TEST_TARGET)
 	@echo ""
 
