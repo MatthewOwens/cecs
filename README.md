@@ -72,4 +72,4 @@ cecs_ent_add_component(cecs, ent, "collision");
 * a component name to add to the entitiy
 
 ### Systems
-testing & implementation required
+documentation required
