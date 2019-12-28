@@ -1,5 +1,6 @@
-TARGET = cecs
+TARGET = libcecs.a
 TEST_TARGET = check
+
 LIBS = -lm -D_REENTRANT -std=c11
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
@@ -23,11 +24,14 @@ TEST_OBJECTS = $(patsubst tests/%.c, tests/%.o, $(wildcard tests/*.c))
 TEST_HEADERS = $(wildcard tests/*.h) $(wildcard tests/**/*.h)
 TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
-.PRECIOUS: $(TARGET) $(ORIG_OBJECTS) $(TEST_OBJECTS)
+.PRECIOUS: $(TARGET) $(TEST_TARGET)
 
-$(TARGET): $(OBJECTS) src/main.o
+#$(LIB_TEST_TARGET): src/main.c $(TARGET)
+#	$(CC) $(CFLAGS) -o $@ $^ -L. -lcecs
+
+$(TARGET): $(OBJECTS)
 	@echo "========== Building $(TARGET) =========="
-	$(CC) $(OBJECTS) src/main.o $(CFLAGS) $(LIBS) -o $@
+	ar rcs libcecs.a $(OBJECTS)
 
 $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	@echo "========== Building $(TEST_TARGET) =========="
@@ -41,7 +45,6 @@ src/%.o: src/%.c
 
 tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ -o $@
-
 
 clean:
 	rm -f src/*.o
