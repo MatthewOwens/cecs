@@ -1,16 +1,16 @@
 position:
-  x: 0.0
-  y: 0.0
-  z: 0.0
+  x: 5.0
+  y: 5.0
+  z: 5.0
 
 velocity:
-  x: 0.0
+  x: 3.0
   y: 0.0
   z: 0.0
 
 uvs:
-  u: 0.0
-  v: 0.0
+  u: 1.0
+  v: 1.0
 
 name:
-  str: null
+  str: "test"
