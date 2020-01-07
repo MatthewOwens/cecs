@@ -28,6 +28,7 @@ START_TEST(yaml_runner_test)
 {
 	ck_abort_msg("stub!\n");
 }
+END_TEST
 
 Suite * yaml_suite(void)
 {
