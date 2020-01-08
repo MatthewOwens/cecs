@@ -1,3 +1,3 @@
 #pragma once
 #include <check.h>
-Suite * yaml_suite(void);
+Suite * comp_yaml_suite(void);

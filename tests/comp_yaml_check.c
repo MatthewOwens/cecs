@@ -66,11 +66,11 @@ START_TEST(name_loaded)
 }
 END_TEST
 
-Suite * yaml_suite(void)
+Suite * comp_yaml_suite(void)
 {
 	Suite * s;
-	TCase * load_case = tcase_create("yaml load");
-	s = suite_create("yaml suite");
+	TCase * load_case = tcase_create("component load");
+	s = suite_create("component yaml suite");
 
 	tcase_add_unchecked_fixture(load_case, yaml_init, yaml_teardown);
 	tcase_add_test(load_case, position_loaded);
