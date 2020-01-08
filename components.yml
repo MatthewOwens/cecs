@@ -12,5 +12,4 @@ uvs:
   u: 1.0
   v: 1.0
 
-name:
-  str: "test"
+name: "test"
