@@ -21,7 +21,7 @@ typedef struct {
 }s_uv;
 
 typedef struct {
-	const char* str;
+	char* str;
 }s_name;
 
 static s_position pos = {0};
@@ -31,6 +31,30 @@ static s_name name = {0};
 
 void yaml_init()	// TODO: stub
 {
+	static const cyaml_schema_field_t vel_fields_schema[] = {
+		CYAML_FIELD_FLOAT("x", CYAML_FLAG_DEFAULT, s_velocity, x),
+		CYAML_FIELD_FLOAT("y", CYAML_FLAG_DEFAULT, s_velocity, y),
+		CYAML_FIELD_FLOAT("z", CYAML_FLAG_DEFAULT, s_velocity, z),
+		CYAML_FIELD_END	// NULL value to signal end of array
+	};
+
+	static const cyaml_schema_field_t pos_fields_schema[] = {
+		CYAML_FIELD_FLOAT("x", CYAML_FLAG_DEFAULT, s_position, x),
+		CYAML_FIELD_FLOAT("y", CYAML_FLAG_DEFAULT, s_position, y),
+		CYAML_FIELD_FLOAT("z", CYAML_FLAG_DEFAULT, s_position, z),
+		CYAML_FIELD_END
+	};
+
+	static const cyaml_schema_field_t uv_fields_schema[] = {
+		CYAML_FIELD_FLOAT("u", CYAML_FLAG_DEFAULT, s_uv, u),
+		CYAML_FIELD_FLOAT("v", CYAML_FLAG_DEFAULT, s_uv, v),
+		CYAML_FIELD_END
+	};
+
+	static const cyaml_schema_field_t name_field_schema = {
+		CYAML_FIELD_STRING_PTR(
+				"name", CYAML_FLAG_POINTER, s_name, str, 0, CYAML_UNLIMITED);
+	};
 }
 
 void yaml_teardown()	// TODO: stub
