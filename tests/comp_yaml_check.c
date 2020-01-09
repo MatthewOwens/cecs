@@ -2,6 +2,7 @@
 #include <cyaml/cyaml.h>
 #include "runner.h"
 #include <check.h>
+#include <stdio.h>
 
 typedef struct {
 	float x;
@@ -29,33 +30,81 @@ static s_velocity vel = {0};
 static s_uv uv = {0};
 static s_name name = {0};
 
-void yaml_init()	// TODO: stub
+void yaml_init()
 {
+	/* ********************
+	   velocity
+	 * ********************/
+	// defining _how_ to map yaml fields to structs
 	static const cyaml_schema_field_t vel_fields_schema[] = {
 		CYAML_FIELD_FLOAT("x", CYAML_FLAG_DEFAULT, s_velocity, x),
 		CYAML_FIELD_FLOAT("y", CYAML_FLAG_DEFAULT, s_velocity, y),
 		CYAML_FIELD_FLOAT("z", CYAML_FLAG_DEFAULT, s_velocity, z),
 		CYAML_FIELD_END	// NULL value to signal end of array
 	};
+	static const cyaml_schema_value_t s_vel_schema = {
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_velocity, vel_fields_schema),
+	};
 
+	/* ********************
+	   position
+	 * ********************/
 	static const cyaml_schema_field_t pos_fields_schema[] = {
 		CYAML_FIELD_FLOAT("x", CYAML_FLAG_DEFAULT, s_position, x),
 		CYAML_FIELD_FLOAT("y", CYAML_FLAG_DEFAULT, s_position, y),
 		CYAML_FIELD_FLOAT("z", CYAML_FLAG_DEFAULT, s_position, z),
 		CYAML_FIELD_END
 	};
+	static const cyaml_schema_value_t s_pos_schema = {
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_position, pos_fields_schema),
+	};
 
+	/* ********************
+	   uv
+	 * ********************/
 	static const cyaml_schema_field_t uv_fields_schema[] = {
 		CYAML_FIELD_FLOAT("u", CYAML_FLAG_DEFAULT, s_uv, u),
 		CYAML_FIELD_FLOAT("v", CYAML_FLAG_DEFAULT, s_uv, v),
 		CYAML_FIELD_END
 	};
+	static const cyaml_schema_value_t s_uv_schema = {
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_uv, uv_fields_schema),
+	};
 
-	static const cyaml_schema_field_t name_field_schema[] = {
+	/* ********************
+	   name
+	 * ********************/
+	static const cyaml_schema_field_t name_fields_schema[] = {
 		CYAML_FIELD_STRING_PTR(
 				"name", CYAML_FLAG_POINTER, s_name, str, 0, CYAML_UNLIMITED),
 		CYAML_FIELD_END
 	};
+
+	// mapping the yaml fields to struct with the schema
+	static const cyaml_schema_value_t component_schema = {
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_velocity, vel_fields_schema),
+		//CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_position, pos_fields_schema),
+		//CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_uv, uv_fields_schema),
+		//CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_name, name_fields_schema),
+		//CYAML_FIELD_END
+	};
+
+	/* ********************
+	   actual config loading
+	 * ********************/
+	static const cyaml_config_t config = {
+		.log_level = CYAML_LOG_WARNING, /* Logging errors and warnings only. */
+		.log_fn = cyaml_log,            /* Use the default logging function. */
+		.mem_fn = cyaml_mem,            /* Use the default memory allocator. */
+	};
+
+	/* Load input file. */
+	// TODO: can only load one at a time?
+	cyaml_err_t err = cyaml_load_file("components.yml", &config,
+			&vel_fields_schema, (void **) &vel, NULL);
+	if (err != CYAML_OK) {
+		fprintf(stderr, "ERROR: %s\n", cyaml_strerror(err));
+	}
 }
 
 void yaml_teardown()	// TODO: stub
