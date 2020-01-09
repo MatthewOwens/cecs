@@ -1,9 +1,9 @@
 movement:
   reads:
-    - "velocity"
-    - "uvs"
+    - velocity
+    - uvs
   writes:
-    - "position"
+    - position
   ignores:
-    - "name"
-  runtype: "per-frame"
+    - name
+  runtype: per-frame
