@@ -7,3 +7,7 @@ movement:
   ignores:
     - name
   runtype: per-frame
+  functions:
+    init: tsys_init
+    work: tsys_run
+    free: free
