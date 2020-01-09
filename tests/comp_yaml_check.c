@@ -51,9 +51,10 @@ void yaml_init()	// TODO: stub
 		CYAML_FIELD_END
 	};
 
-	static const cyaml_schema_field_t name_field_schema = {
+	static const cyaml_schema_field_t name_field_schema[] = {
 		CYAML_FIELD_STRING_PTR(
-				"name", CYAML_FLAG_POINTER, s_name, str, 0, CYAML_UNLIMITED);
+				"name", CYAML_FLAG_POINTER, s_name, str, 0, CYAML_UNLIMITED),
+		CYAML_FIELD_END
 	};
 }
 
