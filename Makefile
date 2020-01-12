@@ -43,7 +43,7 @@ $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	./$(TEST_TARGET)
 	@echo ""
 
-component_gen: src/comp_gen.o
+component_gen: src/comp_gen.o FORCE
 	$(CC) $(CFLAGS) src/comp_gen.o $(LIBS) -o $@
 	./component_gen components.yml src/components
 
