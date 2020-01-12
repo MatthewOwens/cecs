@@ -28,6 +28,7 @@
 *.app
 check
 libcecs.a
+components
 
 # Subdirectories
 obj/
