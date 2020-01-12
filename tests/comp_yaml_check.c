@@ -43,7 +43,8 @@ void yaml_init()
 		CYAML_FIELD_END	// NULL value to signal end of array
 	};
 	static const cyaml_schema_value_t s_vel_schema = {
-		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_velocity, vel_fields_schema),
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_velocity,
+		vel_fields_schema),
 	};
 
 	/* ********************
@@ -56,7 +57,8 @@ void yaml_init()
 		CYAML_FIELD_END
 	};
 	static const cyaml_schema_value_t s_pos_schema = {
-		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_position, pos_fields_schema),
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_position,
+		pos_fields_schema),
 	};
 
 	/* ********************
@@ -68,7 +70,8 @@ void yaml_init()
 		CYAML_FIELD_END
 	};
 	static const cyaml_schema_value_t s_uv_schema = {
-		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_uv, uv_fields_schema),
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_uv,
+		uv_fields_schema),
 	};
 
 	/* ********************
@@ -82,7 +85,8 @@ void yaml_init()
 
 	// mapping the yaml fields to struct with the schema
 	static const cyaml_schema_value_t component_schema = {
-		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_velocity, vel_fields_schema),
+		CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_velocity,
+		vel_fields_schema),
 		//CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_position, pos_fields_schema),
 		//CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_uv, uv_fields_schema),
 		//CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT, s_name, name_fields_schema),
