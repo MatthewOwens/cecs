@@ -32,7 +32,7 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 #$(LIB_TEST_TARGET): src/main.c $(TARGET)
 #	$(CC) $(CFLAGS) -o $@ $^ -L. -lcecs
 
-$(TARGET): $(OBJECTS) components
+$(TARGET): $(OBJECTS) component_gen
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs libcecs.a $(OBJECTS)
 
@@ -43,9 +43,9 @@ $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	./$(TEST_TARGET)
 	@echo ""
 
-components: src/comp_gen.o
+component_gen: src/comp_gen.o
 	$(CC) $(CFLAGS) src/comp_gen.o $(LIBS) -o $@
-	./components components.yml src/components
+	./component_gen components.yml src/components
 
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
