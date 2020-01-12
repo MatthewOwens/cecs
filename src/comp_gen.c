@@ -43,10 +43,6 @@ void set_outfiles(char *arg)
 		strcpy(outfiles[i], arg);
 		strcat(outfiles[i], end[i]);
 	}
-
-	//outfiles[1] = malloc(strlen(arg) + 3);
-	//outfiles[1] = strcat(".c", arg);
-	printf("YEET\n");
 }
 
 int main(int argc, char* argv[])
