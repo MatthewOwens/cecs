@@ -16,7 +16,10 @@ all: $(TARGET) $(TEST_TARGET)
 ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
 ORIG_OBJECTS += $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
 
-OBJECTS := $(filter-out src/main.o,$(ORIG_OBJECTS))
+# filtering out main so we can use the same var for our tests
+# and the component generator, used in it's own target
+OBJECTS := $(filter-out src/main.o src/comp_gen.o ,$(ORIG_OBJECTS))
+
 HEADERS = $(wildcard src/*.h) $(wildcard src/**/*.h)
 SRCS = $(wildcard src/*.c) $(wildcard src/**/*.c)
 
@@ -29,7 +32,7 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 #$(LIB_TEST_TARGET): src/main.c $(TARGET)
 #	$(CC) $(CFLAGS) -o $@ $^ -L. -lcecs
 
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS) components
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs libcecs.a $(OBJECTS)
 
@@ -39,6 +42,10 @@ $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 	@echo "========== RUNNING CECS TESTS =========="
 	./$(TEST_TARGET)
 	@echo ""
+
+components: src/comp_gen.o
+	$(CC) $(CFLAGS) src/comp_gen.o $(LIBS) -o $@
+	./components components.yml src/components
 
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
