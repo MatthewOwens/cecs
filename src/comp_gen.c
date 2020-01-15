@@ -10,21 +10,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <yaml.h>
+#include <errno.h>
 
 static char* outfiles[2];
 static char* yaml_events[YAML_MAPPING_END_EVENT + 1]=
 {
-    "YAML_NO_EVENT",
-    "YAML_STREAM_START_EVENT",
-    "YAML_STREAM_END_EVENT",
-    "YAML_DOCUMENT_START_EVENT",
-    "YAML_DOCUMENT_END_EVENT",
-    "YAML_ALIAS_EVENT",
-    "YAML_SCALAR_EVENT",
-    "YAML_SEQUENCE_START_EVENT",
-    "YAML_SEQUENCE_END_EVENT",
-    "YAML_MAPPING_START_EVENT",
-    "YAML_MAPPING_END_EVENT"
+	"YAML_NO_EVENT",
+	"YAML_STREAM_START_EVENT",
+	"YAML_STREAM_END_EVENT",
+	"YAML_DOCUMENT_START_EVENT",
+	"YAML_DOCUMENT_END_EVENT",
+	"YAML_ALIAS_EVENT",
+	"YAML_SCALAR_EVENT",
+	"YAML_SEQUENCE_START_EVENT",
+	"YAML_SEQUENCE_END_EVENT",
+	"YAML_MAPPING_START_EVENT",
+	"YAML_MAPPING_END_EVENT"
+};
+
+static char* types[3] = 
+{
+	"int",
+	"float",
+	"const char*"
+};
+
+enum {
+	INT=0,
+	FLOAT,
+	STRING
 };
 
 enum {
@@ -64,9 +78,22 @@ void set_outfiles(char *arg)
 	}
 }
 
-const char* determine_type(const char* value)	//TODO: stub
+/* possible types are string, float or int */
+int determine_type(const char* value)	//TODO: stub
 {
-	return "<TYPE>";
+	char* p = value;
+	errno = 0;
+	unsigned long ival = 0;
+	float fval = 0.f;
+
+	ival = strtoul(value, &p, 10);
+	if(errno == 0 && value != p && *p == 0)
+		return INT;
+	fval = strtof(value, &p);
+	if(errno == 0 && value != p && *p == 0)
+		return FLOAT;
+	fval = strtof(value, &p);
+	return STRING;
 }
 
 int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
@@ -121,7 +148,8 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 			} else {
 				value = e->data.scalar.value;
 				fprintf(h, "\t %s %s = %s;\n",
-					determine_type(value), key, value);
+					types[determine_type(value)],
+					key, value);
 				key = NULL;
 				value = NULL;
 			}
