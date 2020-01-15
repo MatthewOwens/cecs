@@ -1,6 +1,6 @@
 position:
   x: 5.0
-  y: 5.0
+  y: 5.5
   z: 5.0
 
 velocity:
@@ -11,6 +11,10 @@ velocity:
 uvs:
   u: 1.0
   v: 1.0
+
+stats:
+  hp: 100
+  mp: 20
 
 name:
   str: test
