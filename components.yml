@@ -12,4 +12,5 @@ uvs:
   u: 1.0
   v: 1.0
 
-name: test
+name:
+  str: test
