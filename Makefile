@@ -45,7 +45,7 @@ $(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
 
 component_gen: src/comp_gen.o FORCE
 	$(CC) $(CFLAGS) src/comp_gen.o $(LIBS) -o $@
-	./component_gen components.yml src/components
+	-./component_gen components.yml src/components
 
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
