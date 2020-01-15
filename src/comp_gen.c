@@ -135,32 +135,46 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 		prev_event.type != YAML_MAPPING_END_EVENT){
 			fprintf(h, "}\n");
 		}
-	} else if (e->type == YAML_SCALAR_EVENT)
-	{
-		// if we've started a new struct
-		if(prev_event.type == start_event) {
-			fprintf(h, "struct %s_component {\n",
-			e->data.scalar.value);
-			start_event = YAML_MAPPING_END_EVENT;
-		} else {
-			if (key == NULL) {
-				key = e->data.scalar.value;
-			} else {
-				value = e->data.scalar.value;
-				fprintf(h, "\t %s %s = %s;\n",
-					types[determine_type(value)],
-					key, value);
-				key = NULL;
-				value = NULL;
-			}
-		}
 	}
+
+	if(e->type != YAML_SCALAR_EVENT){
+		goto cleanup;
+	}
+
+	// if we've started a new struct
+	if(prev_event.type == start_event) {
+		fprintf(h, "struct %s_component {\n",
+		e->data.scalar.value);
+		start_event = YAML_MAPPING_END_EVENT;
+		goto cleanup;
+	}
+
+	if (key == NULL) {
+		key = e->data.scalar.value;
+	} else {
+		value = e->data.scalar.value;
+		int t = determine_type(value);
+		if(t == STRING) { // for strings we need to wrap it
+			char* v = malloc(strlen(value) + 3);
+			sprintf(v, "\"%s\"", value);
+			fprintf(h, "\t %s %s = %s;\n", types[t],
+				key, v);
+			free(v);
+		} else {
+			fprintf(h, "\t %s %s = %s;\n", types[t],
+				key, value);
+		}
+		key = NULL;
+		value = NULL;
+	}
+
 	if(e->type == YAML_MAPPING_END_EVENT) {
 		// we've hit a new line, clear our values
 		key = NULL;
 		value = NULL;
 	}
 
+	cleanup:
 	prev_event = *e;
 	return (e->type == YAML_STREAM_END_EVENT);
 }
