@@ -149,9 +149,9 @@ START_TEST(cecs_check_add_comp)
 	uint32_t strKey = cecs_component_key(cecs, "string");
 	uint32_t uvKey = cecs_component_key(cecs, "uv");
 
-	ck_assert_uint_eq(posKey, 2);
-	ck_assert_uint_eq(strKey, 4);
-	ck_assert_uint_eq(uvKey, 8);
+	ck_assert_uint_eq(posKey, 0);
+	ck_assert_uint_eq(strKey, 1);
+	ck_assert_uint_eq(uvKey, 2);
 }
 END_TEST
 
