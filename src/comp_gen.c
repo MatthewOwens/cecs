@@ -100,7 +100,7 @@ int determine_type(const char* value)	//TODO: stub
 	return STRING;
 }
 
-int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
+int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h, FILE *t)
 {
 
 	/*
@@ -110,6 +110,7 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
  	*/
 	static yaml_event_type_t start_event = YAML_MAPPING_START_EVENT;
 	static yaml_event_t prev_event;
+	static char* reg_start = "cecs_reg_component(cecs, ";
 	static char *key = NULL;
 	static char *value = NULL;
 
@@ -140,7 +141,7 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 		if(start_event != YAML_MAPPING_START_EVENT && 
 		prev_event.type != YAML_MAPPING_END_EVENT){
 			fprintf(h, "};\n");
-			fprintf(c, "};\n");
+			fprintf(c, "\t};\n");
 		}
 	}
 
@@ -154,8 +155,15 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 		e->data.scalar.value);
 		start_event = YAML_MAPPING_END_EVENT;
 
-		fprintf(c, "const struct %s_cmpnt %s = {\n",
+		fprintf(c, "\tconst struct %s_cmpnt %s = {\n",
 			e->data.scalar.value, e->data.scalar.value);
+
+		fprintf(t, "\t%s\"%s\", &%s, sizeof(%s));\n",
+			reg_start, e->data.scalar.value, e->data.scalar.value,
+			e->data.scalar.value);
+		printf("\t%s\"%s\", &%s, sizeof(%s));\n",
+			reg_start, e->data.scalar.value, e->data.scalar.value,
+			e->data.scalar.value);
 		goto cleanup;
 	}
 
@@ -169,12 +177,12 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 			sprintf(v, "\"%s\"", value);
 			fprintf(h, "\t %s %s;// = %s;\n", types[t],
 				key, v);
-			fprintf(c, "\t%s,\n", v);
+			fprintf(c, "\t\t%s,\n", v);
 			free(v);
 		} else {
 			fprintf(h, "\t %s %s;// = %s;\n", types[t],
 				key, value);
-			fprintf(c, "\t%s,\n", value);
+			fprintf(c, "\t\t%s,\n", value);
 		}
 		key = NULL;
 		value = NULL;
@@ -198,24 +206,51 @@ void build_files(char *in, char* out_dir, char *out_name)
 	FILE *infile = fopen(in, "rb");
 	FILE *cfile = fopen(outfiles[0], "w+");
 	FILE *hfile = fopen(outfiles[1], "w+");
+	FILE *tmp = tmpfile();
+	const char* func_proto = "void reg_loaded_components(struct cecs* cecs)";
 	int done = 0;
+	char ch;
+
+	if(tmp == NULL) {
+		fprintf(stderr, "Failed to open tmpfile!\n");
+		exit(-1);
+	}
 
 	yaml_parser_initialize(&parser);
 	yaml_parser_set_input_file(&parser, infile);
 
-	// building the start of our .c file, since it's consistent
+	// building the start of our .h/.c files, since it's consistent
+	fprintf(hfile, "#include \"cecs.h\"\n");
+	fprintf(hfile, "%s;\n\n", func_proto);
+
 	fprintf(cfile, "#include \"%s.h\"\n", out_name);
 	fprintf(cfile, "#include \"cecs.h\"\n\n", out_name);
+	fprintf(cfile, "%s\n{\n", func_proto);
 
 	do {
-		done = parse_event(&parser, &event, cfile, hfile);
+		done = parse_event(&parser, &event, cfile, hfile, tmp);
 	} while(!done);
-
 	yaml_parser_delete(&parser);
+
+	printf("\t\tPARSER DONE\n");
+
+	// concat
+	rewind(tmp);
+	//fseek(tmpfile, 0, SEEK_SET);
+	printf("\t\tIT'S REWIND TIME\n");
+	while((ch = fgetc(tmp)) != EOF)
+	{
+		putchar(ch);
+		fputc(ch,cfile);
+	}
+
+	// still need to finish off our .c file
+	fprintf(cfile, "};");
 
 	fclose(infile);
 	fclose(cfile);
 	fclose(hfile);
+	fclose(tmp);
 }
 
 int main(int argc, char* argv[])
