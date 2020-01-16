@@ -19,6 +19,8 @@ struct cecs* cecs_init()
 	cecs->entities = NULL;
 	cecs->num_entities = 0;
 
+	cecs->next_key = 0;
+
 	/*
 	 * can't use array_init here since free_entities has already been
 	 * declared, see arr.h for more.

@@ -9,8 +9,6 @@
 int cecs_reg_component( struct cecs* cecs, const char* name,
 			void *data, size_t size )
 {
-	static uint32_t skey = 1;
-
 	if(cecs == NULL) {
 		return cecse(CECSE_NULL);
 	} else if (cecs->state == CECS_STARTED){
@@ -24,17 +22,18 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 	cecs->components = tmp;
 	int i = cecs->num_components;
 
-	// generating a bit-unique key for this component
-	skey = skey << 1;
 
 	cecs->components[i].data = malloc(size);
 	memcpy(cecs->components[i].data, data, size);
 
 	cecs->components[i].size = size;
-	cecs->components[i].key = skey;
+	cecs->components[i].key = cecs->next_key;
 	cecs->components[i].name = name;
 
 	cecs->num_components += 1;
+
+	// generating a bit-unique key for the next component
+	cecs->next_key++;
 	return cecse(CECSE_NONE);
 }
 
