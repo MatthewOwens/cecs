@@ -1,0 +1,14 @@
+actor:
+  - position
+  - velocity
+  - uvs
+
+named_actor:
+  - position
+  - velocity
+  - name
+  - uvs
+
+map_location:
+  - position
+  - name

@@ -1,0 +1,20 @@
+position:
+  x: 5.0
+  y: 5.5
+  z: 5.0
+
+velocity:
+  x: 3.0
+  y: 0.0
+  z: 0.0
+
+uvs:
+  u: 1.0
+  v: 1.0
+
+stats:
+  hp: 100
+  mp: 20
+
+name:
+  str: test

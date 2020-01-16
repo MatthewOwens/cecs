@@ -28,6 +28,7 @@
 *.app
 check
 libcecs.a
+component_gen
 
 # Subdirectories
 obj/
@@ -51,3 +52,6 @@ CmakeLists.txtt
 
 # notes
 src/notes.md
+
+# generated files
+src/components.*
