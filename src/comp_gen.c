@@ -230,12 +230,8 @@ void build_files(char *in, char* out_dir, char *out_name)
 	} while(!done);
 	yaml_parser_delete(&parser);
 
-	printf("\t\tPARSER DONE\n");
-
 	// concat
 	rewind(tmp);
-	//fseek(tmpfile, 0, SEEK_SET);
-	printf("\t\tIT'S REWIND TIME\n");
 	while((ch = fgetc(tmp)) != EOF)
 	{
 		putchar(ch);
