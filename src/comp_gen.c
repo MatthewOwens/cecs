@@ -48,13 +48,13 @@ enum {
  
 void usage(char* exe)
 {
-	printf("%s, usage:\n\t%s <input yml file> <output .h/.c name>\n",
+	printf("%s, usage:\n\t%s <input yml file> <out dir> <output .h/.c name>\n",
 	exe, exe);
 }
 
 int args_valid(int argc, char* argv[])
 {
-	if(argc != 3) {
+	if(argc != 4) {
 		usage(argv[0]);
 		printf("got args:\n");
 		for(int i = 0; i < argc; ++i){
@@ -66,14 +66,18 @@ int args_valid(int argc, char* argv[])
 	return 0;
 }
 
-void set_outfiles(char *arg)
+void set_outfiles(char* dir, char *name)
 {
 	char* end[2] = {".c", ".h"};
 
 	for( int i = 0; i < 2; ++i)
 	{
-		outfiles[i] = malloc(strlen(arg) + 2);
-		strcpy(outfiles[i], arg);
+		outfiles[i] = malloc(strlen(dir) + strlen(name) + 3);
+		if(strlen(dir) != 0) {
+			strcpy(outfiles[i], dir);
+			strcat(outfiles[i], "/");//TODO windows compat
+		}
+		strcat(outfiles[i], name);
 		strcat(outfiles[i], end[i]);
 	}
 }
@@ -114,7 +118,9 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 		return 0;
 	}
 
-	/* TODO: process the event */
+	/*********************
+	 * printing the event *
+	 ********************/
 	printf("event: %s", yaml_events[e->type]);
 	if(e->type == YAML_SCALAR_EVENT){
 		printf("\t| %s\n", e->data.scalar.value);
@@ -123,17 +129,18 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 	}
 	printf("\n");
 
+
 	/*********************
 	 * parsing the event *
 	 ********************/
-
 	// new struct is being defined
 	if(e->type == start_event){
 		// if not at the first struct definition, close the brace
 		// doc ends with 2 end mappings, so we exclude the second
 		if(start_event != YAML_MAPPING_START_EVENT && 
 		prev_event.type != YAML_MAPPING_END_EVENT){
-			fprintf(h, "}\n");
+			fprintf(h, "};\n");
+			fprintf(c, "};\n");
 		}
 	}
 
@@ -143,9 +150,12 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 
 	// if we've started a new struct
 	if(prev_event.type == start_event) {
-		fprintf(h, "struct %s_component {\n",
+		fprintf(h, "struct %s_cmpnt {\n",
 		e->data.scalar.value);
 		start_event = YAML_MAPPING_END_EVENT;
+
+		fprintf(c, "const struct %s_cmpnt %s = {\n",
+			e->data.scalar.value, e->data.scalar.value);
 		goto cleanup;
 	}
 
@@ -157,12 +167,14 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 		if(t == STRING) { // for strings we need to wrap it
 			char* v = malloc(strlen(value) + 3);
 			sprintf(v, "\"%s\"", value);
-			fprintf(h, "\t %s %s = %s;\n", types[t],
+			fprintf(h, "\t %s %s;// = %s;\n", types[t],
 				key, v);
+			fprintf(c, "\t%s,\n", v);
 			free(v);
 		} else {
-			fprintf(h, "\t %s %s = %s;\n", types[t],
+			fprintf(h, "\t %s %s;// = %s;\n", types[t],
 				key, value);
+			fprintf(c, "\t%s,\n", value);
 		}
 		key = NULL;
 		value = NULL;
@@ -179,7 +191,7 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h)
 	return (e->type == YAML_STREAM_END_EVENT);
 }
 
-void build_files(char *in)
+void build_files(char *in, char* out_dir, char *out_name)
 {
 	yaml_parser_t parser;
 	yaml_event_t event;
@@ -190,6 +202,10 @@ void build_files(char *in)
 
 	yaml_parser_initialize(&parser);
 	yaml_parser_set_input_file(&parser, infile);
+
+	// building the start of our .c file, since it's consistent
+	fprintf(cfile, "#include \"%s.h\"\n", out_name);
+	fprintf(cfile, "#include \"cecs.h\"\n\n", out_name);
 
 	do {
 		done = parse_event(&parser, &event, cfile, hfile);
@@ -209,9 +225,9 @@ int main(int argc, char* argv[])
 	}
 
 	printf(("args OK\n"));
-	set_outfiles(argv[2]);
+	set_outfiles(argv[2], argv[3]);
 	printf("outfiles are '%s' and '%s'\n", outfiles[0], outfiles[1]);
 
-	build_files(argv[1]);
+	build_files(argv[1], argv[2], argv[3]);
 }
 
