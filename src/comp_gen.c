@@ -2,8 +2,6 @@
  * The component generator is it's own destinct program and is run before the
  * rest of the engine. The goal is to take a user-provided component yaml file
  * and output a valid c header defining structs based on the yaml input.
- * 
- * TODO: generate cecs comp. registration function
 */
 
 #include <stdio.h>
