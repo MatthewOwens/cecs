@@ -7,7 +7,6 @@
 
 static struct cecs *cecs = NULL;
 
-
 void comp_yaml_init()
 {
 	cecs = cecs_init();
