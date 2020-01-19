@@ -16,8 +16,8 @@ small entity-component-system written in C. The purpose of this project is 3-fol
 ## Building
 0. ensure that make, gcc, pkg-config and libcheck are installed
 1. clone the repo
-2. run `make`
-3. run `make check` to run unit tests
+2. run `make component_gen` to generate component c/h file
+3. run `make` to build static lib & run unit tests
 
 make install is currently unsupported, as this project is in no fit state
 to be installed.
@@ -26,13 +26,20 @@ to be installed.
 to use cecs in your project, you can include the following files:
 ```c
 #include "cecs.h"
-#include "cecs_component.h"
 #include "cecs_entitiy.h"
 #include "cecs_system.h"
 ```
 all cecs functions return a `cecs_errno` enum, defined in `cecs_err.h`
 ### Components
 components are dumb data structures, added to entities and manipulated by systems.
+
+#### Defining components with YAML
+components can be defined with YAML for fast iteration. only a small subset of
+YAML is actually supported, but for defining simple data structures (as described
+below). For example anchors and lists aren't supported, but they aren't really needed.
+An example of components defined in YAML can be found in [components.yml](components.yml)
+
+#### Under the hood
 For example:
 ```c
 typedef struct {
