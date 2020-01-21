@@ -55,3 +55,6 @@ src/notes.md
 
 # generated files
 src/components.*
+
+# Valgrind log
+log
