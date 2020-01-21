@@ -157,7 +157,8 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	return cecse(CECSE_NONE);
 }
 
-int cecs_add_entity_v(struct cecs *cecs, int *ent, int comp_count, ...)
+int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity *ent,
+		int comp_count, ...)
 {
 	va_list args;
 	int ret = -1;
@@ -167,10 +168,11 @@ int cecs_add_entity_v(struct cecs *cecs, int *ent, int comp_count, ...)
 	va_start(args, comp_count);
 	for(int i =0; i < comp_count; ++i) {
 		arg = va_arg(args, char*);
-		if(cecs_system(arg) == NULL) {
-			*ent = -1;
+
+		if(cecs_component_key(cecs, arg) == -1) {
+			ent = NULL;
 			return cecse_msg(CECSE_INVALID_VALUE,
-			"can't add %s to ent, component doesn't exist\n!",arg);
+			"can't add component to ent, doesn't exist\n!");
 		}
 	}
 	va_end(args);
@@ -180,4 +182,6 @@ int cecs_add_entity_v(struct cecs *cecs, int *ent, int comp_count, ...)
 		//TODO: stub
 	}
 	va_end(args);
+
+	return cecse(CECSE_NONE);
 }
