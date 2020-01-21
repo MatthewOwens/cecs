@@ -70,7 +70,9 @@ END_TEST
 
 START_TEST(manual_ent_load)
 {
-	ck_abort_msg("STUB!\n");
+	ck_assert_int_eq(cecs->num_entities, ENTITY_COUNT);
+	ck_assert_uint_ge(sizeof(cecs->entities) * cecs->num_entities,
+					  sizeof(cecs->entities) * ENTITY_COUNT);
 }
 END_TEST
 
