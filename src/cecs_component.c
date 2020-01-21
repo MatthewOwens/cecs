@@ -39,7 +39,7 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 
 uint32_t cecs_component_key(struct cecs *cecs, const char* name)
 {
-	const uint32_t null_mask = 0;
+	const uint32_t null_mask = -1;
 	uint32_t ret = null_mask;
 
 
