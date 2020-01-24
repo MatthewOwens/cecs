@@ -178,7 +178,7 @@ int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity *ent,
 	va_end(args);
 
 	// args are valid, add the ent
-	//cecs_add_entity(cecs, ent); TODO: Causes segfaults
+	cecs_add_entity(cecs, ent); //TODO: Causes segfaults
 
 	// add the components
 	va_start(args, comp_count);

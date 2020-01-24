@@ -72,7 +72,7 @@ START_TEST(manual_ent_load)
 {
 	ck_assert_int_eq(cecs->num_entities, ENTITY_COUNT);
 	ck_assert_uint_ge(sizeof(cecs->entities) * cecs->num_entities,
-					  sizeof(cecs->entities) * ENTITY_COUNT);
+			sizeof(cecs->entities) * ENTITY_COUNT);
 }
 END_TEST
 
