@@ -50,7 +50,7 @@ void manual_init()
 	 * Adding 'actors', 'named_actors' and one 'map_location' manually.
 	 * We'll use these to check cecs_add_entity_v() and then as a base of
 	 * comparison later on for the yaml_entities
-	*/
+	 */
 	for(int i = 0; i < ENTITY_COUNT - 1; ++i) {
 		if(i%2 == 0) {
 			cecs_add_entity_v(cecs, &manual_entities[i], 3,
@@ -72,6 +72,23 @@ void manual_teardown()
 	}
 }
 
+void load_check(int check_start)
+{
+	ck_assert_int_eq(cecs->num_entities, ENTITY_COUNT + check_start);
+	ck_assert_uint_ge(sizeof(cecs->entities) * cecs->num_entities,
+			sizeof(cecs->entities) * (ENTITY_COUNT + check_start));
+
+	for(int i = check_start; i < cecs->num_entities; ++i) {
+		ck_assert_int_eq(cecs->entities[i].id, i);
+	}
+
+	ck_assert_int_eq(cecs->entities[check_start + 0].mask, expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[check_start + 1].mask, expected_masks[1]);
+	ck_assert_int_eq(cecs->entities[check_start + 2].mask, expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[check_start + 3].mask, expected_masks[1]);
+	ck_assert_int_eq(cecs->entities[check_start + 4].mask, expected_masks[2]);
+}
+
 START_TEST(stub)
 {
 	ck_abort_msg("STUB!\n");
@@ -80,31 +97,34 @@ END_TEST
 
 START_TEST(manual_ent_load)
 {
-	ck_assert_int_eq(cecs->num_entities, ENTITY_COUNT);
-	ck_assert_uint_ge(sizeof(cecs->entities) * cecs->num_entities,
-			sizeof(cecs->entities) * ENTITY_COUNT);
-
-	for(int i = 0; i < cecs->num_entities; ++i) {
-		ck_assert_int_eq(cecs->entities[i].id, i);
-	}
-
-	ck_assert_int_eq(cecs->entities[0].mask, expected_masks[0]);
-	ck_assert_int_eq(cecs->entities[1].mask, expected_masks[1]);
-	ck_assert_int_eq(cecs->entities[2].mask, expected_masks[0]);
-	ck_assert_int_eq(cecs->entities[3].mask, expected_masks[1]);
-	ck_assert_int_eq(cecs->entities[4].mask, expected_masks[2]);
+	load_check(0);
 }
 END_TEST
 
 START_TEST(yaml_ent_load)
 {
-	ck_abort_msg("STUB!\n");
+	load_check(5);
 }
 END_TEST
 
 START_TEST(comparison)
 {
-	ck_abort_msg("STUB!\n");
+	/* 
+	 * double checking here, so we don't read garbage and go
+	 * down a rabbit hole
+	 */
+	ck_assert_int_eq(cecs->num_entities, ENTITY_COUNT * 2);
+
+	/*
+	 * checking that the entities loaded wiuth manual_init() and
+	 * cecs_load_comp_yaml are identical
+	 */
+	for(int i = 0; i < ENTITY_COUNT; ++i) {
+		ck_assert_int_eq(cecs->entities[i].id,
+				cecs->entities[i + ENTITY_COUNT].id);
+		ck_assert_int_eq(cecs->entities[i].mask,
+				cecs->entities[i+ENTITY_COUNT].mask);
+	}
 }
 END_TEST
 
