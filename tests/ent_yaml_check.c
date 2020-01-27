@@ -82,11 +82,11 @@ void load_check(int check_start)
 		ck_assert_int_eq(cecs->entities[i].id, i);
 	}
 
-	ck_assert_int_eq(cecs->entities[check_start + 0].mask, expected_masks[0]);
-	ck_assert_int_eq(cecs->entities[check_start + 1].mask, expected_masks[1]);
-	ck_assert_int_eq(cecs->entities[check_start + 2].mask, expected_masks[0]);
-	ck_assert_int_eq(cecs->entities[check_start + 3].mask, expected_masks[1]);
-	ck_assert_int_eq(cecs->entities[check_start + 4].mask, expected_masks[2]);
+	ck_assert_int_eq(cecs->entities[check_start+0].mask,expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[check_start+1].mask,expected_masks[1]);
+	ck_assert_int_eq(cecs->entities[check_start+2].mask,expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[check_start+3].mask,expected_masks[1]);
+	ck_assert_int_eq(cecs->entities[check_start+4].mask,expected_masks[2]);
 }
 
 START_TEST(stub)
