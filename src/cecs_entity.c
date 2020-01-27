@@ -44,6 +44,7 @@ int extend_components(struct cecs* cecs)
 	const char* err = "can't extend component array!\n";
 	int i;
 	int target_size = cecs->num_entities * 2;
+	int old_size = cecs->num_entities;
 
 	if(target_size == 0)
 		target_size = 1;
@@ -61,8 +62,8 @@ int extend_components(struct cecs* cecs)
 	}
 
 	// extend inactives array to accomodate new entries
-	for(i = 1; i < cecs->num_entities; ++i){
-		array_push(cecs->free_entities, cecs->num_entities + i);
+	for(i = old_size; i < cecs->num_entities; ++i){
+		array_push(cecs->free_entities, &cecs->entities[i]);
 	}
 	return cecse(CECSE_NONE);
 }
