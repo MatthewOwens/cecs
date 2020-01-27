@@ -76,15 +76,14 @@ int need_components_extended(struct cecs* cecs)
 	return (cecs->free_entities.length == 0);
 }
 
-int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
+int cecs_add_entity(struct cecs* cecs, struct cecs_entity** ent)
 {
 	void* tmp = NULL;
 	if(cecs == NULL) return cecse(CECSE_NULL);
-	if(ent == NULL) return cecse_msg(CECSE_INVALID_VALUE, "cecs_add_entity");
-	ent = get_inactive_entity(cecs);
+	struct cecs_entity* inactive = get_inactive_entity(cecs);
 
 	// if there are no inactive entities
-	if(ent == NULL) {
+	if(inactive == NULL) {
 		if(need_components_extended(cecs)) extend_components(cecs);
 
 		cecs->num_entities++;
@@ -93,20 +92,21 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 
 		if(tmp == NULL) return cecse(CECSE_NOMEM);
 		cecs->entities = tmp;
-		ent = &cecs->entities[cecs->num_entities - 1];
+		*ent = &cecs->entities[cecs->num_entities - 1];
 		// setting the identity id to it's position in our array
-		ent->id = cecs->num_entities - 1;
+		(*ent)->id = cecs->num_entities - 1;
 	} else {
-		ent->mask = 0;
+		*ent = inactive;
+		(*ent)->id = cecs->num_entities - 1;
 		array_pop(cecs->free_entities);
 	}
 
 	// ensuring that no keys are associated with the new entitiy
-	ent->mask = 0;
+	(*ent)->mask = 0;
 	return cecse(CECSE_NONE);
 }
 
-int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
+int cecs_rem_entity(struct cecs* cecs, struct cecs_entity** ent)
 {
 	if(cecs == NULL) return cecse(CECSE_NULL);
 	if(ent == NULL){
@@ -121,7 +121,7 @@ int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
 	}
 
 	// flagging the entity for removal
-	array_push(cecs->free_entities, ent);
+	array_push(cecs->free_entities, *ent);
 	return cecse(CECSE_NONE);
 }
 
@@ -157,7 +157,7 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	return cecse(CECSE_NONE);
 }
 
-int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity *ent,
+int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
 		int comp_count, ...)
 {
 	va_list args;
@@ -183,7 +183,7 @@ int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity *ent,
 	// add the components
 	va_start(args, comp_count);
 	for(int i = 0; i < comp_count; ++i){
-		//cecs_ent_add_component(cecs, ent->id, va_arg(args, char*));
+		cecs_ent_add_component(cecs, (*ent)->id, va_arg(args, char*));
 	}
 	va_end(args);
 

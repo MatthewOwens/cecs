@@ -7,14 +7,13 @@
 #define ENTITY_COUNT 5
 
 static struct cecs *cecs = NULL;
-static int manual_entities[ENTITY_COUNT];
-static int yaml_entities[ENTITY_COUNT];
+static struct cecs_entity *manual_entities[ENTITY_COUNT];
+static struct cecs_entity *yaml_entities[ENTITY_COUNT];
 
 void suite_init()
 {
 	cecs = cecs_init();
 	reg_loaded_components(cecs);
-
 
 	printf("\t%s\n", __FUNCTION__);
 }
@@ -42,6 +41,7 @@ void manual_init()
 	 * comparison later on for the yaml_entities
 	*/
 	for(int i = 0; i < ENTITY_COUNT - 1; ++i) {
+		printf("");
 		if(i%2 == 0) {
 			cecs_add_entity_v(cecs, &manual_entities[i], 3,
 					"position", "velocity", "uvs");
