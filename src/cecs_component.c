@@ -77,3 +77,11 @@ struct cecs_component* cecs_component(struct cecs* cecs, const char* name)
 
 	return NULL;
 }
+
+int cecs_load_comp_yaml( struct cecs* cecs, const char* filename)
+{
+	if(cecs == NULL) {
+		cecse_msg(CECSE_NULL, __FUNCTION__);
+	}
+	return cecse_msg(CECSE_STUB, __FUNCTION__);
+}

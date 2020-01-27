@@ -30,8 +30,9 @@ void suite_teardown()
 	cecs_free(cecs);
 }
 
-void yaml_init() //TODO: stub
+void yaml_init()
 {
+	cecs_load_comp_yaml(cecs, "components.yml");
 }
 
 void yaml_teardown()
