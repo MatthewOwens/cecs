@@ -10,6 +10,13 @@ static struct cecs *cecs = NULL;
 static struct cecs_entity *manual_entities[ENTITY_COUNT];
 static struct cecs_entity *yaml_entities[ENTITY_COUNT];
 
+/*
+ * manually grabbed based on the order that components are loaded in
+ * components.yml. Correct as of 1dbc6173a, so if you break the manual_ent_load
+ * test, check if you've updated the component loading and update accordingly
+*/
+static int expected_masks [3] = {3, 7 ,4};
+
 void suite_init()
 {
 	cecs = cecs_init();
@@ -76,6 +83,12 @@ START_TEST(manual_ent_load)
 	for(int i = 0; i < cecs->num_entities; ++i) {
 		ck_assert_int_eq(cecs->entities[i].id, i);
 	}
+
+	ck_assert_int_eq(cecs->entities[0].mask, expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[1].mask, expected_masks[1]);
+	ck_assert_int_eq(cecs->entities[2].mask, expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[3].mask, expected_masks[1]);
+	ck_assert_int_eq(cecs->entities[4].mask, expected_masks[2]);
 }
 END_TEST
 
