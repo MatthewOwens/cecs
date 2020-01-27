@@ -41,7 +41,6 @@ void manual_init()
 	 * comparison later on for the yaml_entities
 	*/
 	for(int i = 0; i < ENTITY_COUNT - 1; ++i) {
-		printf("");
 		if(i%2 == 0) {
 			cecs_add_entity_v(cecs, &manual_entities[i], 3,
 					"position", "velocity", "uvs");
@@ -73,6 +72,10 @@ START_TEST(manual_ent_load)
 	ck_assert_int_eq(cecs->num_entities, ENTITY_COUNT);
 	ck_assert_uint_ge(sizeof(cecs->entities) * cecs->num_entities,
 			sizeof(cecs->entities) * ENTITY_COUNT);
+
+	for(int i = 0; i < cecs->num_entities; ++i) {
+		ck_assert_int_eq(cecs->entities[i].id, i);
+	}
 }
 END_TEST
 
