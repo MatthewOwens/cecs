@@ -57,6 +57,7 @@ int cecs_free(struct cecs* cecs)
 	array_free(cecs->free_entities);
 
 	free(cecs);
+	cecs = NULL;
 	return cecse(CECSE_NONE);
 }
 
