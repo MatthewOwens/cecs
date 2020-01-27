@@ -36,10 +36,6 @@ END_TEST
 
 START_TEST(arr_pop)
 {
-	for(int i = 0; i < itr_max; ++i){
-		array_push(arr, i);
-	}
-
 	array_pop(arr);
 	printf("len: %zu, cap: %zu, itr_max: %d\n", arr.length, arr.capacity, itr_max);
 	ck_assert_int_eq(arr.length, itr_max - 1);
@@ -50,12 +46,9 @@ END_TEST
 
 START_TEST(arr_pop_at)
 {
-	for(int i = 0; i < itr_max; ++i){
-		array_push(arr, i);
-	}
-
 	array_pop_at(arr, 3);
-	ck_assert_int_eq(arr.length, itr_max - 1);
+	// -2 since we've popped already
+	ck_assert_int_eq(arr.length, itr_max - 2);
 	ck_assert_int_eq(arr.capacity, 8);
 	ck_assert_int_eq(arr.data[3], 4);
 }
