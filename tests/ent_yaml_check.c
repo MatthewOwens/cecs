@@ -34,8 +34,11 @@ void yaml_init() //TODO: stub
 {
 }
 
-void yaml_teardown() //TODO: stub
+void yaml_teardown()
 {
+	for(int i = 0; i < ENTITY_COUNT; ++i){
+			cecs_rem_entity(cecs, &yaml_entities[i]);
+	}
 }
 
 void manual_init()
