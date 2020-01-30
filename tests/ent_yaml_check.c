@@ -32,7 +32,7 @@ void suite_teardown()
 
 void yaml_init()
 {
-	cecs_load_comp_yaml(cecs, "components.yml");
+	cecs_load_ent_yaml(cecs, "entities.yml");
 }
 
 void yaml_teardown()

@@ -17,4 +17,3 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 
 uint32_t cecs_component_key(struct cecs* cecs, const char* name);
 struct cecs_component* cecs_component(struct cecs* cecs, const char* name);
-int cecs_load_comp_yaml( struct cecs* cecs, const char* filename);

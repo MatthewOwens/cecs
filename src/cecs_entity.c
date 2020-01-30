@@ -179,7 +179,7 @@ int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
 	va_end(args);
 
 	// args are valid, add the ent
-	cecs_add_entity(cecs, ent); //TODO: Causes segfaults
+	cecs_add_entity(cecs, ent);
 
 	// add the components
 	va_start(args, comp_count);
@@ -189,4 +189,12 @@ int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
 	va_end(args);
 
 	return cecse(CECSE_NONE);
+}
+
+int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
+{
+	if(cecs == NULL) {
+		cecse_msg(CECSE_NULL, __FUNCTION__);
+	}
+	return cecse_msg(CECSE_STUB, __FUNCTION__);
 }
