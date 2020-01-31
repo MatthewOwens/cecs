@@ -1,5 +1,6 @@
 TARGET = libcecs.a
 TEST_TARGET = check
+COMP_TARGET = components
 
 LIBS = -lm -D_REENTRANT -std=c11 -lyaml -lcyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
@@ -15,6 +16,7 @@ all: $(TARGET) $(TEST_TARGET)
 
 ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
 ORIG_OBJECTS += $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
+COMP_OBJECT = src/comp_gen.o
 
 # filtering out main so we can use the same var for our tests
 # and the component generator, used in it's own target
@@ -29,23 +31,21 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
 .PRECIOUS: $(TARGET) $(TEST_TARGET)
 
-#$(LIB_TEST_TARGET): src/main.c $(TARGET)
-#	$(CC) $(CFLAGS) -o $@ $^ -L. -lcecs
+$(COMP_TARGET): $(COMP_OBJECT)
+	$(CC) $(CFLAGS) $(COMP_OBJECT) $(LIBS) -o $@
+	-./$(COMP_TARGET) components.yml src components
+	rm -f $(COMP_TARGET)
 
-$(TARGET): $(OBJECTS) component_gen
+$(TARGET): $(COMP_OBJECT) $(OBJECTS) 
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs libcecs.a $(OBJECTS)
 
-$(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
+$(TEST_TARGET): $(COMP_OBJECT) $(OBJECTS) $(TEST_OBJECTS) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
 	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING CECS TESTS =========="
 	./$(TEST_TARGET)
 	@echo ""
-
-component_gen: src/comp_gen.o FORCE
-	$(CC) $(CFLAGS) src/comp_gen.o $(LIBS) -o $@
-	-./component_gen components.yml src components
 
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
@@ -65,6 +65,8 @@ FORCE:
 
 
 output:
+	@echo "==== $(COMP_TARGET) ===="
+	@echo "object: $(COMP_OBJECT) ===="
 	@echo "==== $(TARGET) ===="
 	@echo "sources: $(SRCS)"
 	@echo "headers: $(HEADERS)"
