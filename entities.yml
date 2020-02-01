@@ -1,14 +1,17 @@
-actor:
+name: actor
+components:
   - position
   - velocity
   - uvs
 
-named_actor:
+name: named_actor
+components:
   - position
   - velocity
   - name
   - uvs
 
-map_location:
+name: map_location
+components:
   - position
   - name
