@@ -190,11 +190,3 @@ int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
 
 	return cecse(CECSE_NONE);
 }
-
-int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
-{
-	if(cecs == NULL) {
-		cecse_msg(CECSE_NULL, __FUNCTION__);
-	}
-	return cecse_msg(CECSE_STUB, __FUNCTION__);
-}

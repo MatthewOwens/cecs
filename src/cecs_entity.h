@@ -17,5 +17,3 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name);
 // vargs should all be of type const char*
 int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity** ent,
 		int comp_count, ...);
-
-int cecs_load_ent_yaml(struct cecs* cecs, const char* filename);
