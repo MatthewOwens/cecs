@@ -1,17 +1,18 @@
-name: actor
-components:
-  - position
-  - velocity
-  - uvs
+entities:
+  name: actor
+  components:
+    - position
+    - velocity
+    - uvs
 
-name: named_actor
-components:
-  - position
-  - velocity
-  - name
-  - uvs
+  name: named_actor
+  components:
+    - position
+    - velocity
+    - name
+    - uvs
 
-name: map_location
-components:
-  - position
-  - name
+  name: map_location
+  components:
+    - position
+    - name
