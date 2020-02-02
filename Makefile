@@ -6,7 +6,7 @@ LIBS = -lm -D_REENTRANT -std=c11 -lyaml -lcyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = clang
-CFLAGS = -g -Wall -L/usr/lib -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include
+CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
