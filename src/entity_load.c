@@ -61,6 +61,7 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 		cecse_msg(CECSE_NULL, __FUNCTION__);
 	}
 
+	//TODO in_ents is null after load?
 	cyaml_err_t err = cyaml_load_file(filename, &config, &entities_field_schema,
 			(void **) &in_ents, NULL);
 	return cecse_msg(CECSE_STUB, __FUNCTION__);
