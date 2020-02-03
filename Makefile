@@ -57,7 +57,7 @@ clean:
 	rm -f src/*.o
 	rm -f tests/*.o
 	rm -f $(TARGET)
-	rm -f component_gen
+	rm -f $(COMP_TARGET)
 	rm -f $(TEST_TARGET)
 	rm -f src/components.*
 
