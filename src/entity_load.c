@@ -37,23 +37,6 @@ static const cyaml_schema_field_t entity_field_schema[] = {
 	CYAML_FIELD_END
 };
 
-static const cyaml_schema_value_t entity_schema = {
-	CYAML_VALUE_MAPPING(CYAML_FLAG_POINTER, struct entity,
-		entity_field_schema),
-};
-
-/* Top level entities mapping */
-static const cyaml_schema_field_t entities_field_schema[] = {
-	CYAML_FIELD_SEQUENCE("entities", CYAML_FLAG_POINTER,
-		struct loaded_entities, entity, &entity_schema, 0,
-		CYAML_UNLIMITED),
-	CYAML_FIELD_END
-};
-
-static const cyaml_schema_value_t entities_schema = {
-	CYAML_VALUE_MAPPING(CYAML_FLAG_POINTER, struct loaded_entities,
-		entities_field_schema),
-};
 
 int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 {
