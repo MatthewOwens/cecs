@@ -15,11 +15,11 @@ struct loaded_entities{
 
 struct loaded_entities *in_ents = NULL;
 
-/* default config from examples */
 static const cyaml_config_t config = {
 	.log_level = CYAML_LOG_WARNING, /* Logging errors and warnings only. */
 	.log_fn = cyaml_log,            /* Use the default logging function. */
 	.mem_fn = cyaml_mem,            /* Use the default memory allocator. */
+	.flags = CYAML_CFG_IGNORE_UNKNOWN_KEYS
 };
 
 /* Schema for string pointer values (used in sequences of strings). */
@@ -64,5 +64,6 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 	//TODO in_ents is null after load?
 	cyaml_err_t err = cyaml_load_file(filename, &config, &entities_field_schema,
 			(void **) &in_ents, NULL);
+	printf("%p\n", in_ents);
 	return cecse_msg(CECSE_STUB, __FUNCTION__);
 }
