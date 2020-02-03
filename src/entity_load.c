@@ -1,42 +1,88 @@
+#include "openbsd-reallocarray.h"
 #include "entity_load.h"
-#include <cyaml/cyaml.h>
 #include "cecs_err.h"
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <yaml.h>
+#include <arr.h>
 
 struct entity{
-	const char *name;
 	const char **components;
-	unsigned int components_count;
+	int components_count;
+};
+static array(struct entity) entities = array_init();
+
+enum event_status{
+	good = 0,
+	bad,
+	complete
 };
 
-struct loaded_entities{
-	struct entity* entity;
-	unsigned int entity_count;
-};
+void cleanup()
+{
+	for(int i = 0; i < entities.length; ++i){
+		free(entities.data[i].components);
+	}
+	array_free(entities);
+}
 
-struct loaded_entities *in_ents = NULL;
+void add_comp(struct entity *e, const char* name)
+{
+	// sure we're reallocing after every push, but since this is just
+	// running on init, it's not too big a deal
+	
+	void* tmp = obsdreallocarray(e->components, e->components_count + 1,
+			sizeof(const char*));
+	if(tmp){
+		e->components = tmp;
+		e->components_count++;
+	}
+}
 
-static const cyaml_config_t config = {
-	.log_level = CYAML_LOG_WARNING, /* Logging errors and warnings only. */
-	.log_fn = cyaml_log,            /* Use the default logging function. */
-	.mem_fn = cyaml_mem,            /* Use the default memory allocator. */
-	.flags = CYAML_CFG_IGNORE_UNKNOWN_KEYS
-};
+int parse_event(yaml_parser_t *p)
+{
+	static const struct entity empty_ent = {0};
+	static bool interesting_seq = false;
+	static bool in_seq = false;
+	yaml_event_t e;
 
-/* Schema for string pointer values (used in sequences of strings). */
-static const cyaml_schema_value_t component_entry = {
-	CYAML_VALUE_STRING(CYAML_FLAG_POINTER, char, 0, CYAML_UNLIMITED),
-};
+	if(!yaml_parser_parse(p, &e)){
+		fprintf(stderr, "error parsing yml!\n");
+		return bad;
+	}
 
-/* Individual entity mapping */
-static const cyaml_schema_field_t entity_field_schema[] = {
-	CYAML_FIELD_STRING_PTR("name", CYAML_FLAG_POINTER, struct entity,
-		name, 0, CYAML_UNLIMITED),
-	CYAML_FIELD_SEQUENCE_COUNT("components", CYAML_FLAG_POINTER,
-		struct entity, components, components_count, &component_entry,
-		0, CYAML_UNLIMITED),
-	CYAML_FIELD_END
-};
+	switch (e.type) {
+	case YAML_SEQUENCE_START_EVENT:
+		in_seq = true;
+		break;
+	case YAML_SEQUENCE_END_EVENT:
+		in_seq = false;
+		interesting_seq = false;
+		break;
+	case YAML_MAPPING_START_EVENT:
+		array_push(entities, empty_ent);
+		break;
+	case YAML_ALIAS_EVENT:
+		fprintf(stderr, " ERROR: Got alias (anchor %s)\n",
+		    e.data.alias.anchor );
+		return bad;
+		break;
+	case YAML_SCALAR_EVENT:
+		if(interesting_seq && in_seq) {
+			add_comp(&(entities.data[entities.length-1]),
+			e.data.scalar.value);
+		} else if(strcmp(e.data.scalar.value, "component" == 0)) {
+			interesting_seq = true;
+		}
+		break;
+	case YAML_DOCUMENT_END_EVENT:
+		return complete;
+	}
 
+	return good;
+}
 
 int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 {
@@ -44,9 +90,24 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 		cecse_msg(CECSE_NULL, __FUNCTION__);
 	}
 
-	//TODO in_ents is null after load?
-	cyaml_err_t err = cyaml_load_file(filename, &config, &entities_field_schema,
-			(void **) &in_ents, NULL);
-	printf("%p\n", in_ents);
-	return cecse_msg(CECSE_STUB, __FUNCTION__);
+	yaml_parser_t parser;
+	FILE *infile = fopen(filename, "rb");
+	static yaml_event_type_t start_event = YAML_MAPPING_START_EVENT;
+	int status = 0;
+
+	yaml_parser_initialize(&parser);
+	yaml_parser_set_input_file(&parser, infile);
+
+	do {
+		status = parse_event(&parser);
+	} while(status == good);
+	yaml_parser_delete(&parser);
+
+	if(status == bad) {
+		cleanup();
+		return cecse_msg(CECSE_INVALID_VALUE, "bad component yaml");
+	}
+	cleanup();
+	return cecse(CECSE_NONE);
 }
+
