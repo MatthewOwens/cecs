@@ -24,6 +24,9 @@ enum event_status{
 void cleanup()
 {
 	for(int i = 0; i < entities.length; ++i){
+		for(int j = 0; j < entities.data[i].components_count; ++j){
+			free(entities.data[i].components[j]);
+		}
 		free(entities.data[i].components);
 	}
 	array_free(entities);
@@ -33,11 +36,12 @@ void add_comp(struct entity *e, const char* name)
 {
 	// sure we're reallocing after every push, but since this is just
 	// running on init, it's not too big a deal
-	
 	void* tmp = obsdreallocarray(e->components, e->components_count + 1,
 			sizeof(const char*));
 	if(tmp){
 		e->components = tmp;
+		e->components[e->components_count] = malloc(strlen(name));
+		strcpy(e->components[e->components_count], name);
 		e->components_count++;
 	}
 }
@@ -60,13 +64,19 @@ int parse_event(yaml_parser_t *p)
 	case YAML_SEQUENCE_START_EVENT:
 		if(!passed_first_seq) {
 			passed_first_seq = true;
-		} else { in_seq = true; }
+		} else {
+			in_seq = true;
+			array_push(entities, empty_ent);
+		}
 		break;
 	case YAML_SEQUENCE_END_EVENT:
 		in_seq = false;
 		break;
 	case YAML_MAPPING_START_EVENT:
-		array_push(entities, empty_ent);
+		/*
+		 * since we don't care about the entity name, we can ignore the
+		 * mapping entierly.
+		 */
 		break;
 	case YAML_ALIAS_EVENT:
 		fprintf(stderr, " ERROR: Got alias (anchor %s)\n",
@@ -75,6 +85,7 @@ int parse_event(yaml_parser_t *p)
 		break;
 	case YAML_SCALAR_EVENT:
 		if(in_seq) {
+			printf("\t%s\n", e.data.scalar.value);
 			add_comp(&(entities.data[entities.length-1]),
 			e.data.scalar.value);
 		}
@@ -109,6 +120,7 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 		cleanup();
 		return cecse_msg(CECSE_INVALID_VALUE, "bad component yaml");
 	}
+	//TODO: register entities
 	cleanup();
 	return cecse(CECSE_NONE);
 }
