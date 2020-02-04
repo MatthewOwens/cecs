@@ -1,5 +1,6 @@
 #include "openbsd-reallocarray.h"
 #include "entity_load.h"
+#include "yaml_helper.h"
 #include "cecs_err.h"
 #include <stdbool.h>
 #include <string.h>
@@ -44,8 +45,8 @@ void add_comp(struct entity *e, const char* name)
 int parse_event(yaml_parser_t *p)
 {
 	static const struct entity empty_ent = {0};
-	static bool interesting_seq = false;
 	static bool in_seq = false;
+	static bool passed_first_seq = false;
 	yaml_event_t e;
 
 	if(!yaml_parser_parse(p, &e)){
@@ -53,13 +54,16 @@ int parse_event(yaml_parser_t *p)
 		return bad;
 	}
 
+	print_yaml_event(&e);
+
 	switch (e.type) {
 	case YAML_SEQUENCE_START_EVENT:
-		in_seq = true;
+		if(!passed_first_seq) {
+			passed_first_seq = true;
+		} else { in_seq = true; }
 		break;
 	case YAML_SEQUENCE_END_EVENT:
 		in_seq = false;
-		interesting_seq = false;
 		break;
 	case YAML_MAPPING_START_EVENT:
 		array_push(entities, empty_ent);
@@ -70,11 +74,9 @@ int parse_event(yaml_parser_t *p)
 		return bad;
 		break;
 	case YAML_SCALAR_EVENT:
-		if(interesting_seq && in_seq) {
+		if(in_seq) {
 			add_comp(&(entities.data[entities.length-1]),
 			e.data.scalar.value);
-		} else if(strcmp(e.data.scalar.value, "component" == 0)) {
-			interesting_seq = true;
 		}
 		break;
 	case YAML_DOCUMENT_END_EVENT:

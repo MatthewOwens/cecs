@@ -6,7 +6,7 @@ LIBS = -lm -D_REENTRANT -std=c11 -lyaml -lcyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = clang
-CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include
+CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include -v
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
@@ -16,7 +16,7 @@ all: $(TARGET) $(TEST_TARGET)
 
 ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
 ORIG_OBJECTS += $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
-COMP_OBJECT = src/comp_gen.o
+COMP_OBJECTS = src/comp_gen.o src/yaml_helper.o
 
 # filtering out main so we can use the same var for our tests
 # and the component generator, used in it's own target
@@ -31,16 +31,16 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
 .PRECIOUS: $(TARGET) $(TEST_TARGET)
 
-$(COMP_TARGET): $(COMP_OBJECT)
-	$(CC) $(CFLAGS) $(COMP_OBJECT) $(LIBS) -o $@
+$(COMP_TARGET): $(COMP_OBJECTS)
+	$(CC) $(CFLAGS) $(COMP_OBJECTS) $(LIBS) -o $@
 	-./$(COMP_TARGET) components.yml src components
 	rm -f $(COMP_TARGET)
 
-$(TARGET): $(COMP_OBJECT) $(OBJECTS) 
+$(TARGET): $(COMP_OBJECTS) $(OBJECTS) 
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs libcecs.a $(OBJECTS)
 
-$(TEST_TARGET): $(COMP_OBJECT) $(OBJECTS) $(TEST_OBJECTS) FORCE
+$(TEST_TARGET): $(COMP_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
 	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING CECS TESTS =========="
@@ -66,7 +66,7 @@ FORCE:
 
 output:
 	@echo "==== $(COMP_TARGET) ===="
-	@echo "object: $(COMP_OBJECT) ===="
+	@echo "object: $(COMP_OBJECTS) ===="
 	@echo "==== $(TARGET) ===="
 	@echo "sources: $(SRCS)"
 	@echo "headers: $(HEADERS)"
