@@ -158,6 +158,11 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	return cecse(CECSE_NONE);
 }
 
+int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, ...)
+{
+	//TODO: stub
+}
+
 int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
 		int comp_count, ...)
 {
