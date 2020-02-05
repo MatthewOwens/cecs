@@ -2,6 +2,7 @@
 #include "entity_load.h"
 #include "yaml_helper.h"
 #include "cecs_err.h"
+#include "cecs_entity.h"
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -119,6 +120,16 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 	if(status == bad) {
 		cleanup();
 		return cecse_msg(CECSE_INVALID_VALUE, "bad component yaml");
+	}
+
+	/* registering entities*/
+	for(int i = 0; i < entities.length; ++i){
+		struct cecs_entity *e = NULL;
+		cecs_add_entity(cecs, &e);
+		for(int j = 0; j < entities.data[i].components_count; ++j){
+			cecs_ent_add_component(cecs, e->id,
+				entities.data[i].components[j]);
+		}
 	}
 	//TODO: register entities
 	cleanup();
