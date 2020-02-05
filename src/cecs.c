@@ -56,6 +56,11 @@ int cecs_free(struct cecs* cecs)
 	if(cecs->entities != NULL)		free(cecs->entities);
 	array_free(cecs->free_entities);
 
+	for(int i = 0; i < cecs->registered_entity_names.length; ++i)
+		free(cecs->registered_entity_names.data[i]);
+	array_free(cecs->registered_entity_names);
+	array_free(cecs->registered_entities);
+
 	free(cecs);
 	cecs = NULL;
 	return cecse(CECSE_NONE);

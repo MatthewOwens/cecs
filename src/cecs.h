@@ -20,6 +20,9 @@ struct cecs{
 
 	struct cecs_system *systems;
 	int num_systems;
+	
+	array(struct cecs_entity) registered_entities;
+	array(char*) registered_entity_names;
 
 	struct cecs_entity *entities;
 	int num_entities;
