@@ -158,9 +158,44 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	return cecse(CECSE_NONE);
 }
 
+//TODO: test
 int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, ...)
 {
-	//TODO: stub
+	if (cecs == NULL) { return cecse_msg(CECSE_NULL, __FUNCTION__); }
+	if (name == NULL){
+		return cecse_msg(CECSE_INVALID_VALUE, __FUNCTION__);
+	}
+
+	va_list args;
+	uint32_t key = -1;
+	struct cecs_entity ent;
+	ent.mask = 0;
+	ent.id = -1;
+
+	/*
+ 	 * building our entity mask, we can return from here if reg. fails
+ 	 * since we don't allocate anything on the heap in this loop
+ 	 */
+	va_start(args, n_comps);
+	for(int i = 0; i < n_comps; ++i) {
+		arg = va_arg(args, char*);
+		key = cecs_component_key(cecs, arg);
+		if(key == -1) {
+			return cecse_msg(CECSE_INVALID_VALUE,
+			"can't register entity, component doesn't exist");
+		}
+
+		ent.mask | key;
+	}
+	va_end(args);
+	
+	/*
+ 	 * using strdup since the pointer passed in to here will be freed
+ 	 * when the yaml loader finishes
+ 	 */
+	char *tmp = strdup(name);
+	array_push(cecs->registered_entities, ent);
+	array_push(cecs->registered_entities, tmp);
 }
 
 int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
