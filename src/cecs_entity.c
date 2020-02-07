@@ -169,13 +169,14 @@ int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, ...)
 	va_list args;
 	uint32_t key = -1;
 	struct cecs_entity ent;
+	char *arg = NULL;
 	ent.mask = 0;
 	ent.id = -1;
 
 	/*
- 	 * building our entity mask, we can return from here if reg. fails
- 	 * since we don't allocate anything on the heap in this loop
- 	 */
+	* building our entity mask, we can return from here if reg. fails
+	* since we don't allocate anything on the heap in this loop
+	*/
 	va_start(args, n_comps);
 	for(int i = 0; i < n_comps; ++i) {
 		arg = va_arg(args, char*);
@@ -195,7 +196,7 @@ int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, ...)
  	 */
 	char *tmp = strdup(name);
 	array_push(cecs->registered_entities, ent);
-	array_push(cecs->registered_entities, tmp);
+	array_push(cecs->registered_entity_names, tmp);
 }
 
 int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
