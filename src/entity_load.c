@@ -124,14 +124,10 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 
 	/* registering entities*/
 	for(int i = 0; i < entities.length; ++i){
-		struct cecs_entity *e = NULL;
-		cecs_add_entity(cecs, &e);
-		for(int j = 0; j < entities.data[i].components_count; ++j){
-			cecs_ent_add_component(cecs, e->id,
-				entities.data[i].components[j]);
-		}
+		cecs_reg_entity(cecs, "TODO",entities.data[i].components_count,
+			entities.data[i].components);
+		//TODO - test cecs_reg_entity
 	}
-	//TODO: register entities
 	cleanup();
 	return cecse(CECSE_NONE);
 }
