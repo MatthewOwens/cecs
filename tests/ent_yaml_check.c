@@ -108,6 +108,16 @@ START_TEST(yaml_ent_load)
 }
 END_TEST
 
+START_TEST(yaml_ent_registration)
+{
+	ck_assert_int_eq(cecs->registered_entities.length, 3);
+	ck_assert_int_eq(cecs->registered_entity_names.length, 3);
+
+	ck_assert_str_eq(cecs->registered_entity_names.data[0],"actor");
+	ck_assert_str_eq(cecs->registered_entity_names.data[1],"named_actor");
+	ck_assert_str_eq(cecs->registered_entity_names.data[2],"map_location");
+}
+
 START_TEST(comparison)
 {
 	/* 
