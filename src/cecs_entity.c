@@ -158,7 +158,6 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	return cecse(CECSE_NONE);
 }
 
-//TODO: test
 int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps)
 {
 	if (cecs == NULL) { return cecse_msg(CECSE_NULL, __FUNCTION__); }
