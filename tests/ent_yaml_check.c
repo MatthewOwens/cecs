@@ -142,15 +142,31 @@ END_TEST
 Suite * ent_yaml_suite(void)
 {
 	Suite * s = suite_create("entity yaml suite");
-	TCase * load_case = tcase_create("entity load");
+	TCase * manual_add = tcase_create("manual add");
+	TCase * yaml_add = tcase_create("yaml add");
+	TCase * yaml_registration = tcase_create("yaml registration");
 
-	tcase_add_unchecked_fixture(load_case, suite_init, suite_teardown);
-	tcase_add_unchecked_fixture(load_case, manual_init, manual_teardown);
-	tcase_add_unchecked_fixture(load_case, yaml_init, yaml_teardown);
-	tcase_add_test(load_case, manual_ent_load);
-	tcase_add_test(load_case, yaml_ent_load);
-	tcase_add_test(load_case, comparison);
+	tcase_add_unchecked_fixture(manual_add, suite_init, suite_teardown);
+	tcase_add_unchecked_fixture(manual_add, manual_init, manual_teardown);
 
-	suite_add_tcase(s, load_case);
+	tcase_add_unchecked_fixture(yaml_add, suite_init, suite_teardown);
+	tcase_add_unchecked_fixture(yaml_add, manual_init, manual_teardown);
+	tcase_add_unchecked_fixture(yaml_add, yaml_init, yaml_teardown);
+
+	tcase_add_unchecked_fixture(yaml_registration,
+		suite_init, suite_teardown);
+	tcase_add_unchecked_fixture(yaml_registration,
+		manual_init, manual_teardown);
+	tcase_add_unchecked_fixture(yaml_registration,
+		yaml_init, yaml_teardown);
+
+	tcase_add_test(manual_add, manual_ent_load);
+	tcase_add_test(yaml_add, yaml_ent_load);
+	tcase_add_test(yaml_add, comparison);
+	tcase_add_test(yaml_registration, yaml_ent_registration);
+
+	suite_add_tcase(s, manual_add);
+	suite_add_tcase(s, yaml_add);
+	suite_add_tcase(s, yaml_registration);
 	return s;
 }
