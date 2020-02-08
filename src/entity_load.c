@@ -126,7 +126,6 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 	for(int i = 0; i < entities.length; ++i){
 		cecs_reg_entity(cecs, "TODO",entities.data[i].components_count,
 			entities.data[i].components);
-		//TODO - test cecs_reg_entity
 	}
 	cleanup();
 	return cecse(CECSE_NONE);
