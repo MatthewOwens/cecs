@@ -4,12 +4,12 @@
 #include "runner.h"
 #include "entity_load.h"
 #include <cyaml/cyaml.h>
+#include "components.h"
 
 #define ENTITY_COUNT 5
 
 static struct cecs *cecs = NULL;
-static struct cecs_entity *manual_entities[ENTITY_COUNT];
-static struct cecs_entity *yaml_entities[ENTITY_COUNT];
+static struct cecs_entity *entities[ENTITY_COUNT];
 
 /*
  * manually grabbed based on the order that components are loaded in
