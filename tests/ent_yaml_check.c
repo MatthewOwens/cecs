@@ -62,6 +62,7 @@ START_TEST(yaml_reg_ent_names)
 	ck_assert_str_eq(cecs->registered_entity_names.data[1],"named_actor");
 	ck_assert_str_eq(cecs->registered_entity_names.data[2],"map_location");
 }
+END_TEST
 
 Suite * ent_yaml_suite(void)
 {
