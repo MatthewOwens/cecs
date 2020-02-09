@@ -183,7 +183,7 @@ int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps)
 		return cecse_msg(CECSE_INVALID_VALUE, __FUNCTION__);
 	}
 
-	uint32_t key = -1;
+	uint32_t key;
 	struct cecs_entity ent;
 	ent.mask = 0;
 	ent.id = -1;
@@ -199,7 +199,7 @@ int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps)
 			"can't register entity, component doesn't exist");
 		}
 
-		ent.mask | key;
+		ent.mask = ent.mask | key;
 	}
 	
 	/*
