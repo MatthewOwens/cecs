@@ -22,13 +22,21 @@ struct cecs* cecs_init()
 	cecs->next_key = 0;
 
 	/*
-	 * can't use array_init here since free_entities has already been
+	 * can't use array_init here since arrays have already been
 	 * declared, see arr.h for more.
 	 *
 	*/
 	cecs->free_entities.length = 0;
 	cecs->free_entities.capacity = 0;
 	cecs->free_entities.data = NULL;
+
+	cecs->registered_entities.length = 0;
+	cecs->registered_entities.capacity = 0;
+	cecs->registered_entities.data = NULL;
+
+	cecs->registered_entity_names.length = 0;
+	cecs->registered_entity_names.capacity = 0;
+	cecs->registered_entity_names.data = NULL;
 
 	cecse(CECSE_NONE);
 	return cecs;
