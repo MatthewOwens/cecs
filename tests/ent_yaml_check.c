@@ -64,6 +64,17 @@ START_TEST(yaml_reg_ent_names)
 }
 END_TEST
 
+START_TEST(yaml_reg_ent_masks)
+{
+	ck_assert_int_eq(cecs->registered_entities.data[0].mask,
+		expected_masks[0]);
+	ck_assert_int_eq(cecs->registered_entities.data[1].mask,
+		expected_masks[1]);
+	ck_assert_int_eq(cecs->registered_entities.data[2].mask,
+		expected_masks[2]);
+}
+END_TEST
+
 Suite * ent_yaml_suite(void)
 {
 	Suite * s = suite_create("entity yaml suite");
@@ -74,6 +85,7 @@ Suite * ent_yaml_suite(void)
 
 	tcase_add_test(yaml_load, yaml_reg_array_lengths);
 	tcase_add_test(yaml_load, yaml_reg_ent_names);
+	tcase_add_test(yaml_load, yaml_reg_ent_masks);
 
 	suite_add_tcase(s, yaml_load);
 	return s;
