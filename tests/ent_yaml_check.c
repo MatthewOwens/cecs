@@ -34,13 +34,18 @@ void suite_teardown()
 void yaml_init()
 {
 	cecs_load_ent_yaml(cecs, "entities.yml");
+	cecs_add_entity(cecs, "actor", &entities[0]);
+	cecs_add_entity(cecs, "named_actor", &entities[1]);
+	cecs_add_entity(cecs, "map_location", &entities[2]);
+	cecs_add_entity(cecs, "actor", &entities[3]);
+	cecs_add_entity(cecs, "map_location", &entities[4]);
 }
 
 void yaml_teardown()
 {
-	//for(int i = 0; i < ENTITY_COUNT; ++i){
-	//		cecs_rem_entity(cecs, &yaml_entities[i]);
-	//}
+	for(int i = 0; i < ENTITY_COUNT; ++i){
+			cecs_rem_entity(cecs, &entities[i]);
+	}
 }
 
 START_TEST(stub)
