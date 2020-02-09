@@ -4,6 +4,7 @@
 #include "openbsd-reallocarray.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 // returns null if there is none available, ptr to inactive entity if available
@@ -77,11 +78,27 @@ int need_components_extended(struct cecs* cecs)
 	return (cecs->free_entities.length == 0);
 }
 
-int cecs_add_entity(struct cecs* cecs, struct cecs_entity** ent)
+int cecs_add_entity(struct cecs* cecs, char* name, struct cecs_entity** out)
 {
-	void* tmp = NULL;
 	if(cecs == NULL) return cecse(CECSE_NULL);
+
+	void* tmp = NULL;
 	struct cecs_entity* inactive = get_inactive_entity(cecs);
+	struct cecs_entity* selection = NULL;
+	static uint32_t id = 0; 
+
+
+	// checking that the entity named has been registered
+	for(int i = 0; i < cecs->registered_entity_names.length; ++i){
+		if(strcmp(name, cecs->registered_entity_names.data[i]) == 0){
+			selection = &(cecs->registered_entities.data[i]);
+			break;
+		}
+	}
+	if(selection == NULL){
+		return cecse_msg(CECSE_INVALID_VALUE,
+			"cecs_add_entity: requested entity doesn't exist!");
+	}
 
 	// if there are no inactive entities
 	if(inactive == NULL) {
@@ -93,17 +110,18 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity** ent)
 
 		if(tmp == NULL) return cecse(CECSE_NOMEM);
 		cecs->entities = tmp;
-		*ent = &cecs->entities[cecs->num_entities - 1];
+		*out = &cecs->entities[cecs->num_entities - 1];
 		// setting the identity id to it's position in our array
-		(*ent)->id = cecs->num_entities - 1;
 	} else {
-		*ent = inactive;
-		(*ent)->id = cecs->num_entities - 1;
+		*out = inactive;
 		array_pop(cecs->free_entities);
 	}
 
-	// ensuring that no keys are associated with the new entitiy
-	(*ent)->mask = 0;
+	// basic, but ensures that each entity as a unique id
+	id++;
+	(*out)->id = id;
+	(*out)->mask = selection->mask;
+
 	return cecse(CECSE_NONE);
 }
 
@@ -191,37 +209,4 @@ int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps)
 	char *tmp = strdup(name);
 	array_push(cecs->registered_entities, ent);
 	array_push(cecs->registered_entity_names, tmp);
-}
-
-int cecs_add_entity_v(struct cecs *cecs, struct cecs_entity **ent,
-		int comp_count, ...)
-{
-	va_list args;
-	int ret = -1;
-	char* arg = NULL;
-
-	// validating args
-	va_start(args, comp_count);
-	for(int i =0; i < comp_count; ++i) {
-		arg = va_arg(args, char*);
-
-		if(cecs_component_key(cecs, arg) == -1) {
-			ent = NULL;
-			return cecse_msg(CECSE_INVALID_VALUE,
-			"can't add component to ent, doesn't exist\n!");
-		}
-	}
-	va_end(args);
-
-	// args are valid, add the ent
-	cecs_add_entity(cecs, ent);
-
-	// add the components
-	va_start(args, comp_count);
-	for(int i = 0; i < comp_count; ++i){
-		cecs_ent_add_component(cecs, (*ent)->id, va_arg(args, char*));
-	}
-	va_end(args);
-
-	return cecse(CECSE_NONE);
 }
