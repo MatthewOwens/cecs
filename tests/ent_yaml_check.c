@@ -80,6 +80,41 @@ START_TEST(yaml_reg_ent_masks)
 }
 END_TEST
 
+START_TEST(yaml_added_ent_count)
+{
+	ck_assert_int_eq(cecs->num_entities, ENTITY_COUNT);
+}
+END_TEST
+
+START_TEST(yaml_added_ent_masks)
+{
+	if(cecs->num_entities != ENTITY_COUNT){
+		ck_abort_msg("aborting, entities not added");
+	}
+	ck_assert_int_eq(cecs->entities[0].mask, expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[1].mask, expected_masks[1]);
+	ck_assert_int_eq(cecs->entities[2].mask, expected_masks[2]);
+	ck_assert_int_eq(cecs->entities[3].mask, expected_masks[0]);
+	ck_assert_int_eq(cecs->entities[4].mask, expected_masks[2]);
+}
+END_TEST
+
+START_TEST(yaml_added_ent_uids)
+{
+	if(cecs->num_entities != ENTITY_COUNT){
+		ck_abort_msg("aborting, entities not added");
+	}
+	int known_ids[ENTITY_COUNT] = { -1 };
+
+	for(int i = 0; i < ENTITY_COUNT; ++i){
+		for(int j = 0; j < i; ++j){
+			ck_assert_int_ne(cecs->entities[i].id, known_ids[j]);
+		}
+		known_ids[i] = cecs->entities[i].id;
+	}
+}
+END_TEST
+
 Suite * ent_yaml_suite(void)
 {
 	Suite * s = suite_create("entity yaml suite");
@@ -91,6 +126,9 @@ Suite * ent_yaml_suite(void)
 	tcase_add_test(yaml_load, yaml_reg_array_lengths);
 	tcase_add_test(yaml_load, yaml_reg_ent_names);
 	tcase_add_test(yaml_load, yaml_reg_ent_masks);
+	tcase_add_test(yaml_load, yaml_added_ent_count);
+	tcase_add_test(yaml_load, yaml_added_ent_masks);
+	tcase_add_test(yaml_load, yaml_added_ent_uids);
 
 	suite_add_tcase(s, yaml_load);
 	return s;
