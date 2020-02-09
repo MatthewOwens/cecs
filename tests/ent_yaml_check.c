@@ -38,9 +38,9 @@ void yaml_init()
 
 void yaml_teardown()
 {
-	for(int i = 0; i < ENTITY_COUNT; ++i){
-			cecs_rem_entity(cecs, &yaml_entities[i]);
-	}
+	//for(int i = 0; i < ENTITY_COUNT; ++i){
+	//		cecs_rem_entity(cecs, &yaml_entities[i]);
+	//}
 }
 
 START_TEST(stub)
@@ -66,21 +66,14 @@ START_TEST(yaml_reg_ent_names)
 Suite * ent_yaml_suite(void)
 {
 	Suite * s = suite_create("entity yaml suite");
-	TCase * yaml_add = tcase_create("yaml add");
-	TCase * yaml_registration = tcase_create("yaml registration");
+	TCase * yaml_load = tcase_create("yaml load");
 
-	tcase_add_unchecked_fixture(yaml_add, suite_init, suite_teardown);
-	tcase_add_unchecked_fixture(yaml_add, yaml_init, yaml_teardown);
+	tcase_add_unchecked_fixture(yaml_load, suite_init, suite_teardown);
+	tcase_add_unchecked_fixture(yaml_load, yaml_init, yaml_teardown);
 
-	tcase_add_unchecked_fixture(yaml_registration,
-		suite_init, suite_teardown);
-	tcase_add_unchecked_fixture(yaml_registration,
-		yaml_init, yaml_teardown);
+	tcase_add_test(yaml_load, yaml_reg_array_lengths);
+	tcase_add_test(yaml_load, yaml_reg_ent_names);
 
-	tcase_add_test(yaml_registration, yaml_reg_array_lengths);
-	tcase_add_test(yaml_registration, yaml_reg_ent_names);
-
-	suite_add_tcase(s, yaml_add);
-	suite_add_tcase(s, yaml_registration);
+	suite_add_tcase(s, yaml_load);
 	return s;
 }
