@@ -14,7 +14,9 @@ struct entity{
 	const char **components;
 	int components_count;
 };
+
 static array(struct entity) entities = array_init();
+static array(char *) names = array_init();
 
 enum event_status{
 	good = 0,
@@ -29,8 +31,10 @@ void cleanup()
 			free(entities.data[i].components[j]);
 		}
 		free(entities.data[i].components);
+		free(names.data[i]);
 	}
 	array_free(entities);
+	array_free(names);
 }
 
 void add_comp(struct entity *e, const char* name)
@@ -52,6 +56,7 @@ int parse_event(yaml_parser_t *p)
 	static const struct entity empty_ent = {0};
 	static bool in_seq = false;
 	static bool passed_first_seq = false;
+	static bool name_parse = false;
 	yaml_event_t e;
 
 	if(!yaml_parser_parse(p, &e)){
@@ -90,6 +95,16 @@ int parse_event(yaml_parser_t *p)
 			add_comp(&(entities.data[entities.length-1]),
 			e.data.scalar.value);
 		}
+		else if(!name_parse) {
+			if(strcmp((char*)e.data.scalar.value, "name") == 0){
+				name_parse = true;
+			}
+		}
+		else if (name_parse) {
+			array_push(names, NULL);
+			names.data[names.length-1]=strdup(e.data.scalar.value);
+			name_parse = false;
+		}
 		break;
 	case YAML_DOCUMENT_END_EVENT:
 		return complete;
@@ -98,7 +113,7 @@ int parse_event(yaml_parser_t *p)
 	return good;
 }
 
-int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
+int cecs_load_ent_yaml(struct cecs* cecs, const char* filename)
 {
 	if(cecs == NULL) {
 		cecse_msg(CECSE_NULL, __FUNCTION__);
@@ -124,7 +139,8 @@ int cecs_load_ent_yaml( struct cecs* cecs, const char* filename)
 
 	/* registering entities*/
 	for(int i = 0; i < entities.length; ++i){
-		cecs_reg_entity(cecs, "TODO",entities.data[i].components_count,
+		cecs_reg_entity(cecs, names.data[i],
+			entities.data[i].components_count,
 			entities.data[i].components);
 	}
 	cleanup();
