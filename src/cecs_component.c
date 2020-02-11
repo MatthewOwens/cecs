@@ -32,14 +32,14 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 
 	cecs->num_components += 1;
 
-	// generating a bit-unique key for the next component
+	// generating a unique key for the next component, the easy way
 	cecs->next_key++;
 	return cecse(CECSE_NONE);
 }
 
 uint32_t cecs_component_key(struct cecs *cecs, const char* name)
 {
-	const uint32_t null_mask = 0;
+	const uint32_t null_mask = -1;
 	uint32_t ret = null_mask;
 
 

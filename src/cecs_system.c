@@ -132,7 +132,7 @@ int cecs_rem_system(struct cecs* cecs, const char* name)
 		strcpy(buf, x);
 		strcpy(buf+strlen(x), name);
 		strcpy(buf+strlen(x)+strlen(name), y);
-		cecse_msg(CECSE_INVALID_VALUE, buf);
+		return cecse_msg(CECSE_INVALID_VALUE, buf);
 	}
 
 	sys->registered = false;

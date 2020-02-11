@@ -9,8 +9,6 @@
 #include "cecs_system.h"
 
 static struct cecs *cecs = NULL;
-static int enta;
-static int entb;
 
 typedef struct {
 	float x;
@@ -39,34 +37,6 @@ void init_setup()
 void init_teardown()
 {
 	cecs_free(cecs);
-}
-
-void comp_setup()
-{
-	cecs_reg_component(cecs, "position", &posComp, sizeof(posComp));
-	cecs_reg_component(cecs, "string", &strComp, sizeof(strComp));
-	cecs_reg_component(cecs, "uv", &uvComp, sizeof(uvComp));
-}
-
-void comp_teardown()
-{
-}
-
-void ent_setup()
-{
-	cecs_add_entity(cecs, &enta);
-	cecs_ent_add_component(cecs, enta, "position");
-	cecs_ent_add_component(cecs, enta, "string");
-
-	cecs_add_entity(cecs, &entb);
-	cecs_ent_add_component(cecs, entb, "uv");
-	cecs_ent_add_component(cecs, entb, "position");
-}
-
-void ent_teardown()
-{
-	cecs_rem_entity(cecs, &enta);
-	cecs_rem_entity(cecs, &entb);
 }
 
 int tsys_init(struct cecs* cecs)
@@ -140,38 +110,18 @@ START_TEST(cecs_check_init)
 }
 END_TEST
 
-START_TEST(cecs_check_add_comp)
-{
-	ck_assert_int_eq(cecs->num_components, 3);
-	ck_assert_ptr_nonnull(cecs->components);
-
-	uint32_t posKey = cecs_component_key(cecs, "position");
-	uint32_t strKey = cecs_component_key(cecs, "string");
-	uint32_t uvKey = cecs_component_key(cecs, "uv");
-
-	ck_assert_uint_eq(posKey, 0);
-	ck_assert_uint_eq(strKey, 1);
-	ck_assert_uint_eq(uvKey, 2);
-}
-END_TEST
-
-START_TEST(cecs_check_add_ent)
-{
-	ck_assert_int_eq(cecs->num_entities, 2);
-	ck_assert_uint_ge(sizeof(cecs->entities) * cecs->num_entities,
-					  sizeof(cecs->entities) * 2);
-}
-END_TEST
 
 START_TEST(cecs_check_add_sys)
 {
 	struct cecs_system* sys = cecs_system(cecs, "test-sys");
 	ck_assert_int_eq(cecs->num_systems, 1);
 	ck_assert_ptr_nonnull(cecs->systems);
-	ck_assert_int_eq(sys->inclusion_mask, cecs_component_key(cecs, "position") |
-										  cecs_component_key(cecs, "uv") );
+	ck_assert_int_eq(sys->inclusion_mask,
+		cecs_component_key(cecs,"position") |
+		cecs_component_key(cecs, "uv") );
 
-	ck_assert_uint_eq(sys->exclusion_mask, cecs_component_key(cecs, "string"));
+	ck_assert_uint_eq(sys->exclusion_mask,
+			cecs_component_key(cecs, "string"));
 }
 END_TEST
 
@@ -268,18 +218,7 @@ Suite * cecs_suite(void)
 	tcase_add_checked_fixture(tcinit, init_setup, init_teardown);
 	tcase_add_test(tcinit, cecs_check_init);
 
-	tcase_add_unchecked_fixture(tccomp, init_setup, init_teardown);
-	tcase_add_checked_fixture(tccomp, comp_setup, comp_teardown);
-	tcase_add_test(tccomp, cecs_check_add_comp);
-
-	tcase_add_unchecked_fixture(tcent, init_setup, init_teardown);
-	tcase_add_unchecked_fixture(tcent, comp_setup, comp_teardown);
-	tcase_add_checked_fixture(tcent, ent_setup, ent_teardown);
-	tcase_add_test(tcent, cecs_check_add_ent);
-
 	tcase_add_unchecked_fixture(tcsys, init_setup, init_teardown);
-	tcase_add_unchecked_fixture(tcsys, comp_setup, comp_teardown);
-	tcase_add_unchecked_fixture(tcsys, ent_setup, ent_teardown);
 	tcase_add_unchecked_fixture(tcsys, sys_setup, sys_teardown);
 	tcase_add_test(tcsys, cecs_check_system_func);
 	tcase_add_test(tcsys, cecs_check_add_sys);
@@ -287,8 +226,6 @@ Suite * cecs_suite(void)
 	tcase_add_test(tcsys, cecs_check_system_rem);
 
 	suite_add_tcase(s, tcinit);
-	suite_add_tcase(s, tccomp);
-	suite_add_tcase(s, tcent);
 	suite_add_tcase(s, tcsys);
 	return s;
 }

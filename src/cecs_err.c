@@ -16,6 +16,7 @@ static char* cecs_errmsg[] = {
 	"invalid value",
 	"invalid operation",
 	"cecs could not allocate any more memory!",
+	"stub function called",
 	"cecs is uninitilised"
 };
 

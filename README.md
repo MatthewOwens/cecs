@@ -16,7 +16,7 @@ small entity-component-system written in C. The purpose of this project is 3-fol
 ## Building
 0. ensure that make, gcc, pkg-config and libcheck are installed
 1. clone the repo
-2. run `make component_gen` to generate component c/h file
+2. run `make components` to generate component c/h file
 3. run `make` to build static lib & run unit tests
 
 make install is currently unsupported, as this project is in no fit state

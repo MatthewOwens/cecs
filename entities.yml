@@ -1,14 +1,21 @@
-actor:
+# the only fields that the parser actually cares about are squences
+# called "components", names are currently ignored since we don't really need
+# to name the entities, more for the end-user.
+
+- name: actor
+  components:
   - position
   - velocity
   - uvs
 
-named_actor:
+- name: named_actor
+  components:
   - position
   - velocity
   - name
   - uvs
 
-map_location:
+- name: map_location
+  components:
   - position
   - name

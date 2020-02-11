@@ -1,7 +1,6 @@
 movement:
   reads:
     - velocity
-    - uvs
   writes:
     - position
   ignores:
