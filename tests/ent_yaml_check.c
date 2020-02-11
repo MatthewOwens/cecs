@@ -18,7 +18,7 @@ static struct cecs_entity *entities[ENTITY_COUNT];
 */
 static int expected_masks [3] = {3, 7 ,4};
 
-void suite_init()
+static void suite_init()
 {
 	cecs = cecs_init();
 	reg_loaded_components(cecs);
@@ -26,12 +26,12 @@ void suite_init()
 	printf("\t%s\n", __FUNCTION__);
 }
 
-void suite_teardown()
+static void suite_teardown()
 {
 	cecs_free(cecs);
 }
 
-void yaml_init()
+static void yaml_init()
 {
 	cecs_load_ent_yaml(cecs, "entities.yml");
 	cecs_add_entity(cecs, "actor", &entities[0]);
@@ -41,7 +41,7 @@ void yaml_init()
 	cecs_add_entity(cecs, "map_location", &entities[4]);
 }
 
-void yaml_teardown()
+static void yaml_teardown()
 {
 	for(int i = 0; i < ENTITY_COUNT; ++i){
 			cecs_rem_entity(cecs, &entities[i]);
