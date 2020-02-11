@@ -64,8 +64,6 @@ int parse_event(yaml_parser_t *p)
 		return bad;
 	}
 
-	print_yaml_event(&e);
-
 	switch (e.type) {
 	case YAML_SEQUENCE_START_EVENT:
 		if(!passed_first_seq) {
@@ -91,7 +89,6 @@ int parse_event(yaml_parser_t *p)
 		break;
 	case YAML_SCALAR_EVENT:
 		if(in_seq) {
-			printf("\t%s\n", e.data.scalar.value);
 			add_comp(&(entities.data[entities.length-1]),
 			e.data.scalar.value);
 		}
