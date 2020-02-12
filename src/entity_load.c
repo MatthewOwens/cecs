@@ -61,6 +61,10 @@ int parse_event(yaml_parser_t *p)
 
 	if(!yaml_parser_parse(p, &e)){
 		fprintf(stderr, "error parsing yml!\n");
+		// ensuring that state is isolated to a yaml document
+		in_seq = false;
+		passed_first_seq = false;
+		name_parse = false;
 		return bad;
 	}
 
@@ -85,6 +89,10 @@ int parse_event(yaml_parser_t *p)
 	case YAML_ALIAS_EVENT:
 		fprintf(stderr, " ERROR: Got alias (anchor %s)\n",
 		    e.data.alias.anchor );
+		// ensuring that state is isolated to a yaml document
+		in_seq = false;
+		passed_first_seq = false;
+		name_parse = false;
 		return bad;
 		break;
 	case YAML_SCALAR_EVENT:
@@ -104,6 +112,10 @@ int parse_event(yaml_parser_t *p)
 		}
 		break;
 	case YAML_DOCUMENT_END_EVENT:
+		// ensuring that state is isolated to a yaml document
+		in_seq = false;
+		passed_first_seq = false;
+		name_parse = false;
 		return complete;
 	}
 
