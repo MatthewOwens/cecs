@@ -24,7 +24,7 @@ enum event_status{
 	complete
 };
 
-void cleanup()
+static void cleanup()
 {
 	for(int i = 0; i < entities.length; ++i){
 		for(int j = 0; j < entities.data[i].components_count; ++j){
