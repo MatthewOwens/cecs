@@ -4,9 +4,27 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <yaml.h>
 
-enum token_status{
+#define N_ELEMENTS 5
+#define N_FUNCTIONS 3
+
+static char *elements[5] = {
+	"reads",
+	"writes",
+	"ignores",
+	"runtype",
+	"functions"
+};
+
+static char *functions[3] = {
+	"init",
+	"work",
+	"free"
+};
+
+enum event_status{
 	good = 0,
 	bad,
 	complete
@@ -17,9 +35,26 @@ static void cleanup()
 
 }
 
+
+// TODO: stub
+static void parse_scalar(const char* value, bool *elem, bool *func)
+{
+	if(*elem) {
+		printf("elem - ");
+		if(*func){
+			printf(" func - ");
+		}
+		// are we looking at functions?
+	} else {
+		// are we looking at an element?
+	}
+}
+
 static int parse_event(yaml_parser_t *p)
 {
 	yaml_event_t e;
+	static bool parsing_elem = false;
+	static bool parsing_func = false;
 
 	if(!yaml_parser_parse(p, &e)){
 		fprintf(stderr, "error parsing yml!\n");
@@ -39,13 +74,19 @@ static int parse_event(yaml_parser_t *p)
 		fprintf(stderr, " ERROR: Got alias (anchor %s)\n",
 		    e.data.alias.anchor );
 		// ensuring that state is isolated to a yaml document
+		parsing_elem = false;
+		parsing_func = false;
 		return bad;
 		break;
 	case YAML_SCALAR_EVENT:
+		parse_scalar(e.data.scalar.value,
+		&parsing_elem, &parsing_func);
 		printf("\t%s\n", e.data.scalar.value);
 		break;
 	case YAML_DOCUMENT_END_EVENT:
 		// ensuring that state is isolated to a yaml document
+		parsing_elem = false;
+		parsing_func = false;
 		return complete;
 	}
 
