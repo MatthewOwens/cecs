@@ -37,7 +37,7 @@ void cleanup()
 	array_free(names);
 }
 
-void add_comp(struct entity *e, const char* name)
+static void add_comp(struct entity *e, const char* name)
 {
 	// sure we're reallocing after every push, but since this is just
 	// running on init, it's not too big a deal
@@ -51,7 +51,7 @@ void add_comp(struct entity *e, const char* name)
 	}
 }
 
-int parse_event(yaml_parser_t *p)
+static int parse_event(yaml_parser_t *p)
 {
 	static const struct entity empty_ent = {0};
 	static bool in_seq = false;
