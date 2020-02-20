@@ -11,12 +11,19 @@
 #define N_FUNCTIONS 3
 
 // preprocessor magic for includes
-#ifdef CECSENG_SYSFUNCFILE
-	#include CECSENG_SYSFUNCFILE
+#ifdef CECS_SYS_FUNCS
+	#include CECS_SYS_FUNCS
+	#pragma message "CECS_SYS_FUNCS set to " STRING(CECS_SYS_FUNCS)
+#else
+	//#error "CECS_SYS_FUNCS is undefined!" 
+	#warning "CECS_SYS_FUNCS is undefined!" //TODO: switch to error
 #endif
 
-#ifdef USER_SYSFUNCFILE
-	#include USER_SYSFUNCFILE
+#ifdef CECS_USR_FUNCS
+	#include CECS_USR_FUNCS
+	#pragma message "CECS_USR_FUNCS set to " STRING(CECS_USR_FUNCS)
+#else
+	#warning "CECS_USR_FUNCS is undefined!" 
 #endif
 
 static char *elements[5] = {
@@ -39,45 +46,64 @@ enum event_status{
 	complete
 };
 
+enum parse_state{
+	none = -1,
+	sys = 0,
+	elem,
+	func
+};
+
 static void cleanup()
 {
 
 }
 
-
-static void parse_scalar(const char* value, bool *elem, bool *func)
+static void set_scalar_state(const char* value, enum parse_state* s)
 {
-	if(*elem) {
-		// are we looking at functions?
-		for(int i = 0; i < N_FUNCTIONS; ++i) {
-			if(strcmp(value, functions[i]) == 0){
-				*func = true;
-				printf("func - ");
-				return;
-			}
-		}
-	} else {
-		// are we looking at an element?
-		for(int i = 0; i < N_ELEMENTS; ++i) {
-			if(strcmp(value, elements[i]) == 0){
-				*elem = true;
-				printf("elem - ");
-				return;
-			}
+	/*
+	 * are we parsing a function or element?
+	 * systems are handled by YAML_MAPPING_END_EVENT
+	 */
+
+	for(int i = 0; i < N_ELEMENTS; ++i){
+		if(strcmp(value, elements[i]) == 0) {
+			*s = elem;
+			return;
 		}
 	}
 
-	if(!*func){
-		*elem = false;
-		*func = false;
+	for(int i = 0; i < N_FUNCTIONS; ++i){
+		if(strcmp(value, functions[i]) == 0) {
+			*s = func;
+			return;
+		}
 	}
+}
+
+
+static void parse_scalar(const char* value, enum parse_state* s)
+{
+	set_scalar_state(value, s);
+
+	switch(*s){
+	case elem:
+		printf("elem - ");
+		break;
+	case func:
+		printf("func - ");
+		break;
+	case sys:
+		printf("sys - ");
+		break;
+	}
+
+	*s = none;
 }
 
 static int parse_event(yaml_parser_t *p)
 {
 	yaml_event_t e;
-	static bool parsing_elem = false;
-	static bool parsing_func = false;
+	static enum parse_state state;
 
 	if(!yaml_parser_parse(p, &e)){
 		fprintf(stderr, "error parsing yml!\n");
@@ -91,25 +117,23 @@ static int parse_event(yaml_parser_t *p)
 		break;
 	case YAML_SEQUENCE_END_EVENT:
 		break;
-	case YAML_MAPPING_START_EVENT:
+	case YAML_MAPPING_END_EVENT:
+		state = sys;
 		break;
 	case YAML_ALIAS_EVENT:
 		fprintf(stderr, " ERROR: Got alias (anchor %s)\n",
 		    e.data.alias.anchor );
 		// ensuring that state is isolated to a yaml document
-		parsing_elem = false;
-		parsing_func = false;
+		state = none;
 		return bad;
 		break;
 	case YAML_SCALAR_EVENT:
-		parse_scalar(e.data.scalar.value,
-		&parsing_elem, &parsing_func);
+		parse_scalar(e.data.scalar.value, &state);
 		printf("\t%s\n", e.data.scalar.value);
 		break;
 	case YAML_DOCUMENT_END_EVENT:
 		// ensuring that state is isolated to a yaml document
-		parsing_elem = false;
-		parsing_func = false;
+		state = none;
 		return complete;
 	}
 

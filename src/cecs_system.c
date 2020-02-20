@@ -77,7 +77,7 @@ int cecs_sys_set_excl(struct cecs* cecs, const char* name, uint32_t excl_mask)
 int cecs_sys_set_funcs(struct cecs* cecs, const char* name,
 			sys_init_func init,
 			sys_run_func run,
-			sys_free_func free)
+			sys_tidy_func free)
 {
 	struct cecs_system* sys = NULL;
 	sys = cecs_system(cecs, name);
