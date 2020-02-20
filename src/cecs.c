@@ -49,7 +49,6 @@ int cecs_free(struct cecs* cecs)
 	if(cecs->components != NULL){
 		for(int i = 0; i < cecs->num_components; ++i){
 			if(cecs->components[i].data != NULL){
-				printf("freeing component %d\n", i);
 				free(cecs->components[i].data);
 			}
 		}
