@@ -10,9 +10,14 @@
       init: tsys_init
       work: tsys_run
       tidy: tsys_clean
-    ignore:
-      - "woo"
-      - "loads of guff"
-      - "to ignore"
-    moreignore:
-      evenmore: "to_ignore"
+- pathing:
+    reads:
+      - position
+      - name
+    writes:
+      - velocity
+    runtype: per-frame
+    functions:
+      init: path_init
+      work: path_run
+      tidy: path_tidy
