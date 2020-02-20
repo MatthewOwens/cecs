@@ -41,8 +41,9 @@ static void suite_teardown()
 	cecs_free(cecs);
 }
 
-static void yaml_init()	// TODO: stub
+static void yaml_init()
 {
+	cecs_load_sys_yaml(cecs, "systems.yml");
 }
 
 static void yaml_teardown()// TODO: stub
