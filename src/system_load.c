@@ -12,61 +12,71 @@ enum token_status{
 	complete
 };
 
-static int parse_token(yaml_parser_t *p, yaml_token_t *t)
+static void cleanup()
 {
-	yaml_parser_scan(p, t);
-	switch(t->type)
-	{
-	/* Stream start/end */
-	case YAML_STREAM_START_TOKEN: printf("STREAM START\n");	break;
-	case YAML_STREAM_END_TOKEN:   printf("STREAM END\n");	break;
-	/* Token types (read before actual t) */
-	case YAML_KEY_TOKEN:   printf("(Key token)   \n");	break;
-	case YAML_VALUE_TOKEN: printf("(Value token) \n");	break;
-	/* Block delimeters */
-	case YAML_BLOCK_SEQUENCE_START_TOKEN: printf("{\n");	break;
-	case YAML_BLOCK_ENTRY_TOKEN:          printf("- ");	break;
-	case YAML_BLOCK_END_TOKEN:            printf("}\n");	break;
-	/* Data */
-	case YAML_BLOCK_MAPPING_START_TOKEN:  printf("[Block mapping] {\n");	break;
-	case YAML_SCALAR_TOKEN:  printf("scalar %s \n", t->data.scalar.value);	break;
-	/* Others */
-	default:
-	printf("Got token of type %d\n", t->type);
+
+}
+
+static int parse_event(yaml_parser_t *p)
+{
+	yaml_event_t e;
+
+	if(!yaml_parser_parse(p, &e)){
+		fprintf(stderr, "error parsing yml!\n");
+		return bad;
 	}
-	if(t->type == YAML_STREAM_END_TOKEN){
-		yaml_token_delete(t);
+
+	print_yaml_event(&e);
+
+	switch (e.type) {
+	case YAML_SEQUENCE_START_EVENT:
+		break;
+	case YAML_SEQUENCE_END_EVENT:
+		break;
+	case YAML_MAPPING_START_EVENT:
+		break;
+	case YAML_ALIAS_EVENT:
+		fprintf(stderr, " ERROR: Got alias (anchor %s)\n",
+		    e.data.alias.anchor );
+		// ensuring that state is isolated to a yaml document
+		return bad;
+		break;
+	case YAML_SCALAR_EVENT:
+		printf("\t%s\n", e.data.scalar.value);
+		break;
+	case YAML_DOCUMENT_END_EVENT:
+		// ensuring that state is isolated to a yaml document
 		return complete;
 	}
-	yaml_token_delete(t);
+
+
 	return good;
 }
 
 int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 {
+	if(cecs == NULL) {
+		cecse_msg(CECSE_NULL, __FUNCTION__);
+	}
 
-	FILE *fh = fopen("systems.yml", "r");
-	int status = -1;
 	yaml_parser_t parser;
-	yaml_token_t  token;
+	FILE *infile = fopen(filename, "rb");
+	static yaml_event_type_t start_event = YAML_MAPPING_START_EVENT;
+	int status = 0;
 
-	/* Initialize parser */
-	if(!yaml_parser_initialize(&parser))
-	fputs("Failed to initialize parser!\n", stderr);
-	if(fh == NULL)
-	fputs("Failed to open file!\n", stderr);
+	yaml_parser_initialize(&parser);
+	yaml_parser_set_input_file(&parser, infile);
 
-	/* Set input file */
-	yaml_parser_set_input_file(&parser, fh);
-
-	/* BEGIN new code */
 	do {
-		status = parse_token(&parser, &token);
+		status = parse_event(&parser);
 	} while(status == good);
-
-	/* Cleanup */
 	yaml_parser_delete(&parser);
-	fclose(fh);
 
-	return cecse(CECSE_STUB);
+	if(status == bad) {
+		cleanup();
+		return cecse_msg(CECSE_INVALID_VALUE, "bad component yaml");
+	}
+
+	cleanup();
+	return cecse(CECSE_NONE);
 }
