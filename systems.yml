@@ -1,12 +1,12 @@
-movement:
-  reads:
-    - velocity
-  writes:
-    - position
-  ignores:
-    - name
-  runtype: per-frame
-  functions:
-    init: tsys_init
-    work: tsys_run
-    free: free
+- movement:
+    reads:
+      - velocity
+    writes:
+      - position
+    ignores:
+      - name
+    runtype: per-frame
+    functions:
+      init: tsys_init
+      work: tsys_run
+      free: free
