@@ -9,4 +9,10 @@
     functions:
       init: tsys_init
       work: tsys_run
-      free: free
+      tidy: tsys_clean
+    ignore:
+      - "woo"
+      - "loads of guff"
+      - "to ignore"
+    moreignore:
+      evenmore: "to_ignore"

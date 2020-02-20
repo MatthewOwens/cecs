@@ -21,7 +21,7 @@ static char *elements[5] = {
 static char *functions[3] = {
 	"init",
 	"work",
-	"free"
+	"tidy"
 };
 
 enum event_status{
@@ -36,17 +36,31 @@ static void cleanup()
 }
 
 
-// TODO: stub
 static void parse_scalar(const char* value, bool *elem, bool *func)
 {
 	if(*elem) {
-		printf("elem - ");
-		if(*func){
-			printf(" func - ");
-		}
 		// are we looking at functions?
+		for(int i = 0; i < N_FUNCTIONS; ++i) {
+			if(strcmp(value, functions[i]) == 0){
+				*func = true;
+				printf("func - ");
+				return;
+			}
+		}
 	} else {
 		// are we looking at an element?
+		for(int i = 0; i < N_ELEMENTS; ++i) {
+			if(strcmp(value, elements[i]) == 0){
+				*elem = true;
+				printf("elem - ");
+				return;
+			}
+		}
+	}
+
+	if(!*func){
+		*elem = false;
+		*func = false;
 	}
 }
 
@@ -61,7 +75,7 @@ static int parse_event(yaml_parser_t *p)
 		return bad;
 	}
 
-	print_yaml_event(&e);
+	//print_yaml_event(&e);
 
 	switch (e.type) {
 	case YAML_SEQUENCE_START_EVENT:
