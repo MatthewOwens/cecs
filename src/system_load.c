@@ -50,7 +50,9 @@ enum parse_state{
 	none = -1,
 	sys = 0,
 	elem,
-	func
+	func,
+	elem_m,
+	func_m
 };
 
 static void cleanup()
@@ -88,16 +90,22 @@ static void parse_scalar(const char* value, enum parse_state* s)
 	switch(*s){
 	case elem:
 		printf("elem - ");
+		*s = elem_m;
 		break;
 	case func:
 		printf("func - ");
+		*s = func_m;
 		break;
 	case sys:
 		printf("sys - ");
 		break;
+	case elem_m:
+		printf("   e - ");
+		break;
+	case func_m:
+		printf("   f - ");
+		break;
 	}
-
-	*s = none;
 }
 
 static int parse_event(yaml_parser_t *p)
