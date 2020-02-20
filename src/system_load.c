@@ -10,6 +10,15 @@
 #define N_ELEMENTS 5
 #define N_FUNCTIONS 3
 
+// preprocessor magic for includes
+#ifdef CECSENG_SYSFUNCFILE
+	#include CECSENG_SYSFUNCFILE
+#endif
+
+#ifdef USER_SYSFUNCFILE
+	#include USER_SYSFUNCFILE
+#endif
+
 static char *elements[5] = {
 	"reads",
 	"writes",
