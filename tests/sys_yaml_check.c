@@ -56,6 +56,12 @@ START_TEST(systems_added)
 }
 END_TEST
 
+START_TEST(systems_array_size)
+{
+	ck_abort_msg("STUB!\n");
+}
+END_TEST
+
 START_TEST(movement_load_correct)
 {
 	ck_abort_msg("STUB!\n");
@@ -76,6 +82,7 @@ Suite * sys_yaml_suite(void)
 	tcase_add_unchecked_fixture(yaml_load, suite_init, suite_teardown);
 	tcase_add_unchecked_fixture(yaml_load, yaml_init, yaml_teardown);
 
+	tcase_add_test(yaml_load, systems_array_size);
 	tcase_add_test(yaml_load, systems_added);
 	tcase_add_test(yaml_load, movement_load_correct);
 	tcase_add_test(yaml_load, movement_runs_correct);
