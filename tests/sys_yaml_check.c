@@ -52,13 +52,24 @@ static void yaml_teardown()// TODO: stub
 
 START_TEST(systems_added)
 {
-	ck_abort_msg("STUB!\n");
+	// system names are defined in yaml
+	ck_assert_ptr_nonnull(cecs_system(cecs, "movement"));
+	ck_assert_ptr_nonnull(cecs_system(cecs, "pathing"));
 }
 END_TEST
 
 START_TEST(systems_array_size)
 {
-	ck_abort_msg("STUB!\n");
+	// only 2 defined in yaml
+	ck_assert_int_eq(cecs->num_systems, 2);
+
+	/*
+	 * since we're doubling the size of cecs->systems when we need to
+	 * realloc, two should be good, and the third indice should be null
+	 */ 
+	ck_assert_ptr_nonnull(cecs->systems[0]);
+	ck_assert_ptr_nonnull(cecs->systems[1]);
+	ck_assert_ptr_null(cecs->systems[2]);
 }
 END_TEST
 
