@@ -1,6 +1,8 @@
 # TODO:
 
-[ ] rework system load/registration to work with yaml
+[x] rework system load/registration to work with yaml
+
+[ ] tests
 
 [ ] bash out engine systems func file
 
