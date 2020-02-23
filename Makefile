@@ -1,6 +1,7 @@
 TARGET = libcecs.a
 TEST_TARGET = check
 COMP_TARGET = components
+SYS_TARGET = libcecssys.a
 
 LIBS = -lm -D_REENTRANT -std=c11 -lyaml -lcyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
@@ -14,8 +15,9 @@ TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 default: all
 all: $(TARGET) $(TEST_TARGET)
 
-ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
-ORIG_OBJECTS += $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
+#ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
+ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
+SYS_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o, $(wildcard src/systems/*.c))
 COMP_OBJECTS = src/comp_gen.o src/yaml_helper.o
 
 # filtering out main so we can use the same var for our tests
@@ -29,7 +31,7 @@ TEST_OBJECTS = $(patsubst tests/%.c, tests/%.o, $(wildcard tests/*.c))
 TEST_HEADERS = $(wildcard tests/*.h) $(wildcard tests/**/*.h)
 TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
-.PRECIOUS: $(TARGET) $(TEST_TARGET)
+.PRECIOUS: $(TARGET) $(TEST_TARGET) $(SYS_TARGET)
 
 $(COMP_TARGET): $(COMP_OBJECTS)
 	$(CC) $(CFLAGS) $(COMP_OBJECTS) $(LIBS) -o $@
@@ -38,9 +40,13 @@ $(COMP_TARGET): $(COMP_OBJECTS)
 
 $(TARGET): $(COMP_OBJECTS) $(OBJECTS) 
 	@echo "========== BUILDING CECS $(TARGET) =========="
-	ar rcs libcecs.a $(OBJECTS)
+	ar rcs $(TARGET) $(OBJECTS)
 
-$(TEST_TARGET): $(COMP_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) FORCE
+$(SYS_TARGET): $(SYS_OBJECTS) $(OBJECTS)
+	@echo "========== BUILDING CECS $(TARGET) =========="
+	ar rcs $(SYS_TARGET) $(OBJECTS)
+
+$(TEST_TARGET): $(COMP_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
 	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING CECS TESTS =========="
@@ -53,12 +59,16 @@ src/%.o: src/%.c
 tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ -o $@
 
+src/systems/%.o: src/systems/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+
 clean:
 	rm -f src/*.o
 	rm -f tests/*.o
 	rm -f $(TARGET)
 	rm -f $(COMP_TARGET)
 	rm -f $(TEST_TARGET)
+	rm -f $(SYS_TARGET)
 	rm -f src/components.*
 
 FORCE:
