@@ -34,14 +34,11 @@ int cecs_reg_system(struct cecs* cecs, struct cecs_system* sys)
 	}
 
 	if(sysptr == NULL){
-		if(cecs->num_systems == 0){
-			void* tmp = obsdreallocarray(cecs->systems,
-			1, sizeof(struct cecs_system));
-		}
-		} else {
-			void* tmp = obsdreallocarray(cecs->systems,
-			cecs->num_systems*2, sizeof(struct cecs_system));
-		}
+		int target = 1;
+		if(cecs->num_systems > 0) { target = cecs->num_systems * 2; }
+
+		void *tmp = obsdreallocarray(cecs->systems, target,
+			sizeof(struct cecs_system));
 
 		if(tmp == NULL) { return cecse(CECSE_NOMEM); }
 
