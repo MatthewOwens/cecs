@@ -67,9 +67,9 @@ START_TEST(systems_array_size)
 	 * since we're doubling the size of cecs->systems when we need to
 	 * realloc, two should be good, and the third indice should be null
 	 */ 
-	ck_assert_ptr_nonnull(cecs->systems[0]);
-	ck_assert_ptr_nonnull(cecs->systems[1]);
-	ck_assert_ptr_null(cecs->systems[2]);
+	ck_assert_ptr_nonnull(&cecs->systems[0]);
+	ck_assert_ptr_nonnull(&cecs->systems[1]);
+	ck_assert_ptr_null(&cecs->systems[2]);
 }
 END_TEST
 
