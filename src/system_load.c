@@ -24,6 +24,25 @@
 	#warning "CECS_USR_FUNCS is undefined!" 
 #endif
 
+// dynamic library loading
+#ifdef _WIN32	//TODO: windows testing
+	#include <windows.h>
+	#define LIBTYPE HWINSTANCE
+	#define DLOPEN(libname) LoadLibraryW(L ## libname)
+	#define DLFUNC(lib, fn) GetProcAddress((lib), (fn))
+	#define DLCLOSE(lib) FreeLibrary((lib))
+	#define DLERROR GetLastError
+	#define DLEFMT %d
+#else	// linux/macos
+	#include <dlfcn.h>
+	#define LIBTYPE void*
+	#define DLOPEN(libname) dlopen((libname), RTLD_LAZY)
+	#define DLFUNC(lib, fn) dlsym((lib), (fn))
+	#define DLCLOSE(lib) dlclose((lib))
+	#define DLERROR dlerror
+	#define DLEFMT %s
+#endif
+
 static char *elements[5] = {
 	"reads",
 	"writes",
