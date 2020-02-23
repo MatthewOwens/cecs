@@ -99,10 +99,18 @@ static void set_scalar_state(const char* value, enum parse_state* s)
 	}
 }
 
-
-static void parse_scalar(const char* value, enum parse_state* s)
+static void set_func(struct cecs_system* system, int iwt)
 {
+	//TODO: load user/engine functions
+	//TODO: stub
+}
+
+static void parse_scalar(const char* value, enum parse_state* s,
+		struct cecs_system* system)
+{
+	static char* prevValue = "";
 	set_scalar_state(value, s);
+
 
 	switch(*s){
 	case elem:
@@ -114,21 +122,32 @@ static void parse_scalar(const char* value, enum parse_state* s)
 		*s = func_m;
 		break;
 	case sys:
+	{
+		struct cecs_system empty = {0};
 		printf("sys - ");
+		*system = empty;
+		system->name = value;
 		break;
+	}
 	case elem_m:
 		printf("   e - ");
 		break;
 	case func_m:
 		printf("   f - ");
+		if(strcmp(prevValue, "init") == 0) { set_func(system, 0); }
+		else if(strcmp(prevValue, "work") == 0) { set_func(system, 1);}
+		else if(strcmp(prevValue, "tidy") == 0) { set_func(system, 2);}
 		break;
 	}
+
+	prevValue = value;
 }
 
 static int parse_event(yaml_parser_t *p)
 {
 	yaml_event_t e;
 	static enum parse_state state;
+	static struct cecs_system system = {0};
 
 	if(!yaml_parser_parse(p, &e)){
 		fprintf(stderr, "error parsing yml!\n");
@@ -153,7 +172,7 @@ static int parse_event(yaml_parser_t *p)
 		return bad;
 		break;
 	case YAML_SCALAR_EVENT:
-		parse_scalar(e.data.scalar.value, &state);
+		parse_scalar(e.data.scalar.value, &state, &system);
 		printf("\t%s\n", e.data.scalar.value);
 		break;
 	case YAML_DOCUMENT_END_EVENT:
