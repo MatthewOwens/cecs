@@ -27,7 +27,7 @@
 // dynamic library loading
 #ifdef _WIN32	//TODO: windows testing
 	#include <windows.h>
-	#define LIBTYPE HWINSTANCE
+	#define LIBTYPE HMODULE
 	#define DLOPEN(libname) LoadLibraryW(L ## libname)
 	#define DLFUNC(lib, fn) GetProcAddress((lib), (fn))
 	#define DLCLOSE(lib) FreeLibrary((lib))
@@ -42,6 +42,16 @@
 	#define DLERROR dlerror
 	#define DLEFMT %s
 #endif
+
+/*
+ * both can be NULL since HMODULE seems to just be a pointer under the hood
+ * from the docs:
+ *	If the function fails, the return value is NULL
+ * https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryw
+*/
+
+static LIBTYPE sysfuncs = NULL;
+static LIBTYPE usrfuncs = NULL;
 
 static char *elements[5] = {
 	"reads",
@@ -74,7 +84,35 @@ enum parse_state{
 
 static void cleanup()
 {
+	#ifdef CECS_SYS_FUNCS
+		DLCOSE(sysfuncs);
+	#endif
+	#ifdef CECS_USR_FUNCS
+		DLCOSE(usrfuncs);
+	#endif
+}
 
+static void load_libs()
+{
+	#ifdef CECS_SYS_FUNCS
+	sysfuncs = DLOPEN(CECS_SYS_FUNCS);
+	if(sysfuncs == NULL) {
+		fprintf(stderr,
+		"couldn't load system funcs (%s) DLOPEN returned DLEFMT\n",
+		CECS_SYS_FUNCS, DLERROR());
+		exit(-1);
+	}
+	#endif
+
+	#ifdef CECS_USR_FUNCS
+	usrfuncs = DLOPEN(CECS_USR_FUNCS);
+	if(sysfuncs == NULL) {
+		fprintf(stderr,
+		"couldn't load user funcs (%s) DLOPEN returned DLEFMT\n",
+		CECS_USR_FUNCS, DLERROR());
+		exit(-1);
+	}
+	#endif
 }
 
 static void set_scalar_state(const char* value, enum parse_state* s)
@@ -108,7 +146,7 @@ static void set_func(struct cecs_system* system, int iwt)
 static void parse_scalar(const char* value, enum parse_state* s,
 		struct cecs_system* system)
 {
-	static char* prevValue = "";
+	static char* prevValue = NULL;
 	set_scalar_state(value, s);
 
 
@@ -198,6 +236,8 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 
 	yaml_parser_initialize(&parser);
 	yaml_parser_set_input_file(&parser, infile);
+
+	load_libs();
 
 	do {
 		status = parse_event(&parser);
