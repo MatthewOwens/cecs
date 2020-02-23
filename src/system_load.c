@@ -12,7 +12,6 @@
 
 // preprocessor magic for includes
 #ifdef CECS_SYS_FUNCS
-	#include CECS_SYS_FUNCS
 	#pragma message "CECS_SYS_FUNCS set to " STRING(CECS_SYS_FUNCS)
 #else
 	//#error "CECS_SYS_FUNCS is undefined!" 
@@ -20,7 +19,6 @@
 #endif
 
 #ifdef CECS_USR_FUNCS
-	#include CECS_USR_FUNCS
 	#pragma message "CECS_USR_FUNCS set to " STRING(CECS_USR_FUNCS)
 #else
 	#warning "CECS_USR_FUNCS is undefined!" 
