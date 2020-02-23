@@ -12,7 +12,6 @@
 
 // preprocessor magic for includes
 #ifdef CECS_SYS_FUNCS
-	#include CECS_SYS_FUNCS
 	#pragma message "CECS_SYS_FUNCS set to " STRING(CECS_SYS_FUNCS)
 #else
 	//#error "CECS_SYS_FUNCS is undefined!" 
@@ -20,11 +19,39 @@
 #endif
 
 #ifdef CECS_USR_FUNCS
-	#include CECS_USR_FUNCS
 	#pragma message "CECS_USR_FUNCS set to " STRING(CECS_USR_FUNCS)
 #else
 	#warning "CECS_USR_FUNCS is undefined!" 
 #endif
+
+// dynamic library loading
+#ifdef _WIN32	//TODO: windows testing
+	#include <windows.h>
+	#define LIBTYPE HMODULE
+	#define DLOPEN(libname) LoadLibraryW(L ## libname)
+	#define DLFUNC(lib, fn) GetProcAddress((lib), (fn))
+	#define DLCLOSE(lib) FreeLibrary((lib))
+	#define DLERROR GetLastError
+	#define DLEFMT %d
+#else	// linux/macos
+	#include <dlfcn.h>
+	#define LIBTYPE void*
+	#define DLOPEN(libname) dlopen((libname), RTLD_LAZY)
+	#define DLFUNC(lib, fn) dlsym((lib), (fn))
+	#define DLCLOSE(lib) dlclose((lib))
+	#define DLERROR dlerror
+	#define DLEFMT %s
+#endif
+
+/*
+ * both can be NULL since HMODULE seems to just be a pointer under the hood
+ * from the docs:
+ *	If the function fails, the return value is NULL
+ * https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryw
+*/
+
+static LIBTYPE sysfuncs = NULL;
+static LIBTYPE usrfuncs = NULL;
 
 static char *elements[5] = {
 	"reads",
@@ -57,7 +84,35 @@ enum parse_state{
 
 static void cleanup()
 {
+	#ifdef CECS_SYS_FUNCS
+		DLCOSE(sysfuncs);
+	#endif
+	#ifdef CECS_USR_FUNCS
+		DLCOSE(usrfuncs);
+	#endif
+}
 
+static void load_libs()
+{
+	#ifdef CECS_SYS_FUNCS
+	sysfuncs = DLOPEN(CECS_SYS_FUNCS);
+	if(sysfuncs == NULL) {
+		fprintf(stderr,
+		"couldn't load system funcs (%s) DLOPEN returned DLEFMT\n",
+		CECS_SYS_FUNCS, DLERROR());
+		exit(-1);
+	}
+	#endif
+
+	#ifdef CECS_USR_FUNCS
+	usrfuncs = DLOPEN(CECS_USR_FUNCS);
+	if(sysfuncs == NULL) {
+		fprintf(stderr,
+		"couldn't load user funcs (%s) DLOPEN returned DLEFMT\n",
+		CECS_USR_FUNCS, DLERROR());
+		exit(-1);
+	}
+	#endif
 }
 
 static void set_scalar_state(const char* value, enum parse_state* s)
@@ -82,10 +137,18 @@ static void set_scalar_state(const char* value, enum parse_state* s)
 	}
 }
 
-
-static void parse_scalar(const char* value, enum parse_state* s)
+static void set_func(struct cecs_system* system, int iwt)
 {
+	//TODO: load user/engine functions
+	//TODO: stub
+}
+
+static void parse_scalar(const char* value, enum parse_state* s,
+		struct cecs_system* system)
+{
+	static char* prevValue = NULL;
 	set_scalar_state(value, s);
+
 
 	switch(*s){
 	case elem:
@@ -97,21 +160,32 @@ static void parse_scalar(const char* value, enum parse_state* s)
 		*s = func_m;
 		break;
 	case sys:
+	{
+		struct cecs_system empty = {0};
 		printf("sys - ");
+		*system = empty;
+		system->name = value;
 		break;
+	}
 	case elem_m:
 		printf("   e - ");
 		break;
 	case func_m:
 		printf("   f - ");
+		if(strcmp(prevValue, "init") == 0) { set_func(system, 0); }
+		else if(strcmp(prevValue, "work") == 0) { set_func(system, 1);}
+		else if(strcmp(prevValue, "tidy") == 0) { set_func(system, 2);}
 		break;
 	}
+
+	prevValue = value;
 }
 
 static int parse_event(yaml_parser_t *p)
 {
 	yaml_event_t e;
 	static enum parse_state state;
+	static struct cecs_system system = {0};
 
 	if(!yaml_parser_parse(p, &e)){
 		fprintf(stderr, "error parsing yml!\n");
@@ -136,7 +210,7 @@ static int parse_event(yaml_parser_t *p)
 		return bad;
 		break;
 	case YAML_SCALAR_EVENT:
-		parse_scalar(e.data.scalar.value, &state);
+		parse_scalar(e.data.scalar.value, &state, &system);
 		printf("\t%s\n", e.data.scalar.value);
 		break;
 	case YAML_DOCUMENT_END_EVENT:
@@ -162,6 +236,8 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 
 	yaml_parser_initialize(&parser);
 	yaml_parser_set_input_file(&parser, infile);
+
+	load_libs();
 
 	do {
 		status = parse_event(&parser);
