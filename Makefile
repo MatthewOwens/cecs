@@ -15,20 +15,24 @@ TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 default: all
 all: $(TARGET) $(TEST_TARGET)
 
-ORIG_OBJECTS = $(patsubst src/core/%.c, src/core/%.o, $(wildcard src/core/*.c))
-ORIG_OBJECTS += $(patsubst src/components/%.c, src/components/%.o,\
+CORE_OBJECTS = $(patsubst src/core/%.c, src/core/%.o, $(wildcard src/core/*.c))
+COMP_OBJECTS = $(patsubst src/components/%.c, src/components/%.o,\
 $(wildcard src/components/*.c))
-ORIG_OBJECTS += $(patsubst src/entities/%.c, src/entities/%.o,\
+ENT_OBJECTS = $(patsubst src/entities/%.c, src/entities/%.o,\
 $(wildcard src/entities/*.c))
-ORIG_OBJECTS += $(patsubst src/systems/%.c, src/systems/%.o,\
+SYS_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o,\
 $(wildcard src/systems/*.c))
+
+CECS_OBJECTS = $(CORE_OBJECTS) $(COMP_OBJECTS) $(ENT_OBJECTS) $(SYS_OBJECTS)
+
 SYSFN_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o,\
 $(wildcard src/systems/*.c))
-COMP_OBJECTS = src/components/comp_gen.o src/core/yaml_helper.o
+
+COMPG_OBJECTS = src/components/comp_gen.o src/core/yaml_helper.o
 
 # filtering out main so we can use the same var for our tests
 # and the component generator, used in it's own target
-OBJECTS := $(filter-out  src/components/comp_gen.o ,$(ORIG_OBJECTS))
+OBJECTS := $(filter-out  src/components/comp_gen.o ,$(CECS_OBJECTS))
 
 HEADERS = $(wildcard src/*.h) $(wildcard src/**/*.h)
 SRCS = $(wildcard src/*.c) $(wildcard src/**/*.c)
@@ -39,12 +43,12 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
 .PRECIOUS: $(TARGET) $(TEST_TARGET) $(SYS_TARGET)
 
-$(COMP_TARGET): $(COMP_OBJECTS)
-	$(CC) $(CFLAGS) $(COMP_OBJECTS) $(LIBS) -o $@
+$(COMP_TARGET): $(COMPG_OBJECTS)
+	$(CC) $(CFLAGS) $(COMPG_OBJECTS) $(LIBS) -o $@
 	-./$(COMP_TARGET) components.yml src/components components
 	rm -f $(COMP_TARGET)
 
-$(TARGET): $(COMP_OBJECTS) $(OBJECTS) 
+$(TARGET): $(COMPG_OBJECTS) $(OBJECTS) 
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs $(TARGET) $(OBJECTS)
 
@@ -52,7 +56,7 @@ $(SYS_TARGET): $(SYSFN_OBJECTS) $(OBJECTS)
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs $(SYS_TARGET) $(OBJECTS)
 
-$(TEST_TARGET): $(COMP_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
+$(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
 	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING CECS TESTS =========="
@@ -85,7 +89,7 @@ FORCE:
 
 output:
 	@echo "==== $(COMP_TARGET) ===="
-	@echo "object: $(COMP_OBJECTS) ===="
+	@echo "object: $(COMPG_OBJECTS) ===="
 	@echo "==== $(TARGET) ===="
 	@echo "sources: $(SRCS)"
 	@echo "headers: $(HEADERS)"
