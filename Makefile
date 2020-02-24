@@ -7,7 +7,7 @@ LIBS = -lm -DCECS_SYS_FUNCS=$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = clang
-CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/core -Isrc/components -Isrc/systems -Isrc/entities -I/usr/local/include -v
+CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems -Isrc/entities -v
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
@@ -16,10 +16,14 @@ default: all
 all: $(TARGET) $(TEST_TARGET)
 
 ORIG_OBJECTS = $(patsubst src/core/%.c, src/core/%.o, $(wildcard src/core/*.c))
-ORIG_OBJECTS += $(patsubst src/components/%.c, src/components/%.o, $(wildcard src/components/*.c))
-ORIG_OBJECTS += $(patsubst src/entities/%.c, src/entities/%.o, $(wildcard src/entities/*.c))
-ORIG_OBJECTS += $(patsubst src/systems/%.c, src/systems/%.o, $(wildcard src/systems/*.c))
-SYSFN_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o, $(wildcard src/systems/*.c))
+ORIG_OBJECTS += $(patsubst src/components/%.c, src/components/%.o,\
+$(wildcard src/components/*.c))
+ORIG_OBJECTS += $(patsubst src/entities/%.c, src/entities/%.o,\
+$(wildcard src/entities/*.c))
+ORIG_OBJECTS += $(patsubst src/systems/%.c, src/systems/%.o,\
+$(wildcard src/systems/*.c))
+SYSFN_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o,\
+$(wildcard src/systems/*.c))
 COMP_OBJECTS = src/components/comp_gen.o src/core/yaml_helper.o
 
 # filtering out main so we can use the same var for our tests
