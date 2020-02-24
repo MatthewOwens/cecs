@@ -52,7 +52,7 @@ $(TARGET): $(COMPG_OBJECTS) $(OBJECTS)
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs $(TARGET) $(OBJECTS)
 
-$(SYS_TARGET): $(SYSFN_OBJECTS) $(OBJECTS)
+$(SYS_TARGET): $(SYSFN_OBJECTS) $(SYS_OBJECTS) $(CORE_OBJECTS)
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs $(SYS_TARGET) $(OBJECTS)
 
@@ -67,13 +67,13 @@ tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ -o $@
 
 src/systems/%.o: src/systems/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
 src/entities/%.o: src/entities/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
 src/components/%.o: src/components/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
 src/core/%.o: src/core/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
 
 clean:
 	rm -f src/*.o
