@@ -88,24 +88,24 @@ enum parse_state{
 static void cleanup()
 {
 	#ifdef CECS_SYS_FUNCS
-		DLCOSE(sysfuncs);
+		DLCLOSE(XSTR(sysfuncs));
 	#endif
 	#ifdef CECS_USR_FUNCS
-		DLCOSE(usrfuncs);
+		DLCLOSE(usrfuncs);
 	#endif
 }
 
 static void load_libs()
 {
 	printf("\t%s\n", __FUNCTION__);
-	printf("\tCECS_SYS_FUNCS = %s\n", CECS_SYS_FUNCS);
-	printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
+	printf("\tCECS_SYS_FUNCS = %s\n", XSTR(CECS_SYS_FUNCS));
+	//printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
 	#ifdef CECS_SYS_FUNCS
-	sysfuncs = DLOPEN(CECS_SYS_FUNCS);
+	sysfuncs = DLOPEN(XSTR(CECS_SYS_FUNCS));
 	if(sysfuncs == NULL) {
 		fprintf(stderr,
 		"couldn't load system funcs (%s) DLOPEN returned DLEFMT\n",
-		CECS_SYS_FUNCS, DLERROR());
+		XSTR(CECS_SYS_FUNCS), DLERROR());
 		exit(-1);
 	} else { printf("CECS_SYS_FUNCS loaded!\n"); }
 	#endif
