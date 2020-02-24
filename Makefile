@@ -7,7 +7,7 @@ LIBS = -lm -DCECS_SYS_FUNCS=$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = clang
-CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include -v
+CFLAGS = -g -Wall -Isystems/ -Icomponents/ -Isrc/core -Isrc/components -Isrc/systems -Isrc/entities -I/usr/local/include -v
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
@@ -15,14 +15,16 @@ TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 default: all
 all: $(TARGET) $(TEST_TARGET)
 
-#ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
-ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
-SYS_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o, $(wildcard src/systems/*.c))
-COMP_OBJECTS = src/comp_gen.o src/yaml_helper.o
+ORIG_OBJECTS = $(patsubst src/core/%.c, src/core/%.o, $(wildcard src/core/*.c))
+ORIG_OBJECTS += $(patsubst src/components/%.c, src/components/%.o, $(wildcard src/components/*.c))
+ORIG_OBJECTS += $(patsubst src/entities/%.c, src/entities/%.o, $(wildcard src/entities/*.c))
+ORIG_OBJECTS += $(patsubst src/systems/%.c, src/systems/%.o, $(wildcard src/systems/*.c))
+SYSFN_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o, $(wildcard src/systems/*.c))
+COMP_OBJECTS = src/components/comp_gen.o src/core/yaml_helper.o
 
 # filtering out main so we can use the same var for our tests
 # and the component generator, used in it's own target
-OBJECTS := $(filter-out src/main.o src/comp_gen.o ,$(ORIG_OBJECTS))
+OBJECTS := $(filter-out  src/components/comp_gen.o ,$(ORIG_OBJECTS))
 
 HEADERS = $(wildcard src/*.h) $(wildcard src/**/*.h)
 SRCS = $(wildcard src/*.c) $(wildcard src/**/*.c)
@@ -35,14 +37,14 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
 $(COMP_TARGET): $(COMP_OBJECTS)
 	$(CC) $(CFLAGS) $(COMP_OBJECTS) $(LIBS) -o $@
-	-./$(COMP_TARGET) components.yml src components
+	-./$(COMP_TARGET) components.yml src/components components
 	rm -f $(COMP_TARGET)
 
 $(TARGET): $(COMP_OBJECTS) $(OBJECTS) 
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs $(TARGET) $(OBJECTS)
 
-$(SYS_TARGET): $(SYS_OBJECTS) $(OBJECTS)
+$(SYS_TARGET): $(SYSFN_OBJECTS) $(OBJECTS)
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs $(SYS_TARGET) $(OBJECTS)
 
@@ -53,13 +55,16 @@ $(TEST_TARGET): $(COMP_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	./$(TEST_TARGET)
 	@echo ""
 
-src/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
 tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ -o $@
 
 src/systems/%.o: src/systems/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+src/entities/%.o: src/entities/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+src/components/%.o: src/components/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+src/core/%.o: src/core/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
