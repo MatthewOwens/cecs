@@ -3,7 +3,7 @@ TEST_TARGET = check
 COMP_TARGET = components
 SYS_TARGET = libcecssys.a
 
-LIBS = -lm -D_REENTRANT -std=c11 -lyaml -lcyaml
+LIBS = -lm -DCECS_SYS_FUNCS=$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = clang

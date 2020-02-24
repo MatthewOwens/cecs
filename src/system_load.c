@@ -94,6 +94,9 @@ static void cleanup()
 
 static void load_libs()
 {
+	printf("\t%s\n", __FUNCTION__);
+	printf("\tCECS_SYS_FUNCS = %s\n", CECS_SYS_FUNCS);
+	printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
 	#ifdef CECS_SYS_FUNCS
 	sysfuncs = DLOPEN(CECS_SYS_FUNCS);
 	if(sysfuncs == NULL) {
@@ -101,7 +104,7 @@ static void load_libs()
 		"couldn't load system funcs (%s) DLOPEN returned DLEFMT\n",
 		CECS_SYS_FUNCS, DLERROR());
 		exit(-1);
-	}
+	} else { printf("CECS_SYS_FUNCS loaded!\n"); }
 	#endif
 
 	#ifdef CECS_USR_FUNCS
