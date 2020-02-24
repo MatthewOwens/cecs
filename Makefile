@@ -6,7 +6,7 @@ SYS_TARGET = libcecssys.a
 LIBS = -lm -DCECS_SYS_FUNCS=$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
-CC = clang
+CC = gcc
 CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems -Isrc/entities -v
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
