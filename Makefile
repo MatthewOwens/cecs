@@ -3,12 +3,13 @@ TEST_TARGET = check
 COMP_TARGET = components
 SYS_TARGET = libcecssys.so
 
-LIBS = -lm -DCECS_SYS_FUNCS="$(SYS_TARGET)" -D_REENTRANT -std=c11 -lyaml -ldl
+LIBS = -lm -DCECS_SYS_FUNCS=$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml -ldl
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = gcc
-CFLAGS = -g -Wall -fPIC -Isrc/core -Isrc/components -Isrc/systems\
+CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems\
  -Isrc/entities -v
+CSOFLAGS = $(CFLAGS) -fPIC
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
@@ -26,8 +27,8 @@ $(wildcard src/systems/*.c))
 
 CECS_OBJECTS = $(CORE_OBJECTS) $(COMP_OBJECTS) $(ENT_OBJECTS) $(SYS_OBJECTS)
 
-SYSFN_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o,\
-$(wildcard src/systems/*.c))
+SYSFN_OBJECTS = $(patsubst src/systems/sys_funcs/%.c,\
+src/systems/sys_funcs/%.o,$(wildcard src/systems/sys_funcs/*.c))
 
 COMPG_OBJECTS = src/components/comp_gen.o src/core/yaml_helper.o
 
@@ -68,13 +69,15 @@ tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
 src/systems/%.o: src/systems/%.c
-	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
+	$(CC) $(CFLAGS) -c $^ -o $@
+src/systems/sysfuncs/%.o: src/systems/sysfuncs/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
 src/entities/%.o: src/entities/%.c
-	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
+	$(CC) $(CFLAGS) -c $^ -o $@
 src/components/%.o: src/components/%.c
-	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
+	$(CC) $(CFLAGS) -c $^ -o $@
 src/core/%.o: src/core/%.c
-	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
+	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
 	rm -f src/**/*.o
