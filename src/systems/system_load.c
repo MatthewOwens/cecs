@@ -98,20 +98,20 @@ static void cleanup()
 static void load_libs()
 {
 	printf("\t%s\n", __FUNCTION__);
-	printf("\tCECS_SYS_FUNCS = %s\n", XSTR(CECS_SYS_FUNCS));
+	printf("\tCECS_SYS_FUNCS = "XSTR(CECS_SYS_FUNCS) "\n");
 	//printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
 	#ifdef CECS_SYS_FUNCS
 	sysfuncs = DLOPEN(XSTR(CECS_SYS_FUNCS));
 	if(sysfuncs == NULL) {
 		fprintf(stderr,
-		"couldn't load system funcs (%s) DLOPEN returned DLEFMT\n",
-		XSTR(CECS_SYS_FUNCS), DLERROR());
+		"couldn't load system funcs (%s) DLOPEN returned:\n\t'"
+		XSTR(DLEFMT) "'\n", XSTR(CECS_SYS_FUNCS), DLERROR());
 		exit(-1);
 	} else { printf("CECS_SYS_FUNCS loaded!\n"); }
 	#endif
 
 	#ifdef CECS_USR_FUNCS
-	usrfuncs = DLOPEN(CECS_USR_FUNCS);
+	usrfuncs = DLOPEN(CECS_USR_FUNCS, RTLD_LAZY);
 	if(sysfuncs == NULL) {
 		fprintf(stderr,
 		"couldn't load user funcs (%s) DLOPEN returned DLEFMT\n",
