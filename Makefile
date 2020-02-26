@@ -1,13 +1,13 @@
 TARGET = libcecs.a
 TEST_TARGET = check
 COMP_TARGET = components
-SYS_TARGET = libcecssys.a
+SYS_TARGET = libcecssys.so
 
-LIBS = -lm -DCECS_SYS_FUNCS="$(SYS_TARGET)" -D_REENTRANT -std=c11 -lyaml 
-TEST_LIBS = $(LIBS)` pkg-config --libs check`
+LIBS = -lm -DCECS_SYS_FUNCS="$(SYS_TARGET)" -D_REENTRANT -std=c11 -lyaml -ldl
+TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = gcc
-CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems\
+CFLAGS = -g -Wall -fPIC -Isrc/core -Isrc/components -Isrc/systems\
  -Isrc/entities -v
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
@@ -53,9 +53,9 @@ $(TARGET): $(COMPG_OBJECTS) $(OBJECTS)
 	@echo "========== BUILDING CECS $(TARGET) =========="
 	ar rcs $(TARGET) $(OBJECTS)
 
-$(SYS_TARGET): $(SYSFN_OBJECTS) $(SYS_OBJECTS) $(CORE_OBJECTS)
-	@echo "========== BUILDING CECS $(TARGET) =========="
-	ar rcs $(SYS_TARGET) $(OBJECTS)
+$(SYS_TARGET): $(SYSFN_OBJECTS)
+	@echo "========== BUILDING CECS $(SYS_TARGET) =========="
+	$(CC) -shared -Wl,-soname,${SYS_TARGET} -o $(SYS_TARGET) $(SYSFN_OBJECTS)
 
 $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
@@ -65,7 +65,7 @@ $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo ""
 
 tests/%o: tests/%.c
-	$(CC) $(TEST_CFLAGS) -c $^ -o $@
+	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
 src/systems/%.o: src/systems/%.c
 	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
@@ -77,7 +77,7 @@ src/core/%.o: src/core/%.c
 	$(CC) $(CFLAGS) -c $^ $(LIBS) -o $@
 
 clean:
-	rm -f src/*.o
+	rm -f src/**/*.o
 	rm -f tests/*.o
 	rm -f $(TARGET)
 	rm -f $(COMP_TARGET)
