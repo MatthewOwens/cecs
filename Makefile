@@ -9,7 +9,7 @@ TEST_LIBS = $(LIBS) `pkg-config --libs check`
 CC = gcc
 CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems\
  -Isrc/entities -v
-CSOFLAGS = $(CFLAGS) -fPIC
+CSOFLAGS = $(CFLAGS) -c -fPIC
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
@@ -56,7 +56,9 @@ $(TARGET): $(COMPG_OBJECTS) $(OBJECTS)
 
 $(SYS_TARGET): $(SYSFN_OBJECTS)
 	@echo "========== BUILDING CECS $(SYS_TARGET) =========="
-	$(CC) -shared -Wl,-soname,${SYS_TARGET} -o $(SYS_TARGET) $(SYSFN_OBJECTS)
+	$(info $$LD_LIBRARY_PATH is [${LD_LIBRARY_PATH}]")
+	@echo "$LD_LIBRARY_PATH"
+	$(CC) -shared -Wl,-soname,${SYS_TARGET},-rpath=. -o $(SYS_TARGET) $(SYSFN_OBJECTS)
 
 $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
@@ -69,9 +71,9 @@ tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
 src/systems/%.o: src/systems/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CFLAGS) -DCECS_SYS_FUNCS=$(SYS_TARGET) -c $^ -o $@
 src/systems/sysfuncs/%.o: src/systems/sysfuncs/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(CSOFLAGS) -c $^ -o $@
 src/entities/%.o: src/entities/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 src/components/%.o: src/components/%.c
