@@ -3,7 +3,7 @@ TEST_TARGET = check
 COMP_TARGET = components
 SYS_TARGET = libcecssys.so
 
-LIBS = -lm -DCECS_SYS_FUNCS=$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml -ldl
+LIBS = -lm -DCECS_SYS_FUNCS=/home/mokou/git/cecs/$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml -ldl
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = gcc
@@ -71,7 +71,7 @@ tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
 src/systems/%.o: src/systems/%.c
-	$(CC) $(CFLAGS) -DCECS_SYS_FUNCS=$(SYS_TARGET) -c $^ -o $@
+	$(CC) $(CFLAGS) -DCECS_SYS_FUNCS=/home/mokou/git/cecs/$(SYS_TARGET) -c $^ -o $@
 src/systems/sysfuncs/%.o: src/systems/sysfuncs/%.c
 	$(CC) $(CSOFLAGS) -c $^ -o $@
 src/entities/%.o: src/entities/%.c
@@ -88,7 +88,7 @@ clean:
 	rm -f $(COMP_TARGET)
 	rm -f $(TEST_TARGET)
 	rm -f $(SYS_TARGET)
-	rm -f src/components.*
+	rm -f src/components/components.*
 
 FORCE:
 

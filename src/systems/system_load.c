@@ -88,7 +88,7 @@ enum parse_state{
 static void cleanup()
 {
 	#ifdef CECS_SYS_FUNCS
-		DLCLOSE(XSTR(sysfuncs));
+		DLCLOSE(sysfuncs);
 	#endif
 	#ifdef CECS_USR_FUNCS
 		DLCLOSE(usrfuncs);
@@ -98,7 +98,7 @@ static void cleanup()
 static void load_libs()
 {
 	printf("\t%s\n", __FUNCTION__);
-	printf("\tCECS_SYS_FUNCS = "XSTR(CECS_SYS_FUNCS) "\n");
+	printf("\tCECS_SYS_FUNCS = " XSTR(CECS_SYS_FUNCS) "\n");
 	//printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
 	#ifdef CECS_SYS_FUNCS
 	sysfuncs = DLOPEN(XSTR(CECS_SYS_FUNCS));
