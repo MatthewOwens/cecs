@@ -75,12 +75,20 @@ END_TEST
 
 START_TEST(movement_load_correct)
 {
+	cecs_system(cecs, "movement")->init(cecs);
+	cecs_system(cecs, "movement")->run();
+	cecs_system(cecs, "movement")->free();
+
 	ck_abort_msg("STUB!\n");
 }
 END_TEST
 
 START_TEST(movement_runs_correct)
 {
+	cecs_system(cecs, "pathing")->init(cecs);
+	cecs_system(cecs, "pathing")->run();
+	cecs_system(cecs, "pathing")->free();
+
 	ck_abort_msg("STUB!\n");
 }
 END_TEST
