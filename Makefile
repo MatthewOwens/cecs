@@ -3,7 +3,8 @@ TEST_TARGET = check
 COMP_TARGET = components
 SYS_TARGET = libcecssys.so
 
-LIBS = -lm -DCECS_SYS_FUNCS=/home/mokou/git/cecs/$(SYS_TARGET) -D_REENTRANT -std=c11 -lyaml -ldl
+MDEFS = -DCECS_SYS_FUNCS=$(SYS_TARGET)
+LIBS = -lm $(MDEFS) -D_REENTRANT -std=c11 -lyaml -ldl
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
 CC = gcc
@@ -64,14 +65,14 @@ $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
 	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING CECS TESTS =========="
-	./$(TEST_TARGET)
+	LD_LIBRARY_PATH=. ./$(TEST_TARGET)
 	@echo ""
 
 tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
 src/systems/%.o: src/systems/%.c
-	$(CC) $(CFLAGS) -DCECS_SYS_FUNCS=/home/mokou/git/cecs/$(SYS_TARGET) -c $^ -o $@
+	$(CC) $(CFLAGS) $(MDEFS) -c $^ -o $@
 src/systems/sysfuncs/%.o: src/systems/sysfuncs/%.c
 	$(CC) $(CSOFLAGS) -c $^ -o $@
 src/entities/%.o: src/entities/%.c
