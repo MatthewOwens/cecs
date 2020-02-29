@@ -41,16 +41,17 @@ jobs:
         run: |
           sudo apt-get install ${{ matrix.compiler }} --yes
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
-          git clone https://github.com/libcheck/check.git --branch 0.13.0
-          cd check
-          autoreconf --install
-          ./configure
-          make
-          make check
-          sudo make install
-          sudo ldconfig
-          cd ..
-          rm  -rf check
+          sudo apt-get install check
+          #git clone https://github.com/libcheck/check.git --branch 0.13.0
+          #cd check
+          #autoreconf --install
+          #./configure
+          #make
+          #make check
+          #sudo make install
+          #sudo ldconfig
+          #cd ..
+          #rm  -rf check
 
       - name: install dependencies (macOS)
         if: startsWith(matrix.os, 'macOS')
