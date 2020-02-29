@@ -63,10 +63,6 @@ jobs:
         run: make CC=${{ matrix.compiler }}
       - name: package
         run: make artifact
-
-  package:
-    needs: ci
-    steps:
       - uses: actions/upload-artifact@v1
         with:
           name: cecs
