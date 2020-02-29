@@ -35,6 +35,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
       - name: install dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
