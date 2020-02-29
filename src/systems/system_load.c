@@ -208,7 +208,7 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		struct cecs_system empty = {0};
 
 		// do we need to register the system from last time?
-		if(strcmp("", system->name) != 0){
+		if(system->name != NULL){
 			cecs_reg_system(cecs, system);
 		}
 		*system = empty;
@@ -236,7 +236,7 @@ static void parse_scalar(const char* value, enum parse_state* s,
 	prevValue = value;
 }
 
-static int parse_event(yaml_parser_t *p, struct *cecs cecs)
+static int parse_event(yaml_parser_t *p, struct cecs* cecs)
 {
 	yaml_event_t e;
 	static enum parse_state state;
@@ -246,8 +246,6 @@ static int parse_event(yaml_parser_t *p, struct *cecs cecs)
 		fprintf(stderr, "error parsing yml!\n");
 		return bad;
 	}
-
-	//print_yaml_event(&e);
 
 	switch (e.type) {
 	case YAML_SEQUENCE_START_EVENT:
