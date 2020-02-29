@@ -87,8 +87,9 @@ enum parse_state{
 	func_m
 };
 
-static void cleanup()
+void cecs_free_sys_yaml()
 {
+	printf("\t%s\n", __FUNCTION__);
 	#ifdef CECS_SYS_FUNCS
 		DLCLOSE(sysfuncs);
 	#endif
@@ -196,31 +197,21 @@ static void parse_scalar(const char* value, enum parse_state* s,
 
 	switch(*s){
 	case elem:
-		printf("elem - ");
 		*s = elem_m;
 		break;
 	case func:
-		printf("func - ");
 		*s = func_m;
 		break;
 	case sys:
 	{
 		struct cecs_system empty = {0};
-
-		// do we need to register the system from last time?
-		if(system->name != NULL){
-			cecs_reg_system(cecs, system);
-		}
 		*system = empty;
 		system->name = value;
-		printf("sys - ");
 		break;
 	}
 	case elem_m:
-		printf("   e - ");
 		break;
 	case func_m:
-		printf("   f - ");
 		if(strcmp(prevValue, "init") == 0) {
 			set_func(system, 0, value);
 		}
@@ -241,6 +232,7 @@ static int parse_event(yaml_parser_t *p, struct cecs* cecs)
 	yaml_event_t e;
 	static enum parse_state state;
 	static struct cecs_system system = {0};
+	static int mapping_depth = 0;
 
 	if(!yaml_parser_parse(p, &e)){
 		fprintf(stderr, "error parsing yml!\n");
@@ -252,8 +244,17 @@ static int parse_event(yaml_parser_t *p, struct cecs* cecs)
 		break;
 	case YAML_SEQUENCE_END_EVENT:
 		break;
+	case YAML_MAPPING_START_EVENT:
+		mapping_depth++;
+		if(mapping_depth == 1) {
+			state = sys;
+		}
+		break;
 	case YAML_MAPPING_END_EVENT:
-		state = sys;
+		mapping_depth--;
+		if(mapping_depth == 1) {
+			cecs_reg_system(cecs, &system);
+		}
 		break;
 	case YAML_ALIAS_EVENT:
 		fprintf(stderr, " ERROR: Got alias (anchor %s)\n",
@@ -264,11 +265,11 @@ static int parse_event(yaml_parser_t *p, struct cecs* cecs)
 		break;
 	case YAML_SCALAR_EVENT:
 		parse_scalar(e.data.scalar.value, &state, &system, cecs);
-		printf("\t%s\n", e.data.scalar.value);
 		break;
 	case YAML_DOCUMENT_END_EVENT:
 		// ensuring that state is isolated to a yaml document
 		state = none;
+		mapping_depth = 0;
 		return complete;
 	}
 
@@ -298,10 +299,8 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 	yaml_parser_delete(&parser);
 
 	if(status == bad) {
-		cleanup();
 		return cecse_msg(CECSE_INVALID_VALUE, "bad component yaml");
 	}
 
-	cleanup();
 	return cecse(CECSE_NONE);
 }

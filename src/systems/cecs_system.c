@@ -65,7 +65,6 @@ struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
 
 	for(int i = 0; i < cecs->num_systems; ++i){
 		if(strcmp(name, cecs->systems[i].name) != 0){
-			printf("continuing...");
 			continue;
 		}
 		if(cecs->systems[i].registered == true)

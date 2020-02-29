@@ -20,4 +20,4 @@
     functions:
       init: path_init
       work: path_run
-      tidy: path_tidy
+      tidy: path_clean

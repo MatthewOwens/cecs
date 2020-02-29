@@ -48,6 +48,7 @@ static void yaml_init()
 
 static void yaml_teardown()// TODO: stub
 {
+	cecs_free_sys_yaml();
 }
 
 START_TEST(systems_added)
@@ -69,7 +70,6 @@ START_TEST(systems_array_size)
 	 */ 
 	ck_assert_ptr_nonnull(&cecs->systems[0]);
 	ck_assert_ptr_nonnull(&cecs->systems[1]);
-	ck_assert_ptr_null(&cecs->systems[2]);
 }
 END_TEST
 
@@ -78,8 +78,6 @@ START_TEST(movement_load_correct)
 	ck_assert_ptr_nonnull(cecs_system(cecs, "movement")->init);
 	ck_assert_ptr_nonnull(cecs_system(cecs, "movement")->run);
 	ck_assert_ptr_nonnull(cecs_system(cecs, "movement")->free);
-
-	ck_abort_msg("STUB!\n");
 }
 END_TEST
 
@@ -88,8 +86,22 @@ START_TEST(movement_runs_correct)
 	cecs_system(cecs, "movement")->init(cecs);
 	cecs_system(cecs, "movement")->run();
 	cecs_system(cecs, "movement")->free();
+}
+END_TEST
 
-	ck_abort_msg("STUB!\n");
+START_TEST(pathing_load_correct)
+{
+	ck_assert_ptr_nonnull(cecs_system(cecs, "pathing")->init);
+	ck_assert_ptr_nonnull(cecs_system(cecs, "pathing")->run);
+	ck_assert_ptr_nonnull(cecs_system(cecs, "pathing")->free);
+}
+END_TEST
+
+START_TEST(pathing_runs_correct)
+{
+	cecs_system(cecs, "pathing")->init(cecs);
+	cecs_system(cecs, "pathing")->run();
+	cecs_system(cecs, "pathing")->free();
 }
 END_TEST
 
@@ -105,6 +117,8 @@ Suite * sys_yaml_suite(void)
 	tcase_add_test(yaml_load, systems_added);
 	tcase_add_test(yaml_load, movement_load_correct);
 	tcase_add_test(yaml_load, movement_runs_correct);
+	tcase_add_test(yaml_load, pathing_load_correct);
+	tcase_add_test(yaml_load, pathing_runs_correct);
 
 	suite_add_tcase(s, yaml_load);
 	return s;
