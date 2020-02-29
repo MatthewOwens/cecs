@@ -2,6 +2,18 @@ TARGET = libcecs.a
 TEST_TARGET = check
 COMP_TARGET = components
 SYS_TARGET = libcecssys.so
+DETECTED_OS = Unknown
+
+# os detection
+ifeq ($(OS),WINDOWS_NT)
+	DETECTED_OS := Windows
+else
+	DETECTED_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+endif
+
+ifeq ($(DETECTED_OS),Darwin)
+	SYS_TARGET = libcecssys.dylib
+endif
 
 MDEFS = -DCECS_SYS_FUNCS=$(SYS_TARGET)
 LIBS = -lm $(MDEFS) -D_REENTRANT -std=c11 -lyaml -ldl
@@ -57,9 +69,15 @@ $(TARGET): $(COMPG_OBJECTS) $(OBJECTS)
 
 $(SYS_TARGET): $(SYSFN_OBJECTS)
 	@echo "========== BUILDING CECS $(SYS_TARGET) =========="
-	$(info $$LD_LIBRARY_PATH is [${LD_LIBRARY_PATH}]")
-	@echo "$LD_LIBRARY_PATH"
+ifeq ($(DETECTED_OS),Linux)
 	$(CC) -shared -Wl,-soname,${SYS_TARGET},-rpath=. -o $(SYS_TARGET) $(SYSFN_OBJECTS)
+else ifeq ($(DETECTED_OS),Darwin)
+	$(CC) -dynamiclib -install_name $(SYS_TARGET) $(SYSFN_OBJECTS)
+else ifeq ($(DETECTED_OS),Windows_NT)
+	@echo "Windows builds are currently unsupported"
+else
+	@echo "Unknown OS"
+endif
 
 $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
@@ -95,6 +113,8 @@ FORCE:
 
 
 output:
+	@echo "==== OS ==="
+	@echo "$(DETECTED_OS)"
 	@echo "==== $(COMP_TARGET) ===="
 	@echo "object: $(COMPG_OBJECTS) ===="
 	@echo "==== $(TARGET) ===="
