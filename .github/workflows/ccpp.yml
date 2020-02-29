@@ -17,15 +17,15 @@ jobs:
         # Github Actions requires a single row to be added to the build matrix.
         #https://help.github.com/en/articles/workflow-syntax-for-github-actions
         name: [
-          ubuntu-latest-gcc,
-          macOS-latest-clang
+          ubuntu,
+          macOS
         ]
 
         include:
-          - name: ubuntu-latest-gcc
+          - name: ubuntu
             os: ubuntu-latest
             compiler: gcc
-          - name: macOS-latest-clang
+          - name: macOS
             os: macOS-latest
             compiler: clang
 
