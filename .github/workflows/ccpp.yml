@@ -51,7 +51,6 @@ jobs:
           cd ..
           rm  -rf check
 
-      - uses: actions/checkout@v1
       - name: install dependencies (macOS)
         if: startsWith(matrix.os, 'macOS')
         run: |
@@ -91,5 +90,5 @@ jobs:
         if: startsWith(matrix.os, 'macOS')
         uses: actions/upload-artifact@v1
         with:
-          name: cecs-{{ matrix.os }}-{{ matrix.compiler }}
+          name: cecs-${{ matrix.os }}-${{ matrix.compiler }}
           path: cecs
