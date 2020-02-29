@@ -72,7 +72,7 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@v1
         with:
-          name: cecs-{{ matrix.os }}-{{ matrix.compiler }}
+          name: cecs-${{ matrix.os }}-${{ matrix.compiler }}
           path: cecs
 
       - name: package (macOS)
