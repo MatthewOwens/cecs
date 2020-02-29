@@ -2,6 +2,7 @@ TARGET = libcecs.a
 TEST_TARGET = check
 COMP_TARGET = components
 SYS_TARGET = libcecssys.so
+ARTIFACT = cecs.zip
 DETECTED_OS = Unknown
 
 # os detection
@@ -86,6 +87,11 @@ $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	LD_LIBRARY_PATH=. ./$(TEST_TARGET)
 	@echo ""
 
+artifact:
+	rm -f $(ARTIFACT)
+	@echo "========== PACKAGING ARTIFACT =========="
+	zip $(ARTIFACT) $(TARGET) $(SYS_TARGET)
+
 tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
@@ -108,6 +114,7 @@ clean:
 	rm -f $(TEST_TARGET)
 	rm -f $(SYS_TARGET)
 	rm -f src/components/components.*
+	rm -f $(ARTIFACT)
 
 FORCE:
 
