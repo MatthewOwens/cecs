@@ -34,8 +34,8 @@ jobs:
             compiler: clang
 
     steps:
+      - uses: actions/checkout@v1
       - name: install dependencies (ubuntu)
-        uses: actions/checkout@v1
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get install ${{ matrix.compiler }} --yes
@@ -51,8 +51,8 @@ jobs:
           cd ..
           rm  -rf check
 
+      - uses: actions/checkout@v1
       - name: install dependencies (macOS)
-        uses: actions/checkout@v1
         if: startsWith(matrix.os, 'macOS')
         run: |
           brew install autoconf automake libtool check pkg-config libyaml
