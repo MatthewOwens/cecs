@@ -33,8 +33,8 @@ int cecs_reg_system(struct cecs* cecs, struct cecs_system* sys)
 		}
 	}
 
+	int target = 1;
 	if(sysptr == NULL){
-		int target = 1;
 		if(cecs->num_systems > 0) { target = cecs->num_systems * 2; }
 
 		void *tmp = obsdreallocarray(cecs->systems, target,
@@ -49,7 +49,7 @@ int cecs_reg_system(struct cecs* cecs, struct cecs_system* sys)
 	sys->registered = true;	// just making sure
 	memcpy(sysptr, sys, sizeof(struct cecs_system));
 
-	cecs->num_systems *= 2;
+	cecs->num_systems = target;
 	return cecse(CECSE_NONE);
 }
 
