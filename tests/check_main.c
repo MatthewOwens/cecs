@@ -14,11 +14,11 @@ int main(void)
 	int failed_count = 0;
 
 	failed_count += run_suite(test_suite());
-	failed_count += run_suite_forkless(arr_suite());
+	failed_count += run_suite(arr_suite());
 	failed_count += run_suite(cecs_suite());
 	failed_count += run_suite(comp_yaml_suite());
 	failed_count += run_suite(ent_yaml_suite());
-	failed_count += run_suite(sys_yaml_suite());
+	failed_count += run_suite_forkless(sys_yaml_suite());
 
 	return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

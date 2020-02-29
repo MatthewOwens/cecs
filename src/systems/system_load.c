@@ -1,6 +1,8 @@
 #include "system_load.h"
+#include "cecs_system.h"
 #include "yaml_helper.h"
 #include "cecs_err.h"
+#include "cecs.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,15 +13,18 @@
 #define N_FUNCTIONS 3
 
 // preprocessor magic for includes
+
+#define XSTR(x) STR(x)
+#define STR(x) #x
 #ifdef CECS_SYS_FUNCS
-	#pragma message "CECS_SYS_FUNCS set to " STRING(CECS_SYS_FUNCS)
+	#pragma message "CECS_SYS_FUNCS set to " XSTR(CECS_SYS_FUNCS)
 #else
 	//#error "CECS_SYS_FUNCS is undefined!" 
 	#warning "CECS_SYS_FUNCS is undefined!" //TODO: switch to error
 #endif
 
 #ifdef CECS_USR_FUNCS
-	#pragma message "CECS_USR_FUNCS set to " STRING(CECS_USR_FUNCS)
+	#pragma message "CECS_USR_FUNCS set to " XSTR(CECS_USR_FUNCS)
 #else
 	#warning "CECS_USR_FUNCS is undefined!" 
 #endif
@@ -85,30 +90,30 @@ enum parse_state{
 static void cleanup()
 {
 	#ifdef CECS_SYS_FUNCS
-		DLCOSE(sysfuncs);
+		DLCLOSE(sysfuncs);
 	#endif
 	#ifdef CECS_USR_FUNCS
-		DLCOSE(usrfuncs);
+		DLCLOSE(usrfuncs);
 	#endif
 }
 
 static void load_libs()
 {
 	printf("\t%s\n", __FUNCTION__);
-	printf("\tCECS_SYS_FUNCS = %s\n", CECS_SYS_FUNCS);
-	printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
+	printf("\tCECS_SYS_FUNCS = " XSTR(CECS_SYS_FUNCS) "\n");
+	//printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
 	#ifdef CECS_SYS_FUNCS
-	sysfuncs = DLOPEN(CECS_SYS_FUNCS);
+	sysfuncs = DLOPEN(XSTR(CECS_SYS_FUNCS));
 	if(sysfuncs == NULL) {
 		fprintf(stderr,
-		"couldn't load system funcs (%s) DLOPEN returned DLEFMT\n",
-		CECS_SYS_FUNCS, DLERROR());
+		"couldn't load system funcs (%s) DLOPEN returned:\n\t'"
+		XSTR(DLEFMT) "'\n", XSTR(CECS_SYS_FUNCS), DLERROR());
 		exit(-1);
 	} else { printf("CECS_SYS_FUNCS loaded!\n"); }
 	#endif
 
 	#ifdef CECS_USR_FUNCS
-	usrfuncs = DLOPEN(CECS_USR_FUNCS);
+	usrfuncs = DLOPEN(CECS_USR_FUNCS, RTLD_LAZY);
 	if(sysfuncs == NULL) {
 		fprintf(stderr,
 		"couldn't load user funcs (%s) DLOPEN returned DLEFMT\n",
@@ -140,14 +145,50 @@ static void set_scalar_state(const char* value, enum parse_state* s)
 	}
 }
 
-static void set_func(struct cecs_system* system, int iwt)
+//TODO: test set_func()
+static void set_func(struct cecs_system* system, int iwt, const char* value)
 {
-	//TODO: load user/engine functions
-	//TODO: stub
+	sys_init_func* i = NULL;
+	sys_run_func* w = NULL;
+	sys_tidy_func* t = NULL;
+
+	void **sel = NULL;
+	void **target = NULL;
+	char str = "";
+
+	switch(iwt){
+	case 0:
+		sel = &i;
+		str = "init";
+		target = &system->init;
+		break;
+	case 1:
+		sel = &w;
+		str = "work";
+		target = &system->run;
+		break;
+	case 2:
+		sel = &t;
+		str = "tidy";
+		target = &system->free;
+		break;
+	}
+
+	*sel = DLFUNC(usrfuncs, value);
+	if (*sel == NULL) { 
+		*sel = DLFUNC(sysfuncs, value);
+	}
+
+	if(sel == NULL) {
+		fprintf(stderr,
+		"ERROR: " XSTR(DLFUNC) " couldn't match symbol %s\n", value);
+	} else {
+		*target = *sel;
+	}
 }
 
 static void parse_scalar(const char* value, enum parse_state* s,
-		struct cecs_system* system)
+		struct cecs_system* system, struct cecs *cecs)
 {
 	static char* prevValue = NULL;
 	set_scalar_state(value, s);
@@ -165,9 +206,14 @@ static void parse_scalar(const char* value, enum parse_state* s,
 	case sys:
 	{
 		struct cecs_system empty = {0};
-		printf("sys - ");
+
+		// do we need to register the system from last time?
+		if(system->name != NULL){
+			cecs_reg_system(cecs, system);
+		}
 		*system = empty;
 		system->name = value;
+		printf("sys - ");
 		break;
 	}
 	case elem_m:
@@ -175,16 +221,22 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		break;
 	case func_m:
 		printf("   f - ");
-		if(strcmp(prevValue, "init") == 0) { set_func(system, 0); }
-		else if(strcmp(prevValue, "work") == 0) { set_func(system, 1);}
-		else if(strcmp(prevValue, "tidy") == 0) { set_func(system, 2);}
+		if(strcmp(prevValue, "init") == 0) {
+			set_func(system, 0, value);
+		}
+		else if(strcmp(prevValue, "work") == 0) {
+			set_func(system, 1, value);
+		}
+		else if(strcmp(prevValue, "tidy") == 0) {
+			set_func(system, 2, value);
+		}
 		break;
 	}
 
 	prevValue = value;
 }
 
-static int parse_event(yaml_parser_t *p)
+static int parse_event(yaml_parser_t *p, struct cecs* cecs)
 {
 	yaml_event_t e;
 	static enum parse_state state;
@@ -194,8 +246,6 @@ static int parse_event(yaml_parser_t *p)
 		fprintf(stderr, "error parsing yml!\n");
 		return bad;
 	}
-
-	//print_yaml_event(&e);
 
 	switch (e.type) {
 	case YAML_SEQUENCE_START_EVENT:
@@ -213,7 +263,7 @@ static int parse_event(yaml_parser_t *p)
 		return bad;
 		break;
 	case YAML_SCALAR_EVENT:
-		parse_scalar(e.data.scalar.value, &state, &system);
+		parse_scalar(e.data.scalar.value, &state, &system, cecs);
 		printf("\t%s\n", e.data.scalar.value);
 		break;
 	case YAML_DOCUMENT_END_EVENT:
@@ -243,7 +293,7 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 	load_libs();
 
 	do {
-		status = parse_event(&parser);
+		status = parse_event(&parser, cecs);
 	} while(status == good);
 	yaml_parser_delete(&parser);
 
