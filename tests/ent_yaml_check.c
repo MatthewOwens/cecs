@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "runner.h"
 #include "entity_load.h"
-#include <cyaml/cyaml.h>
 #include "components.h"
 
 #define ENTITY_COUNT 5
