@@ -72,7 +72,7 @@ $(SYS_TARGET): $(SYSFN_OBJECTS)
 ifeq ($(DETECTED_OS),Linux)
 	$(CC) -shared -Wl,-soname,${SYS_TARGET},-rpath=. -o $(SYS_TARGET) $(SYSFN_OBJECTS)
 else ifeq ($(DETECTED_OS),Darwin)
-	$(CC) -dynamiclib -install_name $(SYS_TARGET) $(SYSFN_OBJECTS)
+	$(CC) -dynamiclib -install_name $(SYS_TARGET) -o $(SYS_TARGET) $(SYSFN_OBJECTS)
 else ifeq ($(DETECTED_OS),Windows_NT)
 	@echo "Windows builds are currently unsupported"
 else
