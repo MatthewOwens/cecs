@@ -34,8 +34,8 @@ jobs:
             compiler: clang
 
     steps:
-      - uses: actions/checkout@v1
       - name: install dependencies (ubuntu)
+        uses: actions/checkout@v1
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get install ${{ matrix.compiler }} --yes
@@ -50,38 +50,46 @@ jobs:
           sudo ldconfig
           cd ..
           rm  -rf check
-      - uses: actions/checkout@v1
+
       - name: install dependencies (macOS)
+        uses: actions/checkout@v1
         if: startsWith(matrix.os, 'macOS')
         run: |
           brew install autoconf automake libtool check pkg-config libyaml
+
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
+
       - name: components
         run: make components CC=${{ matrix.compiler }}
+
       - name: cecs
         run: make CC=${{ matrix.compiler }}
+
       - name: package (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           mkdir cecs
           cp *.so cecs
           cp *.a cecs
+
       - name: upload artifact (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
-      - uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v1
         with:
           name: cecs-{{ matrix.os }}-{{ matrix.compiler }}
           path: cecs
+
       - name: package (macOS)
         if: startsWith(matrix.os, 'macOS')
         run: |
           mkdir cecs
           cp *.dylib cecs
           cp *.a cecs
+
       - name: upload artifact (macOS)
         if: startsWith(matrix.os, 'macOS')
-      - uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v1
         with:
           name: cecs-{{ matrix.os }}-{{ matrix.compiler }}
           path: cecs
