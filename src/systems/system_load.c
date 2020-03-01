@@ -210,6 +210,7 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		break;
 	}
 	case elem_m:
+		//TODO: parse reads, writes, ignores & runtype
 		break;
 	case func_m:
 		if(strcmp(prevValue, "init") == 0) {
