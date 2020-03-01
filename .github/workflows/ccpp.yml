@@ -95,19 +95,6 @@ jobs:
   release:
     needs: ci
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [
-          ubuntu,
-          macOS
-        ]
-
-        include:
-          - name: ubuntu
-            os: ubuntu-latest
-          - name: macOS
-            os: macOS-latest
     steps:
       - uses: actions/checkout@v1
 
@@ -120,6 +107,18 @@ jobs:
           echo "::set-env name=VPATCH::$(cut -d . -f3 .version)"
           echo "::set-env name=VERSION::v$(cat .version)"
 
+      - name: set release variables (draft)
+        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
+        run: |
+          echo "::set-env name=DRAFT::true"
+          echo "::set-env name=RSUFFIX::-draft"
+
+      - name: set release variables
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          echo "::set-env name=DRAFT::false"
+          echo "::set-env name=RSUFFIX::"
+
       - name: create release
         id: create-release
         if: github.event_name == 'push' && github.ref != 'refs/heads/master'
@@ -128,22 +127,35 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}${{ env.RSUFFIX }}
           draft: true
   
       - name: get artifacts
         if: github.event_name == 'push'
         run: |
-          aws s3 cp s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip\
-           cecs-${{ matrix.name }}-$VERSION
+          aws s3 cp s3://$BUCKET/ubuntu-latest/cecs-$GITHUB_SHA.zip\
+           cecs-linux-$VERSION
+          aws s3 cp s3://$BUCKET/macOS-latest/cecs-$GITHUB_SHA.zip\
+           cecs-darwin-$VERSION
 
-      - name: upload release artifacts
+      - name: upload release artifacts (linux)
         if: github.event_name == 'push'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./cecs-${{ matrix.name }}-${{ env.VERSION }}
-          asset_name: cecs-${{ matrix.name }}-${{ env.VERSION }}
+          asset_path: ./cecs-linux-${{ env.VERSION }}
+          asset_name: cecs-linux-latest-${{ env.VERSION }}
+          asset_content_type: application/zip
+
+      - name: upload release artifacts (macos)
+        if: github.event_name == 'push'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./cecs-darwin-${{ env.VERSION }}
+          asset_name: cecs-darwin-latest-${{ env.VERSION }}
           asset_content_type: application/zip
