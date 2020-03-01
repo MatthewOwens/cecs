@@ -88,5 +88,5 @@ jobs:
           aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BUCKET: ${{ secrets.AWS_S3_BUCKET }}
