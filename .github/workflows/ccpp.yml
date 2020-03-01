@@ -31,6 +31,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - uses: chrislennon/action-aws-cli@v1.1
 
       - name: install dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
@@ -68,13 +69,6 @@ jobs:
           cp *.so cecs
           cp *.a cecs
 
-      - name: upload artifact (ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/upload-artifact@v1
-        with:
-          name: cecs-${{ matrix.os }}-${{ matrix.compiler }}
-          path: cecs
-
       - name: package (macOS)
         if: startsWith(matrix.os, 'macOS')
         run: |
@@ -82,9 +76,17 @@ jobs:
           cp *.dylib cecs
           cp *.a cecs
 
-      - name: upload artifact (macOS)
-        if: startsWith(matrix.os, 'macOS')
+      - name: upload artifact (github)
         uses: actions/upload-artifact@v1
         with:
-          name: cecs-${{ matrix.os }}-${{ matrix.compiler }}
+          name: cecs-${{ matrix.os }}
           path: cecs
+
+      - name: upload artifact (s3)
+        run: |
+          zip -r cecs.zip cecs
+          aws s3 cp cecs.zip s3://$BUCKET cecs-${{ matrix.os }}-$GITHUB_SHA.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          BUCKET: ${{ secrets.AWS_S3_BUCKET }}
