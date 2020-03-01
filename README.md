@@ -7,6 +7,8 @@
 <a href="https://github.com/MatthewOwens/cecs/issues"><img alt="Issues" src="https://img.shields.io/github/issues-raw/MatthewOwens/cecs.svg"/></a>
 </p>
 
+![pipeline](https://github.com/MatthewOwens/cecs/workflows/pipeline/badge.svg)
+
 ## Summary
 small entity-component-system written in C. The purpose of this project is 3-fold:
 * brush up on c (again)
