@@ -19,8 +19,7 @@
 #ifdef CECS_SYS_FUNCS
 	#pragma message "CECS_SYS_FUNCS set to " XSTR(CECS_SYS_FUNCS)
 #else
-	//#error "CECS_SYS_FUNCS is undefined!" 
-	#warning "CECS_SYS_FUNCS is undefined!" //TODO: switch to error
+	#error "CECS_SYS_FUNCS is undefined!" 
 #endif
 
 #ifdef CECS_USR_FUNCS
