@@ -269,7 +269,6 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		system->name = value;
 		break;
 	}
-	//TODO: parse reads, writes, ignores & runtype
 	case rt_m:
 		set_runtype(value, system);
 		break;
