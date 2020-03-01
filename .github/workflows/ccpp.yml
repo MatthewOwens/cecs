@@ -85,7 +85,7 @@ jobs:
       - name: upload artifact (s3)
         run: |
           zip -r cecs.zip cecs
-          aws s3 cp cecs.zip s3://$BUCKET cecs-${{ matrix.os }}-$GITHUB_SHA.zip
+          aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
