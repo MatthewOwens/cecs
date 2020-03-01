@@ -97,6 +97,7 @@ jobs:
 
   release:
     needs: ci
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -111,30 +112,28 @@ jobs:
           echo "::set-env name=VERSION::v$(cat .version)"
 
       - name: set release variables (draft)
-        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
+        if: github.ref != 'refs/heads/master'
         run: |
           echo "::set-env name=DRAFT::true"
           echo "::set-env name=RSUFFIX::-draft"
 
       - name: set release variables
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master'
         run: |
           echo "::set-env name=DRAFT::false"
           echo "::set-env name=RSUFFIX::"
 
       - name: create release
         id: create-release
-        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.VERSION }}
           release_name: Release ${{ env.VERSION }}${{ env.RSUFFIX }}
-          draft: true
+          draft: ${{ env.DRAFT }}
   
       - name: get artifacts
-        if: github.event_name == 'push'
         run: |
           aws s3 cp s3://$BUCKET/ubuntu-latest/cecs-$GITHUB_SHA.zip\
            cecs-linux-$VERSION
@@ -142,7 +141,6 @@ jobs:
            cecs-darwin-$VERSION
 
       - name: upload release artifacts (linux)
-        if: github.event_name == 'push'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -153,7 +151,6 @@ jobs:
           asset_content_type: application/zip
 
       - name: upload release artifacts (macos)
-        if: github.event_name == 'push'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
