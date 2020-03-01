@@ -105,4 +105,23 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name);
 ```
 
 ### Systems
-documentation required
+Systems iterate across components that they are interested in and can run
+per-frame, on init or with a direct call to the system.
+
+Each system is associated with three functions: `init`, `work` and `run`.
+These funcitons are loaded dynamically from one of two shared object files.
+[CECS_SYS_FUNCS](src/systems/sys_funcs/sys_funcs.c) is defined and compiled
+here, whereas CECS_USR_FUNCS is defined by _you_ and can overwrite the system
+functions.
+For an example of building a dynamic library and linking it to your application,
+please see the `$(SYS_TARGET` recipe in the [Makefile](Makefile)
+
+#### Defining entities with YAML
+Similarly to components, only a subset of YAML is supported in defining
+systems.
+An example of systems defined in YAML can be found in
+[systems.yml](systems.yml)
+
+#### Under the hood
+systems are currently only loaded into their respective data structure. As an
+engine to utilise this project is still to be created.
