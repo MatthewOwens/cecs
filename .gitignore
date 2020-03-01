@@ -54,4 +54,7 @@ CmakeLists.txtt
 src/notes.md
 
 # generated files
-src/components.*
+src/components/components.*
+
+# Valgrind log
+log

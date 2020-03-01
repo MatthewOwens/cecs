@@ -7,86 +7,49 @@
 #include <stdbool.h>
 #include "openbsd-reallocarray.h"
 
-int cecs_reg_system(struct cecs* cecs, const char* name)
+int cecs_reg_system(struct cecs* cecs, struct cecs_system* sys)
 {
-	printf("registering cecs system %s\n", name);
+	if(sys == NULL) {
+		return cecse_msg(CECSE_INVALID_VALUE,
+			"tried to register system, but sys is NULL\n");
+	}
+	printf("registering cecs system %s\n", sys->name);
 	printf("checking if sys with that name already exists...\n");
 	if(cecs == NULL) {
 		return cecse(CECSE_NULL);
 	} else if (cecs->state != CECS_UNINITILISED) {
 		return cecse(CECSE_INVALID_OPERATION);
-	} else if (cecs_system(cecs, name) != NULL) {
-		fprintf(stderr, "\tsystem with name %s already exists!\n", name);
+	} else if (cecs_system(cecs, sys->name) != NULL) {
+		fprintf(stderr, "\tsystem with name %s already exists!\n",
+				sys->name);
 		return cecse(CECSE_INVALID_VALUE);
 	}
 
-	struct cecs_system* sys = NULL;
+	struct cecs_system* sysptr = NULL;
 	for(int i = 0; i < cecs->num_systems; ++i){
 		if(&cecs->systems[i] == NULL){
-			sys = &cecs->systems[i];
+			sysptr = &cecs->systems[i];
 			break;
 		}
 	}
 
-	if(sys == NULL){
-		void* tmp = obsdreallocarray(cecs->systems, cecs->num_systems+1,
-		sizeof(struct cecs_system));
+	int target = 1;
+	if(sysptr == NULL){
+		if(cecs->num_systems > 0) { target = cecs->num_systems * 2; }
+
+		void *tmp = obsdreallocarray(cecs->systems, target,
+			sizeof(struct cecs_system));
 
 		if(tmp == NULL) { return cecse(CECSE_NOMEM); }
 
 		cecs->systems = tmp;
-		sys = &cecs->systems[cecs->num_systems];
+		sysptr = &cecs->systems[cecs->num_systems];
 	}
 
-	// setting defaults
-	sys->inclusion_mask = 0;
-	sys->exclusion_mask = 0;
-	sys->name = name;
+	sys->registered = true;	// just making sure
+	memcpy(sysptr, sys, sizeof(struct cecs_system));
 
-	sys->init = NULL;
-	sys->run = NULL;
-	sys->free = NULL;
-	sys->registered = true;
-
-	cecs->num_systems += 1;
-	return cecse(CECSE_NONE);
-}
-
-int cecs_sys_set_incl(struct cecs* cecs, const char* name, uint32_t incl_mask)
-{
-	struct cecs_system* sys = NULL;
-	sys = cecs_system(cecs, name);
-	if(sys == NULL)
-		return cecse(CECSE_INVALID_VALUE);
-
-	sys->inclusion_mask = incl_mask;
-	return cecse(CECSE_NONE);
-}
-
-int cecs_sys_set_excl(struct cecs* cecs, const char* name, uint32_t excl_mask)
-{
-	struct cecs_system* sys = NULL;
-	sys = cecs_system(cecs, name);
-	if(sys == NULL)
-		return cecse(CECSE_INVALID_VALUE);
-
-	sys->exclusion_mask = excl_mask;
-	return cecse(CECSE_NONE);
-}
-
-int cecs_sys_set_funcs(struct cecs* cecs, const char* name,
-			sys_init_func init,
-			sys_run_func run,
-			sys_free_func free)
-{
-	struct cecs_system* sys = NULL;
-	sys = cecs_system(cecs, name);
-	if(sys == NULL)
-		return cecse(CECSE_INVALID_VALUE);
-
-	sys->init = init;
-	sys->run = run;
-	sys->free = free;
+	cecs->num_systems = target;
 	return cecse(CECSE_NONE);
 }
 
@@ -102,14 +65,14 @@ struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
 
 	for(int i = 0; i < cecs->num_systems; ++i){
 		if(strcmp(name, cecs->systems[i].name) != 0){
-			printf("continuing...");
 			continue;
 		}
 		if(cecs->systems[i].registered == true)
 			return &cecs->systems[i];
 		else
 		{
-			printf("%s.registered is %d\n", cecs->systems[i].name, cecs->systems[i].registered);
+			printf("%s.registered is %d\n", cecs->systems[i].name,
+					cecs->systems[i].registered);
 			return NULL;
 		}
 	}
@@ -132,7 +95,7 @@ int cecs_rem_system(struct cecs* cecs, const char* name)
 		strcpy(buf, x);
 		strcpy(buf+strlen(x), name);
 		strcpy(buf+strlen(x)+strlen(name), y);
-		cecse_msg(CECSE_INVALID_VALUE, buf);
+		return cecse_msg(CECSE_INVALID_VALUE, buf);
 	}
 
 	sys->registered = false;

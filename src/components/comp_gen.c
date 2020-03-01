@@ -9,22 +9,9 @@
 #include <string.h>
 #include <yaml.h>
 #include <errno.h>
+#include "yaml_helper.h"
 
 static char* outfiles[2];
-static char* yaml_events[YAML_MAPPING_END_EVENT + 1]=
-{
-	"YAML_NO_EVENT",
-	"YAML_STREAM_START_EVENT",
-	"YAML_STREAM_END_EVENT",
-	"YAML_DOCUMENT_START_EVENT",
-	"YAML_DOCUMENT_END_EVENT",
-	"YAML_ALIAS_EVENT",
-	"YAML_SCALAR_EVENT",
-	"YAML_SEQUENCE_START_EVENT",
-	"YAML_SEQUENCE_END_EVENT",
-	"YAML_MAPPING_START_EVENT",
-	"YAML_MAPPING_END_EVENT"
-};
 
 static char* types[3] = 
 {
@@ -73,7 +60,7 @@ void set_outfiles(char* dir, char *name)
 		outfiles[i] = malloc(strlen(dir) + strlen(name) + 3);
 		if(strlen(dir) != 0) {
 			strcpy(outfiles[i], dir);
-			strcat(outfiles[i], "/");//TODO windows compat
+			strcat(outfiles[i], "/"); //TODO: windows compat
 		}
 		strcat(outfiles[i], name);
 		strcat(outfiles[i], end[i]);
@@ -81,7 +68,7 @@ void set_outfiles(char* dir, char *name)
 }
 
 /* possible types are string, float or int */
-int determine_type(const char* value)	//TODO: stub
+int determine_type(const char* value)
 {
 	char* p = value;
 	errno = 0;
@@ -120,7 +107,7 @@ int parse_event(yaml_parser_t *p, yaml_event_t *e, FILE *c, FILE *h, FILE *t)
 	/*********************
 	 * printing the event *
 	 ********************/
-	printf("event: %s", yaml_events[e->type]);
+	print_yaml_event(e);
 	if(e->type == YAML_SCALAR_EVENT){
 		printf("\t| %s\n", e->data.scalar.value);
 	} else if (e->type == YAML_MAPPING_START_EVENT){

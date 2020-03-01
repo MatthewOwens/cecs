@@ -1,13 +1,23 @@
-movement:
-  reads:
-    - velocity
-    - uvs
-  writes:
-    - position
-  ignores:
-    - name
-  runtype: per-frame
-  functions:
-    init: tsys_init
-    work: tsys_run
-    free: free
+- movement:
+    reads:
+      - velocity
+    writes:
+      - position
+    ignores:
+      - name
+    runtype: per-frame
+    functions:
+      init: tsys_init
+      work: tsys_run
+      tidy: tsys_clean
+- pathing:
+    reads:
+      - position
+      - name
+    writes:
+      - velocity
+    runtype: per-frame
+    functions:
+      init: path_init
+      work: path_run
+      tidy: path_clean

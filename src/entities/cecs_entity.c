@@ -4,6 +4,7 @@
 #include "openbsd-reallocarray.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 // returns null if there is none available, ptr to inactive entity if available
@@ -44,6 +45,7 @@ int extend_components(struct cecs* cecs)
 	const char* err = "can't extend component array!\n";
 	int i;
 	int target_size = cecs->num_entities * 2;
+	int old_size = cecs->num_entities;
 
 	if(target_size == 0)
 		target_size = 1;
@@ -61,8 +63,8 @@ int extend_components(struct cecs* cecs)
 	}
 
 	// extend inactives array to accomodate new entries
-	for(i = 1; i < cecs->num_entities; ++i){
-		array_push(cecs->free_entities, cecs->num_entities + i);
+	for(i = old_size; i < cecs->num_entities; ++i){
+		array_push(cecs->free_entities, &cecs->entities[i]);
 	}
 	return cecse(CECSE_NONE);
 }
@@ -76,15 +78,30 @@ int need_components_extended(struct cecs* cecs)
 	return (cecs->free_entities.length == 0);
 }
 
-int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
+int cecs_add_entity(struct cecs* cecs, char* name, struct cecs_entity** out)
 {
-	void* tmp = NULL;
 	if(cecs == NULL) return cecse(CECSE_NULL);
-	if(ent == NULL) return cecse_msg(CECSE_INVALID_VALUE, "cecs_add_entity");
-	ent = get_inactive_entity(cecs);
+
+	void* tmp = NULL;
+	struct cecs_entity* inactive = get_inactive_entity(cecs);
+	struct cecs_entity* selection = NULL;
+	static uint32_t id = 0; 
+
+
+	// checking that the entity named has been registered
+	for(int i = 0; i < cecs->registered_entity_names.length; ++i){
+		if(strcmp(name, cecs->registered_entity_names.data[i]) == 0){
+			selection = &(cecs->registered_entities.data[i]);
+			break;
+		}
+	}
+	if(selection == NULL){
+		return cecse_msg(CECSE_INVALID_VALUE,
+			"cecs_add_entity: requested entity doesn't exist!");
+	}
 
 	// if there are no inactive entities
-	if(ent == NULL) {
+	if(inactive == NULL) {
 		if(need_components_extended(cecs)) extend_components(cecs);
 
 		cecs->num_entities++;
@@ -93,20 +110,22 @@ int cecs_add_entity(struct cecs* cecs, struct cecs_entity* ent)
 
 		if(tmp == NULL) return cecse(CECSE_NOMEM);
 		cecs->entities = tmp;
-		ent = &cecs->entities[cecs->num_entities - 1];
+		*out = &cecs->entities[cecs->num_entities - 1];
 		// setting the identity id to it's position in our array
-		ent->id = cecs->num_entities - 1;
 	} else {
-		ent->mask = 0;
+		*out = inactive;
 		array_pop(cecs->free_entities);
 	}
 
-	// ensuring that no keys are associated with the new entitiy
-	ent->mask = 0;
+	// basic, but ensures that each entity as a unique id
+	id++;
+	(*out)->id = id;
+	(*out)->mask = selection->mask;
+
 	return cecse(CECSE_NONE);
 }
 
-int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
+int cecs_rem_entity(struct cecs* cecs, struct cecs_entity** ent)
 {
 	if(cecs == NULL) return cecse(CECSE_NULL);
 	if(ent == NULL){
@@ -121,7 +140,7 @@ int cecs_rem_entity(struct cecs* cecs, struct cecs_entity* ent)
 	}
 
 	// flagging the entity for removal
-	array_push(cecs->free_entities, ent);
+	array_push(cecs->free_entities, *ent);
 	return cecse(CECSE_NONE);
 }
 
@@ -134,7 +153,7 @@ int cecs_ent_add_component(struct cecs *cecs, uint32_t id, char* name)
 	if(is_inactive(cecs, id) == 0) return cecse(CECSE_INVALID_VALUE);
 
 	uint32_t key = cecs_component_key(cecs, name);
-	if(key == 0) return cecse(CECSE_INVALID_VALUE);
+	if(key == -1) return cecse(CECSE_INVALID_VALUE);
 
 	// adding the key to the entity
 	ent->mask = ent->mask | key;
@@ -150,9 +169,44 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	if(is_inactive(cecs, id) == 0) return cecse(CECSE_INVALID_VALUE);
 
 	uint32_t key = cecs_component_key(cecs, name);
-	if(key == 0) return cecse(CECSE_INVALID_VALUE);
+	if(key == -1) return cecse(CECSE_INVALID_VALUE);
 
 	// removing the key to the entity using bitwise xor
 	ent->mask = ent->mask ^ key;
 	return cecse(CECSE_NONE);
+}
+
+int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps)
+{
+	if (cecs == NULL) { return cecse_msg(CECSE_NULL, __FUNCTION__); }
+	if (name == NULL){
+		return cecse_msg(CECSE_INVALID_VALUE, __FUNCTION__);
+	}
+
+	uint32_t key;
+	struct cecs_entity ent;
+	ent.mask = 0;
+	ent.id = -1;
+
+	/*
+	* building our entity mask, we can return from here if reg. fails
+	* since we don't allocate anything on the heap in this loop
+	*/
+	for(int i = 0; i < n_comps; ++i) {
+		key = cecs_component_key(cecs, comps[i]);
+		if(key == -1) {
+			return cecse_msg(CECSE_INVALID_VALUE,
+			"can't register entity, component doesn't exist");
+		}
+
+		ent.mask = ent.mask | key;
+	}
+	
+	/*
+ 	 * using strdup since the pointer passed in to here will be freed
+ 	 * when the yaml loader finishes
+ 	 */
+	char *tmp = strdup(name);
+	array_push(cecs->registered_entities, ent);
+	array_push(cecs->registered_entity_names, tmp);
 }

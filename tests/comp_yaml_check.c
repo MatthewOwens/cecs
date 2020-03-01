@@ -1,12 +1,10 @@
 #include "cecs.h"
 #include "runner.h"
 #include "components.h"
-#include <cyaml/cyaml.h>
 #include <check.h>
 #include <stdio.h>
 
 static struct cecs *cecs = NULL;
-
 
 void comp_yaml_init()
 {

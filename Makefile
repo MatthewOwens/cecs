@@ -1,11 +1,29 @@
 TARGET = libcecs.a
 TEST_TARGET = check
+COMP_TARGET = components
+SYS_TARGET = libcecssys.so
+ARTIFACT = cecs.zip
+DETECTED_OS = Unknown
 
-LIBS = -lm -D_REENTRANT -std=c11 -lyaml -lcyaml
+# os detection
+ifeq ($(OS),WINDOWS_NT)
+	DETECTED_OS := Windows
+else
+	DETECTED_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+endif
+
+ifeq ($(DETECTED_OS),Darwin)
+	SYS_TARGET = libcecssys.dylib
+endif
+
+MDEFS = -DCECS_SYS_FUNCS=$(SYS_TARGET)
+LIBS = -lm $(MDEFS) -D_REENTRANT -std=c11 -lyaml -ldl
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
 
-CC = clang
-CFLAGS = -g -Wall -L/usr/lib -Isystems/ -Icomponents/ -Isrc/ -I/usr/local/include
+CC = gcc
+CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems\
+ -Isrc/entities -v
+CSOFLAGS = $(CFLAGS) -c -fPIC
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
@@ -13,12 +31,24 @@ TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 default: all
 all: $(TARGET) $(TEST_TARGET)
 
-ORIG_OBJECTS = $(patsubst src/%.c, src/%.o, $(wildcard src/**/*.c))
-ORIG_OBJECTS += $(patsubst src/%.c, src/%.o, $(wildcard src/*.c))
+CORE_OBJECTS = $(patsubst src/core/%.c, src/core/%.o, $(wildcard src/core/*.c))
+COMP_OBJECTS = $(patsubst src/components/%.c, src/components/%.o,\
+$(wildcard src/components/*.c))
+ENT_OBJECTS = $(patsubst src/entities/%.c, src/entities/%.o,\
+$(wildcard src/entities/*.c))
+SYS_OBJECTS = $(patsubst src/systems/%.c, src/systems/%.o,\
+$(wildcard src/systems/*.c))
+
+CECS_OBJECTS = $(CORE_OBJECTS) $(COMP_OBJECTS) $(ENT_OBJECTS) $(SYS_OBJECTS)
+
+SYSFN_OBJECTS = $(patsubst src/systems/sys_funcs/%.c,\
+src/systems/sys_funcs/%.o,$(wildcard src/systems/sys_funcs/*.c))
+
+COMPG_OBJECTS = src/components/comp_gen.o src/core/yaml_helper.o
 
 # filtering out main so we can use the same var for our tests
 # and the component generator, used in it's own target
-OBJECTS := $(filter-out src/main.o src/comp_gen.o ,$(ORIG_OBJECTS))
+OBJECTS := $(filter-out  src/components/comp_gen.o ,$(CECS_OBJECTS))
 
 HEADERS = $(wildcard src/*.h) $(wildcard src/**/*.h)
 SRCS = $(wildcard src/*.c) $(wildcard src/**/*.c)
@@ -27,44 +57,73 @@ TEST_OBJECTS = $(patsubst tests/%.c, tests/%.o, $(wildcard tests/*.c))
 TEST_HEADERS = $(wildcard tests/*.h) $(wildcard tests/**/*.h)
 TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 
-.PRECIOUS: $(TARGET) $(TEST_TARGET)
+.PRECIOUS: $(TARGET) $(TEST_TARGET) $(SYS_TARGET)
 
-#$(LIB_TEST_TARGET): src/main.c $(TARGET)
-#	$(CC) $(CFLAGS) -o $@ $^ -L. -lcecs
+$(COMP_TARGET): $(COMPG_OBJECTS)
+	$(CC) $(CFLAGS) $(COMPG_OBJECTS) $(LIBS) -o $@
+	-./$(COMP_TARGET) components.yml src/components components
+	rm -f $(COMP_TARGET)
 
-$(TARGET): $(OBJECTS) component_gen
+$(TARGET): $(COMPG_OBJECTS) $(OBJECTS) 
 	@echo "========== BUILDING CECS $(TARGET) =========="
-	ar rcs libcecs.a $(OBJECTS)
+	ar rcs $(TARGET) $(OBJECTS)
 
-$(TEST_TARGET): $(OBJECTS) $(TEST_OBJECTS) FORCE
+$(SYS_TARGET): $(SYSFN_OBJECTS)
+	@echo "========== BUILDING CECS $(SYS_TARGET) =========="
+ifeq ($(DETECTED_OS),Linux)
+	$(CC) -shared -Wl,-soname,${SYS_TARGET},-rpath=. -o $(SYS_TARGET) $(SYSFN_OBJECTS)
+else ifeq ($(DETECTED_OS),Darwin)
+	$(CC) -dynamiclib -install_name $(SYS_TARGET) -o $(SYS_TARGET) $(SYSFN_OBJECTS)
+else ifeq ($(DETECTED_OS),Windows_NT)
+	@echo "Windows builds are currently unsupported"
+else
+	@echo "Unknown OS"
+endif
+
+$(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
 	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING CECS TESTS =========="
-	./$(TEST_TARGET)
+	LD_LIBRARY_PATH=. ./$(TEST_TARGET)
 	@echo ""
 
-component_gen: src/comp_gen.o FORCE
-	$(CC) $(CFLAGS) src/comp_gen.o $(LIBS) -o $@
-	-./component_gen components.yml src components
-
-src/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+artifact:
+	rm -f $(ARTIFACT)
+	@echo "========== PACKAGING ARTIFACT =========="
+	zip $(ARTIFACT) $(TARGET) $(SYS_TARGET)
 
 tests/%o: tests/%.c
-	$(CC) $(TEST_CFLAGS) -c $^ -o $@
+	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
+
+src/systems/%.o: src/systems/%.c
+	$(CC) $(CFLAGS) $(MDEFS) -c $^ -o $@
+src/systems/sysfuncs/%.o: src/systems/sysfuncs/%.c
+	$(CC) $(CSOFLAGS) -c $^ -o $@
+src/entities/%.o: src/entities/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+src/components/%.o: src/components/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+src/core/%.o: src/core/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
-	rm -f src/*.o
+	rm -f src/**/*.o
 	rm -f tests/*.o
 	rm -f $(TARGET)
-	rm -f component_gen
+	rm -f $(COMP_TARGET)
 	rm -f $(TEST_TARGET)
-	rm -f src/components.*
+	rm -f $(SYS_TARGET)
+	rm -f src/components/components.*
+	rm -f $(ARTIFACT)
 
 FORCE:
 
 
 output:
+	@echo "==== OS ==="
+	@echo "$(DETECTED_OS)"
+	@echo "==== $(COMP_TARGET) ===="
+	@echo "object: $(COMPG_OBJECTS) ===="
 	@echo "==== $(TARGET) ===="
 	@echo "sources: $(SRCS)"
 	@echo "headers: $(HEADERS)"
