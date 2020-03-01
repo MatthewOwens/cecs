@@ -115,9 +115,9 @@ jobs:
 
       - name: set version variables
         run: |
-          echo "::set-env name=VMAJOR::$(cut -d . -f1 .version"
-          echo "::set-env name=VMINOR::$(cut -d . -f2 .version"
-          echo "::set-env name=VPATCH::$(cut -d . -f3 .version"
+          echo "::set-env name=VMAJOR::$(cut -d . -f1 .version)"
+          echo "::set-env name=VMINOR::$(cut -d . -f2 .version)"
+          echo "::set-env name=VPATCH::$(cut -d . -f3 .version)"
           echo "::set-env name=VERSION::v$(cat .version)"
 
       - name: create release
