@@ -59,10 +59,10 @@ static LIBTYPE sysfuncs = NULL;
 static LIBTYPE usrfuncs = NULL;
 
 static char *elements[5] = {
+	"runtype",
 	"reads",
 	"writes",
 	"ignores",
-	"runtype",
 	"functions"
 };
 
@@ -81,10 +81,16 @@ enum event_status{
 enum parse_state{
 	none = -1,
 	sys = 0,
-	elem,
 	func,
-	elem_m,
-	func_m
+	func_m,
+	rt,
+	rt_m,
+	r,
+	r_m,
+	w,
+	w_m,
+	i,
+	i_m
 };
 
 void cecs_free_sys_yaml()
@@ -131,22 +137,20 @@ static void set_scalar_state(const char* value, enum parse_state* s)
 	 * systems are handled by YAML_MAPPING_END_EVENT
 	 */
 
-	for(int i = 0; i < N_ELEMENTS; ++i){
-		if(strcmp(value, elements[i]) == 0) {
-			*s = elem;
-			return;
-		}
-	}
+	if(strcmp(value, elements[0]) == 0) { *s = rt; }
+	if(strcmp(value, elements[1]) == 0) { *s = r; }
+	if(strcmp(value, elements[2]) == 0) { *s = w; }
+	if(strcmp(value, elements[3]) == 0) { *s = i; }
+	if(strcmp(value, elements[4]) == 0) { *s = func; }
 
-	for(int i = 0; i < N_FUNCTIONS; ++i){
-		if(strcmp(value, functions[i]) == 0) {
-			*s = func;
-			return;
-		}
-	}
+	//for(int i = 0; i < N_FUNCTIONS; ++i){
+	//	if(strcmp(value, functions[i]) == 0) {
+	//		*s = func;
+	//		return;
+	//	}
+	//}
 }
 
-//TODO: test set_func()
 static void set_func(struct cecs_system* system, int iwt, const char* value)
 {
 	sys_init_func* i = NULL;
@@ -188,6 +192,24 @@ static void set_func(struct cecs_system* system, int iwt, const char* value)
 	}
 }
 
+void set_runtype(const char* value, struct cecs_system *system)
+{
+	const char* valid_values[3] = {
+		"init",
+		"per-frame",
+		"direct-call"
+	};
+
+	for(int i = 0; i < 3; ++i){
+		if(strcmp(value, valid_values[i]) == 0) {
+			system->runtype = i;
+			return;
+		}
+	}
+
+	system->runtype = unknown;
+}
+
 static void parse_scalar(const char* value, enum parse_state* s,
 		struct cecs_system* system, struct cecs *cecs)
 {
@@ -196,10 +218,19 @@ static void parse_scalar(const char* value, enum parse_state* s,
 
 
 	switch(*s){
-	case elem:
-		*s = elem_m;
+	case rt:	// runtype
+		*s = rt_m;
 		break;
-	case func:
+	case r:		// reads
+		*s = r_m;
+		break;
+	case w:		// writes
+		*s = w_m;
+		break;
+	case i:		// ignores
+		*s = i_m;
+		break;
+	case func:	// functions
 		*s = func_m;
 		break;
 	case sys:
@@ -209,8 +240,15 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		system->name = value;
 		break;
 	}
-	case elem_m:
-		//TODO: parse reads, writes, ignores & runtype
+	//TODO: parse reads, writes, ignores & runtype
+	case rt_m:
+		set_runtype(value, system);
+		break;
+	case r_m:
+		break;
+	case w_m:
+		break;
+	case i_m:
 		break;
 	case func_m:
 		if(strcmp(prevValue, "init") == 0) {
@@ -254,6 +292,7 @@ static int parse_event(yaml_parser_t *p, struct cecs* cecs)
 	case YAML_MAPPING_END_EVENT:
 		mapping_depth--;
 		if(mapping_depth == 1) {
+			printf("registered system\n");
 			cecs_reg_system(cecs, &system);
 		}
 		break;
