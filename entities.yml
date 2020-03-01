@@ -1,7 +1,3 @@
-# the only fields that the parser actually cares about are squences
-# called "components", names are currently ignored since we don't really need
-# to name the entities, more for the end-user.
-
 - name: actor
   components:
   - position
