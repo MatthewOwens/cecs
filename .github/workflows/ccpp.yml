@@ -7,6 +7,11 @@ on:
       - develop
       - ci
 
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+
 jobs:
   ci:
     name: ${{ matrix.name }}
@@ -86,7 +91,59 @@ jobs:
         run: |
           zip -r cecs.zip cecs
           aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip
+
+  release:
+    needs: ci
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [
+          ubuntu,
+          macOS
+        ]
+
+        include:
+          - name: ubuntu
+            os: ubuntu-latest
+          - name: macOS
+            os: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: chrislennon/action-aws-cli@v1.1
+
+      - name: set version variables
+        run: |
+          echo "::set-env name=VMAJOR::$(cut -d . -f1 .version"
+          echo "::set-env name=VMINOR::$(cut -d . -f2 .version"
+          echo "::set-env name=VPATCH::$(cut -d . -f3 .version"
+          echo "::set-env name=VERSION::v$(cat .version)"
+
+      - name: create release
+        id: create-release
+        if: github.event_name == 'push' && github.ref != 'refs/heads/master'
+        uses: actions/create-release@v1
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: $VERSION
+          release_name: Release v$VERSION
+          draft: true
+  
+      - name: get artifacts
+        if: github.event_name == 'push'
+        run: |
+          aws s3 cp s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip\
+           cecs-${{ matrix.name }}-$VERSION
+
+      - name: upload release artifacts
+        if: github.event_name == 'push'
+        uses: actions/upload-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./cecs-${{ matrix.name }}-$VERSION
+          asset_name: cecs-${{ matrix.name }}-$VERSION
+          asset_content_type: application/zip
