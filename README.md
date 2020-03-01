@@ -74,25 +74,35 @@ cecs_reg_component(cecs, "position", &posComp, sizeof(posComp));
 
 once a component has been registered the original variable and it's associated
 location in memory are no longer required. 
+
+
 ### Entities
+Entities represent discreet object types in-game, and are comprised of
+one or more components.
+
+#### Defining entities with YAML
+Similarly to components, only a subset of YAML is supported in defining
+entities.
+An example of entities defined in YAML can be found in
+[entities.yml](entities.yml)
 
 #### Under the hood
 entities are clusters of components that represent an object in the game.
 empty entities are registered with:
 ```c
-static int ent;
-cecs_add_entity(cecs, &ent);
+int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps);
 ```
-here the `ent` parameter is a return parameter, the internal ID of the entitiy.
-from there, entities can be composed using `cecs_ent_add_component`
+here the `name`, `n_comps` and `comps` parameters are loaded from YAML.
+
+there is also support for adding & removing components from and entity at
+runtime with:
 ```c
-cecs_ent_add_component(cecs, ent, "position");
-cecs_ent_add_component(cecs, ent, "collision");
+int cecs_ent_add_component(struct cecs *cecs, uint32_t id, char* name);
 ```
-`cecs_ent_add_component` takes three parameters
-* a pointer to cecs
-* the internal entitiy ID returned from `cecs_add_entity`
-* a component name to add to the entitiy
+and
+```c
+int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name);
+```
 
 ### Systems
 documentation required
