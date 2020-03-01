@@ -1,5 +1,6 @@
 #pragma once
 #include "cecs.h"
+#include "arr.h"
 #include <stdbool.h>
 
 struct cecs;
@@ -21,9 +22,9 @@ struct cecs_system
 	sys_run_func run;
 	sys_tidy_func free;
 	sys_runtype runtype;
-	uint32_t read_mask;
-	uint32_t write_mask;
-	uint32_t ignore_mask;
+	array(uint32_t) read_keys;
+	array(uint32_t) write_keys;
+	array(uint32_t) ignore_keys;
 	const char *name;
 	bool registered;
 };

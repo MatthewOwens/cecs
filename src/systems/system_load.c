@@ -192,7 +192,7 @@ static void set_func(struct cecs_system* system, int iwt, const char* value)
 	}
 }
 
-void set_runtype(const char* value, struct cecs_system *system)
+static void set_runtype(const char* value, struct cecs_system *system)
 {
 	const char* valid_values[3] = {
 		"init",
@@ -208,6 +208,36 @@ void set_runtype(const char* value, struct cecs_system *system)
 	}
 
 	system->runtype = unknown;
+}
+
+static void append_read_key(const char* value, struct cecs_system* system,
+			struct cecs *cecs){
+	const uint32_t bad_key = -1;
+	uint32_t key = cecs_component_key(cecs, value);
+
+	if(key != bad_key) {
+		array_push(system->read_keys, key);
+	}
+}
+
+static void append_write_key(const char* value, struct cecs_system* system,
+			struct cecs *cecs){
+	const uint32_t bad_key = -1;
+	uint32_t key = cecs_component_key(cecs, value);
+
+	if(key != bad_key) {
+		array_push(system->write_keys, key);
+	}
+}
+
+static void append_ignore_key(const char* value, struct cecs_system* system,
+			struct cecs *cecs){
+	const uint32_t bad_key = -1;
+	uint32_t key = cecs_component_key(cecs, value);
+
+	if(key != bad_key) {
+		array_push(system->ignore_keys, key);
+	}
 }
 
 static void parse_scalar(const char* value, enum parse_state* s,
@@ -245,10 +275,13 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		set_runtype(value, system);
 		break;
 	case r_m:
+		append_read_key(value, system, cecs);
 		break;
 	case w_m:
+		append_write_key(value, system, cecs);
 		break;
 	case i_m:
+		append_ignore_key(value, system, cecs);
 		break;
 	case func_m:
 		if(strcmp(prevValue, "init") == 0) {
