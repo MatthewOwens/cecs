@@ -54,13 +54,20 @@ int args_valid(int argc, char* argv[])
 void set_outfiles(char* dir, char *name)
 {
 	char* end[2] = {".c", ".h"};
+	char dirEnd;
+
+	#ifdef _WIN32
+		dirEnd = "\\"
+	#else
+		dirEnd = "/"
+	#endif
 
 	for( int i = 0; i < 2; ++i)
 	{
 		outfiles[i] = malloc(strlen(dir) + strlen(name) + 3);
 		if(strlen(dir) != 0) {
 			strcpy(outfiles[i], dir);
-			strcat(outfiles[i], "/");//TODO windows compat
+			strcat(outfiles[i], dirEnd);
 		}
 		strcat(outfiles[i], name);
 		strcat(outfiles[i], end[i]);
