@@ -75,7 +75,7 @@ void set_outfiles(char* dir, char *name)
 }
 
 /* possible types are string, float or int */
-int determine_type(const char* value)	//TODO: stub
+int determine_type(const char* value)
 {
 	char* p = value;
 	errno = 0;
