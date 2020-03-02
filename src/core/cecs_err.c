@@ -20,12 +20,12 @@ static char* cecs_errmsg[] = {
 	"cecs is uninitilised"
 };
 
-int cecse(enum cecs_errno err)
+int cecserr(enum cecs_errno err)
 {
-	return cecse_msg(err, "");
+	return cecserr_msg(err, "");
 }
 
-int cecse_msg(enum cecs_errno err, const char* msg)
+int cecserr_msg(enum cecs_errno err, const char* msg)
 {
 	if (err != CECSE_NONE)
 		fprintf(stderr,
@@ -34,12 +34,12 @@ int cecse_msg(enum cecs_errno err, const char* msg)
 	return err;
 }
 
-int cecse_last()
+int cecserr_last()
 {
-	return cecse(lasterrno);
+	return cecserr(lasterrno);
 }
 
-void cecse_set(enum cecs_errno err)
+void cecserr_set(enum cecs_errno err)
 {
 	lasterrno = err;
 }

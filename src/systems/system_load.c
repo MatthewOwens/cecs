@@ -351,7 +351,7 @@ static int parse_event(yaml_parser_t *p, struct cecs* cecs)
 int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 {
 	if(cecs == NULL) {
-		cecse_msg(CECSE_NULL, __FUNCTION__);
+		cecserr_msg(CECSE_NULL, __FUNCTION__);
 	}
 
 	yaml_parser_t parser;
@@ -370,8 +370,8 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 	yaml_parser_delete(&parser);
 
 	if(status == bad) {
-		return cecse_msg(CECSE_INVALID_VALUE, "bad component yaml");
+		return cecserr_msg(CECSE_INVALID_VALUE, "bad component yaml");
 	}
 
-	return cecse(CECSE_NONE);
+	return cecserr(CECSE_NONE);
 }

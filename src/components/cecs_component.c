@@ -10,14 +10,14 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 			void *data, size_t size )
 {
 	if(cecs == NULL) {
-		return cecse(CECSE_NULL);
+		return cecserr(CECSE_NULL);
 	} else if (cecs->state == CECS_STARTED){
-		return cecse(CECSE_INVALID_OPERATION);
+		return cecserr(CECSE_INVALID_OPERATION);
 	}
 
 	void* tmp  = obsdreallocarray(cecs->components, cecs->num_components+1,
 				sizeof(struct cecs_component));
-	if (tmp == NULL) { return cecse(CECSE_NOMEM); }
+	if (tmp == NULL) { return cecserr(CECSE_NOMEM); }
 
 	cecs->components = tmp;
 	int i = cecs->num_components;
@@ -34,7 +34,7 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 
 	// generating a unique key for the next component, the easy way
 	cecs->next_key++;
-	return cecse(CECSE_NONE);
+	return cecserr(CECSE_NONE);
 }
 
 uint32_t cecs_component_key(struct cecs *cecs, const char* name)
@@ -62,10 +62,10 @@ struct cecs_component* cecs_component(struct cecs* cecs, const char* name)
 	const char* bVal = "cecs_component - requested compo doesn't exist\n";
 
 	if(cecs == NULL){
-		cecse(CECSE_NULL);
+		cecserr(CECSE_NULL);
 		return NULL;
 	} else if (name == NULL){
-		cecse_msg(CECSE_INVALID_VALUE, nVal);
+		cecserr_msg(CECSE_INVALID_VALUE, nVal);
 		return NULL;
 	}
 
