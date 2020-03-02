@@ -95,33 +95,47 @@ jobs:
           zip -r cecs.zip cecs
           aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip
 
-  release:
+  is-release-ready:
     needs: ci
-    if: github.event_name == 'push'
+    if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
 
-      - uses: chrislennon/action-aws-cli@v1.1
-
-      - name: set version variables
+      - name: get version variables
         run: |
           echo "::set-env name=VMAJOR::$(cut -d . -f1 .version)"
           echo "::set-env name=VMINOR::$(cut -d . -f2 .version)"
           echo "::set-env name=VPATCH::$(cut -d . -f3 .version)"
           echo "::set-env name=VERSION::v$(cat .version)"
 
-      - name: set release variables (draft)
-        if: github.ref != 'refs/heads/master'
+      - name: ensure version has been updated
         run: |
-          echo "::set-env name=DRAFT::true"
-          echo "::set-env name=RSUFFIX::-draft"
+          PREVVER=$(git tag | tail -1)
+          if [ $PREVVER == $VERSION ]; then
+            echo "version not incremented! Aborting release"
+            exit 1
+          fi
+        shell: bash
+
+  release:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: chrislennon/action-aws-cli@v1.1
+
+      - name: get version variables
+        run: |
+          echo "::set-env name=VMAJOR::$(cut -d . -f1 .version)"
+          echo "::set-env name=VMINOR::$(cut -d . -f2 .version)"
+          echo "::set-env name=VPATCH::$(cut -d . -f3 .version)"
+          echo "::set-env name=VERSION::v$(cat .version)"
 
       - name: set release variables
-        if: github.ref == 'refs/heads/master'
         run: |
-          echo "::set-env name=DRAFT::false"
-          echo "::set-env name=RSUFFIX::"
+          echo "::set-env name=DRAFT::true"
 
       - name: create release
         id: create-release
