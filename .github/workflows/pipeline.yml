@@ -133,10 +133,6 @@ jobs:
           echo "::set-env name=VPATCH::$(cut -d . -f3 .version)"
           echo "::set-env name=VERSION::v$(cat .version)"
 
-      - name: set release variables
-        run: |
-          echo "::set-env name=DRAFT::true"
-
       - name: create release
         id: create-release
         uses: actions/create-release@v1
@@ -145,7 +141,7 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           release_name: Release ${{ env.VERSION }}${{ env.RSUFFIX }}
-          draft: ${{ env.DRAFT }}
+          draft: false
   
       - name: get artifacts
         run: |
