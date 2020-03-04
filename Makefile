@@ -8,6 +8,8 @@ DETECTED_OS = Unknown
 # os detection
 ifeq ($(OS),WINDOWS_NT)
 	DETECTED_OS := Windows
+	SYS_TARGET = libcecssys.dll
+	SYS_MINGWSO = libcecssys_dll.a
 else
 	DETECTED_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
 endif
@@ -76,6 +78,7 @@ else ifeq ($(DETECTED_OS),Darwin)
 	$(CC) -dynamiclib -install_name $(SYS_TARGET) -o $(SYS_TARGET) $(SYSFN_OBJECTS)
 else ifeq ($(DETECTED_OS),Windows_NT)
 	@echo "Windows builds are currently unsupported"
+	$(CC) -shared -Wl,--out-implib,$(SYS_MINGWSO) -o $(SYS_TARGET) $(SYSFN_OBJECTS)
 else
 	@echo "Unknown OS"
 endif
@@ -86,11 +89,6 @@ $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== RUNNING CECS TESTS =========="
 	LD_LIBRARY_PATH=. ./$(TEST_TARGET)
 	@echo ""
-
-artifact:
-	rm -f $(ARTIFACT)
-	@echo "========== PACKAGING ARTIFACT =========="
-	zip $(ARTIFACT) $(TARGET) $(SYS_TARGET)
 
 tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
