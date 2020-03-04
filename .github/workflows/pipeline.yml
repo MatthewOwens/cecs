@@ -70,7 +70,12 @@ jobs:
       - name: install dependencies (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
-          pip install PyYAML
+          git clone https://github.com/yaml/libyaml.git
+          cd libyaml
+          cmake .
+          cmake --build . --config Release --clean-first
+          ctest -C release
+          ls
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
