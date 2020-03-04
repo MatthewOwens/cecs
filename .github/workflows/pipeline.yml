@@ -41,16 +41,25 @@ jobs:
             compiler: clang
           - name: mingw
             os: ubuntu-latest
-            compiler: gcc-mingw-w64-x86-64
+            compiler: x86_64-w64-mingw32-gcc
 
     steps:
       - uses: actions/checkout@v1
       - uses: chrislennon/action-aws-cli@v1.1
 
+      - name: install compiler (ubuntu)
+        if: startsWith(matrix.name, 'ubuntu')
+        run: |
+          sudo apt-get install ${{ matrix.compiler }} --yes
+
+      - name: install compiler (mingw)
+        if: startsWith(matrix.name, 'mingw')
+        run: |
+          sudo apt-get install mingw-w64-gcc --yes
+
       - name: install dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          sudo apt-get install ${{ matrix.compiler }} --yes
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
