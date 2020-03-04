@@ -26,7 +26,8 @@ jobs:
         #https://help.github.com/en/articles/workflow-syntax-for-github-actions
         name: [
           ubuntu,
-          macOS
+          macOS,
+          mingw
         ]
 
         include:
@@ -36,6 +37,9 @@ jobs:
           - name: macOS
             os: macOS-latest
             compiler: clang
+          - name: mingw
+            os: ubuntu-latest
+            compiler: gcc-mingw-w64
 
     steps:
       - uses: actions/checkout@v1
@@ -71,29 +75,30 @@ jobs:
         run: make CC=${{ matrix.compiler }}
 
       - name: package (ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
+        if: startsWith(matrix.name, 'ubuntu')
         run: |
           mkdir cecs
           cp *.so cecs
           cp *.a cecs
 
       - name: package (macOS)
-        if: startsWith(matrix.os, 'macOS')
+        if: startsWith(matrix.name, 'macOS')
         run: |
           mkdir cecs
           cp *.dylib cecs
           cp *.a cecs
 
-      - name: upload artifact (github)
-        uses: actions/upload-artifact@v1
-        with:
-          name: cecs-${{ matrix.os }}
-          path: cecs
+      - name: package (mingw)
+        if: startsWith(matrix.name, 'mingw')
+        run: |
+          mkdir cecs
+          cp *.dll cecs
+          cp *.lib cecs
 
       - name: upload artifact (s3)
         run: |
           zip -r cecs.zip cecs
-          aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip
+          aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.name }}/cecs-$GITHUB_SHA.zip
 
   is-release-ready:
     needs: ci
@@ -145,10 +150,12 @@ jobs:
   
       - name: get artifacts
         run: |
-          aws s3 cp s3://$BUCKET/ubuntu-latest/cecs-$GITHUB_SHA.zip\
+          aws s3 cp s3://$BUCKET/ubuntu/cecs-$GITHUB_SHA.zip\
            cecs-linux-$VERSION
-          aws s3 cp s3://$BUCKET/macOS-latest/cecs-$GITHUB_SHA.zip\
+          aws s3 cp s3://$BUCKET/macOS/cecs-$GITHUB_SHA.zip\
            cecs-darwin-$VERSION
+          aws s3 cp s3://$BUCKET/mingw/cecs-$GITHUB_SHA.zip\
+           cecs-windows-$VERSION
 
       - name: upload release artifacts (linux)
         uses: actions/upload-release-asset@v1
@@ -157,7 +164,7 @@ jobs:
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./cecs-linux-${{ env.VERSION }}
-          asset_name: cecs-linux-latest-${{ env.VERSION }}
+          asset_name: cecs-linux-${{ env.VERSION }}
           asset_content_type: application/zip
 
       - name: upload release artifacts (macos)
@@ -167,5 +174,15 @@ jobs:
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./cecs-darwin-${{ env.VERSION }}
-          asset_name: cecs-darwin-latest-${{ env.VERSION }}
+          asset_name: cecs-darwin-${{ env.VERSION }}
+          asset_content_type: application/zip
+
+      - name: upload release artifacts (windows)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./cecs-windows-${{ env.VERSION }}
+          asset_name: cecs-windows-${{ env.VERSION }}
           asset_content_type: application/zip
