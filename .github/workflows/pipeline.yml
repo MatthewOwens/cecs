@@ -80,7 +80,6 @@ jobs:
           cmake --build . --config Release --clean-first
           ctest -C release
           ls
-          cp Release\OFF.lib RELEASE\yaml.lib
           echo "=========== Release =========="
           ls Release
           make install
