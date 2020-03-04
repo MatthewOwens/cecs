@@ -70,8 +70,10 @@ jobs:
       - name: install dependencies (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
-          (new-object System.Net.WebClient).DownloadFile(http://pyyaml.org/download/pyyaml/PyYAML-5.3-cp38-cp38m-win_amd64.whl, PyYAML.whl)
-          pip install PyYAML.whl
+          wget http://pyyaml.org/download/pyyaml/$pyyaml_whl
+          pip install $pyyaml_whl
+        env:
+          pyyaml_whl: PyYAML-5.3-cp38-cp38m-win_amd64.whl
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
