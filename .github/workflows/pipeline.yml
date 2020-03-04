@@ -67,10 +67,10 @@ jobs:
         run: |
           brew install autoconf automake libtool check pkg-config libyaml
 
-      - name: install dependencies (windows)
-        if: startsWith(matrix.os, 'windows'
-        run: |
-          choco install make 
+#     - name: install dependencies (windows)
+#       if: startsWith(matrix.os, 'windows')
+#       run: |
+#         choco install make 
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
