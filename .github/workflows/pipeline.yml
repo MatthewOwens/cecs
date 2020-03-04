@@ -73,7 +73,7 @@ jobs:
           git clone https://github.com/yaml/libyaml.git
           cd libyaml
           cmake .
-          cmake --build . --config Release --clean-first
+          cmake --build . --config Release --clean-first --install
           ctest -C release
           ls
           cp Release/OFF.lib RELEASE/yaml.lib
