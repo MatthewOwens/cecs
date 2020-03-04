@@ -67,16 +67,16 @@ jobs:
         run: |
           brew install autoconf automake libtool check pkg-config libyaml
 
-     - name: install dependencies (windows)
-       if: startsWith(matrix.os, 'windows')
-       run: |
-         git clone https://github.com/yaml/libyaml
-         cd libyaml
-         ./bootstrap
-         ./configure
-         make
-         make install
-       shell: bash
+      - name: install dependencies (windows)
+        if: startsWith(matrix.os, 'windows')
+         run: |
+           git clone https://github.com/yaml/libyaml
+           cd libyaml
+           ./bootstrap
+           ./configure
+           make
+           make install
+         shell: bash
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
