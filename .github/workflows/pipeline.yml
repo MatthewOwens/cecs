@@ -55,7 +55,7 @@ jobs:
       - name: install compiler (mingw)
         if: startsWith(matrix.name, 'mingw')
         run: |
-          sudo apt-get install mingw-w64-gcc --yes
+          sudo apt-get install gcc-mingw-w64 --yes
 
       - name: install dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
