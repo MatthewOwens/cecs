@@ -106,12 +106,6 @@ jobs:
           cp *.lib cecs
         shell: bash
 
-      - name: upload artifact (github)
-        uses: actions/upload-artifact@v1
-        with:
-          name: cecs-${{ matrix.os }}
-          path: cecs
-
       - name: upload artifact (s3)
         run: |
           zip -r cecs.zip cecs
