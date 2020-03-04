@@ -75,7 +75,8 @@ jobs:
           cmake .
           cmake --build . --config Release --clean-first
           ctest -C release
-          ls
+          ls Release
+          cp Release/OFF.lib RELEASE/yaml.lib
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
