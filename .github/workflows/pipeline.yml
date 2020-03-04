@@ -67,6 +67,13 @@ jobs:
         run: |
           brew install autoconf automake libtool check pkg-config libyaml
 
+      - name: finding libc (windows)
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          cd /
+          find . | grep libc
+        shell: bash
+
       - name: install dependencies (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
@@ -82,7 +89,6 @@ jobs:
           ls
           echo "=========== Release =========="
           ls Release
-          make install
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
