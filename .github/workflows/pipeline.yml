@@ -41,7 +41,7 @@ jobs:
             compiler: clang
           - name: mingw
             os: ubuntu-latest
-            compiler: gcc-mingw-w64
+            compiler: gcc-mingw-w64-x86-64
 
     steps:
       - uses: actions/checkout@v1
