@@ -70,10 +70,7 @@ jobs:
       - name: install dependencies (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
-          wget.exe http://pyyaml.org/download/pyyaml/${{ env.pyyaml_whl }}
-          pip install ${{ env.pyyaml_whl }}
-        env:
-          pyyaml_whl: PyYAML-5.3-cp38-cp38m-win_amd64.whl
+          pip install PyYAML
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
