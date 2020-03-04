@@ -76,7 +76,6 @@ jobs:
           ./configure
           make
           make install
-        shell: bash
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
