@@ -70,12 +70,9 @@ jobs:
       - name: install dependencies (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
-          git clone https://github.com/yaml/libyaml
-          cd libyaml
-          ./bootstrap
-          ./configure
-          make
-          make install
+          (new-object System.Net.WebClient).DownloadFile `
+          (http://pyyaml.org/download/pyyaml/PyYAML-5.3-cp38-cp38m-win_amd64.whl PyYAML.whl)
+          pip install PyYAML.whl
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
