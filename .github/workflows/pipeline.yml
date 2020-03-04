@@ -70,8 +70,12 @@ jobs:
       - name: install dependencies (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
+          echo "=========== cloning libyaml =========="
           git clone https://github.com/yaml/libyaml.git
           cd libyaml
+          echo "=========== grabbing patch =========="
+          Invoke-WebRequest https://gist.githubusercontent.com/MatthewOwens/896a643a86438425e80d786892dc9de9/raw/bb5c118a1264bfe809fdb9d7b91bd4457feb02e8/libyaml-win-cmake.patch -Outfile win-cmake.patch
+          git apply win-cmake.patch
           cmake .
           cmake --build . --config Release --clean-first
           ctest -C release
@@ -79,8 +83,7 @@ jobs:
           cp Release\OFF.lib RELEASE\yaml.lib
           echo "=========== Release =========="
           ls Release
-          echo "=========== cmake =========="
-          ls cmake
+          make install
 
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
