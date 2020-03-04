@@ -70,9 +70,7 @@ jobs:
       - name: finding libc (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
-          cd /
-          find . | grep libc
-        shell: bash
+          cpp -v /dev/null -o /dev/null
 
       - name: install dependencies (windows)
         if: startsWith(matrix.os, 'windows')
