@@ -74,9 +74,8 @@ jobs:
           git clone https://github.com/yaml/libyaml.git
           cd libyaml
           echo "=========== grabbing patch =========="
-          Invoke-WebRequest https://gist.githubusercontent.com/MatthewOwens/896a643a86438425e80d786892dc9de9/raw/bb5c118a1264bfe809fdb9d7b91bd4457feb02e8/libyaml-win-cmake.patch -Outfile win-cmake.patch
-          unix2dos win-cmake.patch
-          git apply --ignore-space-change --ignore-whitespace --whitespace=fix win-cmake.patch
+          Invoke-WebRequest https://gist.githubusercontent.com/MatthewOwens/fa46c6fb225d208523ce83cdc2e2eb0b/raw/33ed653bdd90bf2c737e901e3f5b6d879559596f/libyaml-win-cmake.patch -Outfile win-cmake.patch
+          patch CMakeLists.txt win-cmake.patch
           cmake .
           cmake --build . --config Release --clean-first
           ctest -C release
