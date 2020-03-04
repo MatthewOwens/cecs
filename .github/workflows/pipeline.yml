@@ -75,7 +75,7 @@ jobs:
           cd libyaml
           echo "=========== grabbing patch =========="
           Invoke-WebRequest https://gist.githubusercontent.com/MatthewOwens/896a643a86438425e80d786892dc9de9/raw/bb5c118a1264bfe809fdb9d7b91bd4457feb02e8/libyaml-win-cmake.patch -Outfile win-cmake.patch
-          git apply win-cmake.patch
+          git apply --ignore-space-change --ignore-whitespace --whitespace=fix win-cmake.patch
           cmake .
           cmake --build . --config Release --clean-first
           ctest -C release
