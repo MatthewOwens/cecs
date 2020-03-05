@@ -62,7 +62,7 @@ TEST_SRCS = $(wildcard tests/*.c) $(wildcard tests/**/*.c)
 .PRECIOUS: $(TARGET) $(TEST_TARGET) $(SYS_TARGET)
 
 $(COMP_TARGET): $(COMPG_OBJECTS)
-	$(CC) $(CFLAGS) $(COMPG_OBJECTS) $(LIBS) -o $@
+	$(CC) $(MINGW_LDIRS) $(CFLAGS) $(COMPG_OBJECTS) $(LIBS) -o $@
 	-./$(COMP_TARGET) components.yml src/components components
 	rm -f $(COMP_TARGET)
 
