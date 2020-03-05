@@ -8,7 +8,7 @@ DETECTED_OS = Unknown
 MDEFS = -DCECS_SYS_FUNCS=$(SYS_TARGET)
 LIBS = -lm $(MDEFS) -D_REENTRANT -std=c11 -lyaml -ldl
 TEST_LIBS = $(LIBS) `pkg-config --libs check`
-MINGW_LDIRS = /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib
+MINGW_LDIRS =
 
 CC = gcc
 CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems\
@@ -19,7 +19,7 @@ TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 # os detection
 ifeq ($(OS),WINDOWS_NT)
 	DETECTED_OS := Windows
-	LIBS = -L$(MINGW_LDIRS) $(LIBS)
+	MINGW_LDIRS = -L/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib
 else
 	DETECTED_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
 endif
@@ -89,24 +89,19 @@ $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	LD_LIBRARY_PATH=. ./$(TEST_TARGET)
 	@echo ""
 
-artifact:
-	rm -f $(ARTIFACT)
-	@echo "========== PACKAGING ARTIFACT =========="
-	zip $(ARTIFACT) $(TARGET) $(SYS_TARGET)
-
 tests/%o: tests/%.c
 	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
 src/systems/%.o: src/systems/%.c
-	$(CC) $(CFLAGS) $(MDEFS) -c $^ -o $@
+	$(CC) $(MINGW_LDIRS) $(CFLAGS) $(MDEFS) -c $^ -o $@
 src/systems/sysfuncs/%.o: src/systems/sysfuncs/%.c
-	$(CC) $(CSOFLAGS) -c $^ -o $@
+	$(CC) $(MINGW_LDIRS) $(CSOFLAGS) -c $^ -o $@
 src/entities/%.o: src/entities/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(MINGW_LDIRS) $(CFLAGS) -c $^ -o $@
 src/components/%.o: src/components/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(MINGW_LDIRS) $(CFLAGS) -c $^ -o $@
 src/core/%.o: src/core/%.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) $(MINGW_LDIRS) $(CFLAGS) -c $^ -o $@
 
 clean:
 	rm -f src/**/*.o
