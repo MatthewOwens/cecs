@@ -68,12 +68,16 @@ jobs:
           git clone https://github.com/yaml/libyaml.git
           cd libyaml
           ./bootstrap
-          ./configure --host=x86_64-w64-mingw32 --prefix=/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/
+          ./configure --host=x86_64-w64-mingw32 --prefix=${{ env.PREFIX }}
           CC=${{ matrix.compiler }} make
           sudo make install
-          sudo ldconfig
+          ls ${{ env.PREFIX }}
+          sudo ldconfig ${{ env.PREFIX/lib }}
           cd ..
           rm -rf libyaml
+        env:
+          PREFIX: /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/
+
 
       - name: building libcheck (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
