@@ -71,8 +71,13 @@ jobs:
           ./configure --host=x86_64-w64-mingw32 --prefix=${{ env.PREFIX }}
           CC=${{ matrix.compiler }} make
           sudo make install
+          echo "========== PREFIX DIR =========="
           ls ${{ env.PREFIX }}
-          sudo ldconfig ${{ env.PREFIX }}/lib
+          echo "========== PREFIX DIR/LIB =========="
+          ls ${{ env.PREFIX }}lib
+          echo "========== PREFIX DIR/INCLUDE =========="
+          ls ${{ env.PREFIX }}include
+          sudo ldconfig ${{ env.PREFIX }}lib
           cd ..
           rm -rf libyaml
         env:
