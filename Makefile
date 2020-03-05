@@ -5,9 +5,21 @@ SYS_TARGET = libcecssys.so
 ARTIFACT = cecs.zip
 DETECTED_OS = Unknown
 
+MDEFS = -DCECS_SYS_FUNCS=$(SYS_TARGET)
+LIBS = -lm $(MDEFS) -D_REENTRANT -std=c11 -lyaml -ldl
+TEST_LIBS = $(LIBS) `pkg-config --libs check`
+MINGW_LDIRS = /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib
+
+CC = gcc
+CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems\
+ -Isrc/entities -v
+CSOFLAGS = $(CFLAGS) -c -fPIC
+TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
+
 # os detection
 ifeq ($(OS),WINDOWS_NT)
 	DETECTED_OS := Windows
+	LIBS = -L$(MINGW_LDIRS) $(LIBS)
 else
 	DETECTED_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
 endif
@@ -15,16 +27,6 @@ endif
 ifeq ($(DETECTED_OS),Darwin)
 	SYS_TARGET = libcecssys.dylib
 endif
-
-MDEFS = -DCECS_SYS_FUNCS=$(SYS_TARGET)
-LIBS = -lm $(MDEFS) -D_REENTRANT -std=c11 -lyaml -ldl
-TEST_LIBS = $(LIBS) `pkg-config --libs check`
-
-CC = gcc
-CFLAGS = -g -Wall -Isrc/core -Isrc/components -Isrc/systems\
- -Isrc/entities -v
-CSOFLAGS = $(CFLAGS) -c -fPIC
-TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 .PHONY: default all clean FORCE
 
