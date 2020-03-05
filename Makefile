@@ -28,6 +28,8 @@ ifeq ($(DETECTED_OS),Darwin)
 	SYS_TARGET = libcecssys.dylib
 endif
 
+$(info $$DETECTED_OS is [ ${DETECTED_OS} ])
+
 .PHONY: default all clean FORCE
 
 default: all
