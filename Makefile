@@ -17,7 +17,7 @@ CSOFLAGS = $(CFLAGS) -c -fPIC
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 # os detection
-ifeq ($(OS),WINDOWS_NT)
+ifneq '$(findstring mingw,$CC)' ''
 	DETECTED_OS := Windows
 	MINGW_LDIRS = -L/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib
 else
