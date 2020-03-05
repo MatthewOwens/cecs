@@ -32,6 +32,7 @@ $(info $$CC is [ ${CC} ])
 $(info parsing $$CC...)
 OUT=$(findstring mingw,$CC)
 $(info ran $$(findstring mingw,${CC}), got ${OUT})
+$(info ran $$(findstring ${CC},mingw), got ${OUT})
 $(info $$DETECTED_OS is [ ${DETECTED_OS} ])
 
 .PHONY: default all clean FORCE
