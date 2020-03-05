@@ -72,7 +72,7 @@ jobs:
           CC=${{ matrix.compiler }} make
           sudo make install
           ls ${{ env.PREFIX }}
-          sudo ldconfig ${{ env.PREFIX/lib }}
+          sudo ldconfig ${{ env.PREFIX }}/lib
           cd ..
           rm -rf libyaml
         env:
