@@ -57,15 +57,32 @@ jobs:
         run: |
           sudo apt-get install gcc-mingw-w64 --yes
 
-      - name: install dependencies (ubuntu)
+      - name: install binary dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
+
+      - name: building libyaml (mingw)
+        if: startsWith(matrix.name, 'mingw')
+        run: |
+          git clone https://github.com/yaml/libyaml.git
+          cd libyaml
+          ./bootstrap
+          ./configure
+          CC=${{ matrix.compiler }} make
+          sudo make install
+          sudo ldconfig
+          cd ..
+          rm -f libyaml
+
+      - name: building libcheck (ubuntu)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
           autoreconf --install
           ./configure
-          make
+          CC=${{ matrix.compiler }} make
           sudo make install
           sudo ldconfig
           cd ..
