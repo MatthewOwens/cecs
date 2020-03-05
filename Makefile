@@ -27,7 +27,9 @@ endif
 ifeq ($(DETECTED_OS),Darwin)
 	SYS_TARGET = libcecssys.dylib
 endif
-
+$(info $$CC is [ ${CC} ])
+$(info parsing $$CC...)
+$(info $(findstring mingw,$$CC))
 $(info $$DETECTED_OS is [ ${DETECTED_OS} ])
 
 .PHONY: default all clean FORCE
