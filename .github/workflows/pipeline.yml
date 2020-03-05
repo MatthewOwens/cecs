@@ -68,7 +68,7 @@ jobs:
           git clone https://github.com/yaml/libyaml.git
           cd libyaml
           ./bootstrap
-          ./configure
+          ./configure --host=x86_64-w64-mingw32
           CC=${{ matrix.compiler }} make
           sudo make install
           sudo ldconfig
