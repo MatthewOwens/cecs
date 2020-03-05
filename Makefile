@@ -17,7 +17,7 @@ CSOFLAGS = $(CFLAGS) -c -fPIC
 TEST_CFLAGS = $(CFLAGS) `pkg-config --cflags check`
 
 # os detection
-ifneq (,$(findstring mingw,$CC))
+ifneq (,$(findstring mingw,$(CC)))
 	DETECTED_OS := Windows
 	MINGW_LDIRS = -L/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib
 else
@@ -31,9 +31,6 @@ endif
 $(info $$CC is [ ${CC} ])
 $(info parsing $$CC...)
 OUT=$(findstring mingw,$(CC))
-OUT2=$(findstring mingw,x86_64-w64-mingw32-gcc)
-$(info ran $$(findstring mingw,${CC}), got ${OUT})
-$(info ran $$(findstring mingw,x86_64-w64-mingw32-gcc), got ${OUT2})
 $(info $$DETECTED_OS is [ ${DETECTED_OS} ])
 
 .PHONY: default all clean FORCE
