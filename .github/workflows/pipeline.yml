@@ -62,13 +62,20 @@ jobs:
         run: |
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
 
+      - name: setting environment variables (mingw)
+        if: startsWith(matrix.name, 'mingw')
+        run: |
+          echo "::set-env name=HOST::x86_64-w64-mingw32"
+          echo "::set-en name=PREFIX::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/"
+          echo "::set-en name=LIBDIR::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib"
+
       - name: building libyaml (mingw)
         if: startsWith(matrix.name, 'mingw')
         run: |
           git clone https://github.com/yaml/libyaml.git
           cd libyaml
           ./bootstrap
-          ./configure --host=x86_64-w64-mingw32 --prefix=${{ env.PREFIX }} --libdir=${{ env.PREFIX }}lib
+          ./configure --host=${{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
           CC=${{ matrix.compiler }} make
           sudo make install
           echo "========== PREFIX DIR =========="
@@ -83,8 +90,21 @@ jobs:
         env:
           PREFIX: /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/
 
+      - name: building libcheck (mingw)
+        if: startsWith(matrix.name, 'mingw')
+        run: |
+          git clone https://github.com/libcheck/check.git --branch 0.13.0
+          cd check
+          autoreconf --install
+          ./configure --host={{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
+          CC=${{ matrix.compiler }} make
+          sudo make install
+          sudo ldconfig
+          cd ..
+          rm  -rf check
+
       - name: building libcheck (ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
+        if: startsWith(matrix.name, 'ubuntu')
         run: |
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
