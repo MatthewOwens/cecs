@@ -90,7 +90,7 @@ endif
 
 $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo "========== BUILDING CECS $(TEST_TARGET) =========="
-	$(CC) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
+	$(CC) $(MINGW_LDIRS) $(TEST_CFLAGS) $(OBJECTS) $(TEST_OBJECTS) $(TEST_LIBS) -o $@
 	@echo "========== RUNNING CECS TESTS =========="
 	LD_LIBRARY_PATH=. ./$(TEST_TARGET)
 	@echo ""
