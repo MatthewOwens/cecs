@@ -32,7 +32,7 @@
 #ifdef _WIN32	//TODO: windows testing
 	#include <windows.h>
 	#define LIBTYPE HMODULE
-	#define DLOPEN(libname) LoadLibraryW(L ## libname)
+	#define DLOPEN(libname) LoadLibraryW(libname)
 	#define DLFUNC(lib, fn) GetProcAddress((lib), (fn))
 	#define DLCLOSE(lib) FreeLibrary((lib))
 	#define DLERROR GetLastError
