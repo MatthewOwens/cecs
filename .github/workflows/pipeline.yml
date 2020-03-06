@@ -145,10 +145,6 @@ jobs:
       - name: components
         run: make components CC=${{ env.HCC }}
 
-      - name: removing native libyaml
-        run: |
-          sudo apt-get remove libyaml-0-2 libyaml-dev libyaml-doc --yes
-
       - name: cecs
         run: make CC=${{ env.XCC }}
 
