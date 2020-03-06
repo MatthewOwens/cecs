@@ -109,6 +109,7 @@ jobs:
           sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64 --yes
           sudo apt-get install mingw-w64 binutils-mingw-w64 mingw-w64-tools --yes
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
+          sudo apt-get install wine
 
       - name: building libyaml (mingw)
         run: |
@@ -154,12 +155,14 @@ jobs:
           ls ${{ env.LIBDIR }}
           echo "========== PREFIX DIR/INCLUDE =========="
           ls ${{ env.PREFIX }}include
+          pkg-config --cflags check
+          pkg-config --libs check
 
       - name: compiler version check
         run: ${{ env.XCC }} --version
 
       - name: components
-        run: make components CC=${{ env.HCC }}
+        run: make components CC=${{ env.XCC }}
 
       - name: cecs
         run: make CC=${{ env.XCC }}
