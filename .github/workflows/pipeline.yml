@@ -28,8 +28,7 @@ jobs:
         #https://help.github.com/en/articles/workflow-syntax-for-github-actions
         name: [
           ubuntu,
-          macOS,
-          mingw
+          macOS
         ]
 
         include:
@@ -39,73 +38,16 @@ jobs:
           - name: macOS
             os: macOS-latest
             compiler: clang
-          - name: mingw
-            os: ubuntu-latest
-            compiler: x86_64-w64-mingw32-gcc
 
     steps:
       - uses: actions/checkout@v1
       - uses: chrislennon/action-aws-cli@v1.1
 
-      - name: install compiler (ubuntu)
-        if: startsWith(matrix.name, 'ubuntu')
-        run: |
-          sudo apt-get install ${{ matrix.compiler }} --yes
-
-      - name: install compiler (mingw)
-        if: startsWith(matrix.name, 'mingw')
-        run: |
-          sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64 --yes
-
-      - name: install binary dependencies (ubuntu)
+      - name: install dependencies (ubuntu)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
+          sudo apt-get install ${{ matrix.compiler }} --yes
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
-
-      - name: setting environment variables (mingw)
-        if: startsWith(matrix.name, 'mingw')
-        run: |
-          echo "::set-env name=HOST::x86_64-w64-mingw32"
-          echo "::set-env name=PREFIX::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/"
-          echo "::set-env name=LIBDIR::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib/"
-
-      - name: building libyaml (mingw)
-        if: startsWith(matrix.name, 'mingw')
-        run: |
-          git clone https://github.com/yaml/libyaml.git
-          cd libyaml
-          ./bootstrap
-          ./configure --host=${{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
-          CC=${{ matrix.compiler }} make
-          sudo make install
-          echo "========== PREFIX DIR =========="
-          ls ${{ env.PREFIX }}
-          echo "========== PREFIX DIR/LIB =========="
-          ls ${{ env.PREFIX }}lib
-          echo "========== PREFIX DIR/INCLUDE =========="
-          ls ${{ env.PREFIX }}include
-          sudo ldconfig ${{ env.LIBDIR }}
-          cd ..
-          rm -rf libyaml
-        env:
-          PREFIX: /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/
-
-      - name: building libcheck (mingw)
-        if: startsWith(matrix.name, 'mingw')
-        run: |
-          git clone https://github.com/libcheck/check.git --branch 0.13.0
-          cd check
-          autoreconf --install
-          ./configure --host=${{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
-          CC=${{ matrix.compiler }} make
-          sudo make install
-          sudo ldconfig ${{ env.LIBDIR }}
-          cd ..
-          rm  -rf check
-
-      - name: building libcheck (ubuntu)
-        if: startsWith(matrix.name, 'ubuntu')
-        run: |
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
           autoreconf --install
@@ -131,21 +73,78 @@ jobs:
         run: make CC=${{ matrix.compiler }}
 
       - name: package (ubuntu)
-        if: startsWith(matrix.name, 'ubuntu')
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           mkdir cecs
           cp *.so cecs
           cp *.a cecs
 
       - name: package (macOS)
-        if: startsWith(matrix.name, 'macOS')
+        if: startsWith(matrix.os, 'macOS')
         run: |
           mkdir cecs
           cp *.dylib cecs
           cp *.a cecs
 
-      - name: package (mingw)
+      - name: upload artifact (s3)
+        run: |
+          zip -r cecs.zip cecs
+          aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.name }}/cecs-$GITHUB_SHA.zip
+
+  xci:
+    env:
+      XCC: x86_64-w64-mingw32-gcc
+      CC: gcc
+      HOST: x86_64-w64-mingw32
+      PREFIX: /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/
+      LIBDIR: /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib/
+    name: mingw
+    runs-on: ubuntu-latest
+      - name: install compiler (mingw)
+        run: |
+          sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64 --yes
+
+      - name: building libyaml (mingw)
+        run: |
+          git clone https://github.com/yaml/libyaml.git
+          cd libyaml
+          ./bootstrap
+          ./configure --host=${{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
+          CC=${{ env.XCC }} make
+          sudo make install
+          echo "========== PREFIX DIR =========="
+          ls ${{ env.PREFIX }}
+          echo "========== PREFIX DIR/LIB =========="
+          ls ${{ env.LIBDIR }}
+          echo "========== PREFIX DIR/INCLUDE =========="
+          ls ${{ env.PREFIX }}include
+          sudo ldconfig ${{ env.LIBDIR }}
+          cd ..
+          rm -rf libyaml
+
+      - name: building libcheck (mingw)
         if: startsWith(matrix.name, 'mingw')
+        run: |
+          git clone https://github.com/libcheck/check.git --branch 0.13.0
+          cd check
+          autoreconf --install
+          ./configure --host=${{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
+          CC=${{ env.XCC }} make
+          sudo make install
+          sudo ldconfig ${{ env.LIBDIR }}
+          cd ..
+          rm  -rf check
+
+      - name: compiler version check
+        run: ${{ env.XCC }} --version
+
+      - name: components
+        run: make components CC=${{ env.CC }}
+
+      - name: cecs
+        run: make CC=${{ env.XCC }}
+
+      - name: package (mingw)
         run: |
           mkdir cecs
           cp *.dll cecs
@@ -154,10 +153,11 @@ jobs:
       - name: upload artifact (s3)
         run: |
           zip -r cecs.zip cecs
-          aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.name }}/cecs-$GITHUB_SHA.zip
+          aws s3 cp cecs.zip s3://$BUCKET/mingw/cecs-$GITHUB_SHA.zip
+
 
   is-release-ready:
-    needs: ci
+    needs: [ci, xci]
     if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -180,7 +180,7 @@ jobs:
         shell: bash
 
   release:
-    needs: ci
+    needs: is-release-ready
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
