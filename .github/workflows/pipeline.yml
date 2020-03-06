@@ -101,6 +101,9 @@ jobs:
     name: mingw
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
+      - uses: chrislennon/action-aws-cli@v1.1
+
       - name: install compiler (mingw)
         run: |
           sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64 --yes
