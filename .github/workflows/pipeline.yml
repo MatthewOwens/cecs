@@ -96,7 +96,7 @@ jobs:
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
           autoreconf --install
-          ./configure --host={{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
+          ./configure --host=${{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
           CC=${{ matrix.compiler }} make
           sudo make install
           sudo ldconfig ${{ env.LIBDIR }}
