@@ -21,6 +21,7 @@ ifneq (,$(findstring mingw,$(CC)))
 	DETECTED_OS := Windows
 	MINGW_LDIRS = -L/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib
 	LIBS := $(filter-out -ldl,$(LIBS))
+	TEST_LIBS = $(LIBS) `x86_64-w64-mingw32-pkg-config --libs check`
 else
 	DETECTED_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
 endif
