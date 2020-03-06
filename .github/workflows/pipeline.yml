@@ -100,6 +100,7 @@ jobs:
       LIBDIR: /usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib/
     name: mingw
     runs-on: ubuntu-latest
+    steps:
       - name: install compiler (mingw)
         run: |
           sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64 --yes
