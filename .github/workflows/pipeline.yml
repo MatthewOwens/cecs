@@ -146,14 +146,14 @@ jobs:
           cd ..
           rm  -rf check
 
-				- name: lib output
-					run: |
-					echo "========== PREFIX DIR =========="
-					ls ${{ env.PREFIX }}
-					echo "========== PREFIX DIR/LIB =========="
-					ls ${{ env.LIBDIR }}
-					echo "========== PREFIX DIR/INCLUDE =========="
-					ls ${{ env.PREFIX }}include
+      - name: lib output
+				run: |
+          echo "========== PREFIX DIR =========="
+          ls ${{ env.PREFIX }}
+          echo "========== PREFIX DIR/LIB =========="
+          ls ${{ env.LIBDIR }}
+          echo "========== PREFIX DIR/INCLUDE =========="
+          ls ${{ env.PREFIX }}include
 
       - name: compiler version check
         run: ${{ env.XCC }} --version
