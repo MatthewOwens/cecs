@@ -127,6 +127,10 @@ jobs:
           cd ..
           rm -rf libyaml
 
+      - name: removing native libyaml
+        run: |
+          sudo apt-get remove libyaml-0-2 libyaml-dev libyaml-doc --yes
+
       - name: building libcheck (mingw)
         run: |
           git clone https://github.com/libcheck/check.git --branch 0.13.0
