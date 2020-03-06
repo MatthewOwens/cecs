@@ -128,7 +128,6 @@ jobs:
           rm -rf libyaml
 
       - name: building libcheck (mingw)
-        if: startsWith(matrix.name, 'mingw')
         run: |
           git clone https://github.com/libcheck/check.git --branch 0.13.0
           cd check
