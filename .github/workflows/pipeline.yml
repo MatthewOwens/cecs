@@ -146,8 +146,8 @@ jobs:
           cd ..
           rm  -rf check
 
-      - name: lib output
-				run: |
+				- name: lib output
+					run: |
 					echo "========== PREFIX DIR =========="
 					ls ${{ env.PREFIX }}
 					echo "========== PREFIX DIR/LIB =========="
