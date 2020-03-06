@@ -109,7 +109,8 @@ jobs:
           sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64 --yes
           sudo apt-get install mingw-w64 binutils-mingw-w64 mingw-w64-tools --yes
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
-          sudo apt-get install wine-stable
+          sudo apt-get install wine-stable wine-binfmt
+          sudo update-binfmts --import /usr/share/binfmts/wine
 
       - name: building libyaml (mingw)
         run: |
