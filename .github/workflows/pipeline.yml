@@ -66,8 +66,8 @@ jobs:
         if: startsWith(matrix.name, 'mingw')
         run: |
           echo "::set-env name=HOST::x86_64-w64-mingw32"
-          echo "::set-en name=PREFIX::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/"
-          echo "::set-en name=LIBDIR::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib"
+          echo "::set-env name=PREFIX::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/"
+          echo "::set-env name=LIBDIR::/usr/lib/gcc/x86_64-w64-mingw32/7.3-win32/lib/"
 
       - name: building libyaml (mingw)
         if: startsWith(matrix.name, 'mingw')
@@ -84,7 +84,7 @@ jobs:
           ls ${{ env.PREFIX }}lib
           echo "========== PREFIX DIR/INCLUDE =========="
           ls ${{ env.PREFIX }}include
-          sudo ldconfig ${{ env.PREFIX }}lib
+          sudo ldconfig ${{ env.LIBDIR }}
           cd ..
           rm -rf libyaml
         env:
@@ -99,7 +99,7 @@ jobs:
           ./configure --host={{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
           CC=${{ matrix.compiler }} make
           sudo make install
-          sudo ldconfig
+          sudo ldconfig ${{ env.LIBDIR }}
           cd ..
           rm  -rf check
 
