@@ -147,7 +147,7 @@ jobs:
           rm  -rf check
 
       - name: lib output
-				run: |
+        run: |
           echo "========== PREFIX DIR =========="
           ls ${{ env.PREFIX }}
           echo "========== PREFIX DIR/LIB =========="
