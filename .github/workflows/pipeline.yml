@@ -106,7 +106,7 @@ jobs:
 
       - name: install dependencies (mingw)
         run: |
-          sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64 --yes
+          sudo apt-get install gcc-mingw-w64 gcc-mingw-w64-x86-64  mingw32-binutils mingw-64 --yes
           sudo apt-get install libyaml-0-2 libyaml-dev libyaml-doc --yes
 
       - name: building libyaml (mingw)
