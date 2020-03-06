@@ -96,7 +96,7 @@ $(TEST_TARGET): $(COMPG_OBJECTS) $(OBJECTS) $(TEST_OBJECTS) $(SYS_TARGET) FORCE
 	@echo ""
 
 tests/%o: tests/%.c
-	$(CC) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
+	$(CC) $(MINGW_LDIRS) $(TEST_CFLAGS) -c $^ $(TEST_LIBS) -o $@
 
 src/systems/%.o: src/systems/%.c
 	$(CC) $(MINGW_LDIRS) $(CFLAGS) $(MDEFS) -c $^ -o $@
