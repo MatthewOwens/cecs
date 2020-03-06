@@ -118,12 +118,6 @@ jobs:
           ./configure --host=${{ env.HOST }} --prefix=${{ env.PREFIX }} --libdir=${{ env.LIBDIR }}
           CC=${{ env.XCC }} make
           sudo make install
-          echo "========== PREFIX DIR =========="
-          ls ${{ env.PREFIX }}
-          echo "========== PREFIX DIR/LIB =========="
-          ls ${{ env.LIBDIR }}
-          echo "========== PREFIX DIR/INCLUDE =========="
-          ls ${{ env.PREFIX }}include
           sudo ldconfig ${{ env.LIBDIR }}
           cd ..
           rm -rf libyaml
@@ -139,6 +133,27 @@ jobs:
           sudo ldconfig ${{ env.LIBDIR }}
           cd ..
           rm  -rf check
+
+      - name: building libcheck (native)
+        run: |
+          git clone https://github.com/libcheck/check.git --branch 0.13.0
+          cd check
+          autoreconf --install
+          ./configure
+          CC=${{ env.HCC }} make
+          sudo make install
+          sudo ldconfig
+          cd ..
+          rm  -rf check
+
+      - name: lib output
+				run: |
+          echo "========== PREFIX DIR =========="
+          ls ${{ env.PREFIX }}
+          echo "========== PREFIX DIR/LIB =========="
+          ls ${{ env.LIBDIR }}
+          echo "========== PREFIX DIR/INCLUDE =========="
+          ls ${{ env.PREFIX }}include
 
       - name: compiler version check
         run: ${{ env.XCC }} --version
