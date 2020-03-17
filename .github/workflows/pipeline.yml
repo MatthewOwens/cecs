@@ -22,20 +22,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Github Actions requires a single row to be added to the build matrix.
-        #https://help.github.com/en/articles/workflow-syntax-for-github-actions
         name: [
-          ubuntu,
-          macOS
+          linux,
+          darwin
         ]
 
         include:
-          - name: ubuntu
+          - name: linux
             os: ubuntu-latest
             compiler: gcc
-          - name: macOS
+            so-extension: so
+            sto-extension: a
+          - name: darwin
             os: macOS-latest
             compiler: clang
+            so-extension: dylib
+            sto-extension: a
 
     steps:
       - uses: actions/checkout@v1
@@ -64,59 +66,28 @@ jobs:
       - name: compiler version check
         run: ${{ matrix.compiler }} --version
 
-      - name: components
-        run: make components CC=${{ matrix.compiler }}
+      - name: generating component c/h files
+        run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} components
 
       - name: cecs
-        run: make CC=${{ matrix.compiler }}
+        run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} libcecs.${{ matrix.sto-extension }}
 
-      - name: package (ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
+      - name: checks
+        run: make 
+        run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} check
+
+      - name: package
         run: |
-          mkdir cecs
-          cp *.so cecs
-          cp *.a cecs
-
-      - name: package (macOS)
-        if: startsWith(matrix.os, 'macOS')
-        run: |
-          mkdir cecs
-          cp *.dylib cecs
-          cp *.a cecs
-
-      - name: upload artifact (github)
-        uses: actions/upload-artifact@v1
-        with:
-          name: cecs-${{ matrix.os }}
-          path: cecs
+          ls -lah
+          @echo "----------"
+          mkdir cecs-${{ matrix.name }}
+          cp *.${{ matrix.so-extension }} cecs-${{ matrix.name }}
+          cp libcecs.${{ matrix.sto-extension }} cecs-${{ matrix.name }}
 
       - name: upload artifact (s3)
         run: |
-          zip -r cecs.zip cecs
-          aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.os }}/cecs-$GITHUB_SHA.zip
-
-  is-release-ready:
-    needs: ci
-    if: github.event_name == 'pull_request' && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-
-      - name: get version variables
-        run: |
-          echo "::set-env name=VMAJOR::$(cut -d . -f1 .version)"
-          echo "::set-env name=VMINOR::$(cut -d . -f2 .version)"
-          echo "::set-env name=VPATCH::$(cut -d . -f3 .version)"
-          echo "::set-env name=VERSION::v$(cat .version)"
-
-      - name: ensure version has been updated
-        run: |
-          PREVVER=$(git tag | tail -1)
-          if [ $PREVVER == $VERSION ]; then
-            echo "version not incremented! Aborting release"
-            exit 1
-          fi
-        shell: bash
+          zip -r cecs.zip cecs-${{ matrix.name }}
+          aws s3 cp cecs.zip s3://$BUCKET/${{ matrix.name }}/cecs-$GITHUB_SHA.zip
 
   release:
     needs: ci
@@ -124,13 +95,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+
       - uses: chrislennon/action-aws-cli@v1.1
 
-      - name: get version variables
+      - name: set version variables
         run: |
-          echo "::set-env name=VMAJOR::$(cut -d . -f1 .version)"
-          echo "::set-env name=VMINOR::$(cut -d . -f2 .version)"
-          echo "::set-env name=VPATCH::$(cut -d . -f3 .version)"
           echo "::set-env name=VERSION::v$(cat .version)"
 
       - name: create release
@@ -140,32 +109,35 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ env.VERSION }}${{ env.RSUFFIX }}
+          release_name: Release ${{ env.VERSION }}
           draft: false
-  
-      - name: get artifacts
-        run: |
-          aws s3 cp s3://$BUCKET/ubuntu-latest/cecs-$GITHUB_SHA.zip\
-           cecs-linux-$VERSION
-          aws s3 cp s3://$BUCKET/macOS-latest/cecs-$GITHUB_SHA.zip\
-           cecs-darwin-$VERSION
 
-      - name: upload release artifacts (linux)
+      - name: get artifacts (linux)
+        run: |
+          aws s3 cp s3://$BUCKET/linux/cecs-$GITHUB_SHA.zip\
+           cecs-linux-$VERSION
+
+      - name: upload release artifact (linux)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./cecs-linux-${{ env.VERSION }}
-          asset_name: cecs-linux-latest-${{ env.VERSION }}
+          asset_name: cecs-linux-${{ env.VERSION }}
           asset_content_type: application/zip
 
-      - name: upload release artifacts (macos)
+      - name: get artifacts (darwin)
+        run: |
+          aws s3 cp s3://$BUCKET/darwin/cecs-$GITHUB_SHA.zip\
+           cecs-darwin-$VERSION
+
+      - name: upload release artifact (darwin)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./cecs-darwin-${{ env.VERSION }}
-          asset_name: cecs-darwin-latest-${{ env.VERSION }}
+          asset_name: cecs-darwin-${{ env.VERSION }}
           asset_content_type: application/zip
