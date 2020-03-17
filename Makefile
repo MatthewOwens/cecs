@@ -13,17 +13,20 @@ endif
 ifeq ($(TARGET_OS), linux)
 EXE_END :=
 SO_END := .so
+STO_END := .a
 CC := gcc
 endif
 ifeq ($(TARGET_OS), darwin)
 EXE_END :=
 SO_END := .dylib
+STO_END := .a
 CC := clang
 endif
 ifeq ($(TARGET_OS), windows)
 $(error windows builds are currently unsupported)
 EXE_END := .exe
 SO_END := .dll
+STO_END := .lib
 CC := gcc
 endif
 
@@ -31,7 +34,7 @@ endif
 #    TARGET VARS   #
 ####################
 # exporting sane defaults for our various targets
-export TARGET := lib$(TARGET_NAME)$(SO_END)
+export TARGET := lib$(TARGET_NAME)$(STO_END)
 export TEST_TARGET := check
 export COMP_TARGET := components$(EXE_END)
 export EXAMPLE_SYSTEMS := lib$(TARGET_NAME)_sysfuncs$(SO_END)
