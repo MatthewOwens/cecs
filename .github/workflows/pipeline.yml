@@ -70,7 +70,8 @@ jobs:
         run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} components
 
       - name: cecs
-        run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} libcecs.${{ matrix.sto-extension }}
+        run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }}\
+         libcecs.${{ matrix.sto-extension }}
 
       - name: checks
         run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} check
