@@ -73,7 +73,6 @@ jobs:
         run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} libcecs.${{ matrix.sto-extension }}
 
       - name: checks
-        run: make 
         run: make CC=${{ matrix.compiler }} TARGET_OS=${{ matrix.name }} check
 
       - name: package
