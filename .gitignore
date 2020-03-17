@@ -28,7 +28,10 @@
 *.app
 check
 libcecs.a
-component_gen
+components
+
+# Depend files
+*.d
 
 # Subdirectories
 obj/
