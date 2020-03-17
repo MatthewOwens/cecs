@@ -78,7 +78,7 @@ jobs:
       - name: package
         run: |
           ls -lah
-          @echo "----------"
+          echo "----------"
           mkdir cecs-${{ matrix.name }}
           cp *.${{ matrix.so-extension }} cecs-${{ matrix.name }}
           cp libcecs.${{ matrix.sto-extension }} cecs-${{ matrix.name }}
