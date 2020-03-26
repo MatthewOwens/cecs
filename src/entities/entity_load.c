@@ -125,7 +125,7 @@ static int parse_event(yaml_parser_t *p)
 int cecs_load_ent_yaml(struct cecs* cecs, const char* filename)
 {
 	if(cecs == NULL) {
-		cecserr_msg(CECSE_NULL, __FUNCTION__);
+		cecserr_msg(CECS_NULL, __FUNCTION__);
 	}
 
 	yaml_parser_t parser;
@@ -143,7 +143,7 @@ int cecs_load_ent_yaml(struct cecs* cecs, const char* filename)
 
 	if(status == bad) {
 		cleanup();
-		return cecserr_msg(CECSE_INVALID_VALUE, "bad component yaml");
+		return cecserr_msg(CECS_INVALID_VALUE, "bad component yaml");
 	}
 
 	/* registering entities*/
@@ -153,6 +153,6 @@ int cecs_load_ent_yaml(struct cecs* cecs, const char* filename)
 			entities.data[i].components);
 	}
 	cleanup();
-	return cecserr(CECSE_NONE);
+	return cecserr(CECS_NONE);
 }
 

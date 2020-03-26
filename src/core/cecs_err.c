@@ -9,7 +9,7 @@
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
 
-static enum cecs_errno lasterrno = CECSE_NONE;
+static enum cecs_errno lasterrno = CECS_NONE;
 
 static char* cecs_errmsg[] = {
 	"",
@@ -27,7 +27,7 @@ int cecserr(enum cecs_errno err)
 
 int cecserr_msg(enum cecs_errno err, const char* msg)
 {
-	if (err != CECSE_NONE)
+	if (err != CECS_NONE)
 		fprintf(stderr,
 		ANSI_COLOR_RED "cecs error: %s %s\n" ANSI_COLOR_RESET,
 		cecs_errmsg[err], msg);

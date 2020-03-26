@@ -38,13 +38,13 @@ struct cecs* cecs_init()
 	cecs->registered_entity_names.capacity = 0;
 	cecs->registered_entity_names.data = NULL;
 
-	cecserr(CECSE_NONE);
+	cecserr(CECS_NONE);
 	return cecs;
 }
 
 int cecs_free(struct cecs* cecs)
 {
-	if(cecs == NULL) return cecserr(CECSE_NULL); 
+	if(cecs == NULL) return cecserr(CECS_NULL); 
 
 	if(cecs->components != NULL){
 		for(int i = 0; i < cecs->num_components; ++i){
@@ -70,18 +70,18 @@ int cecs_free(struct cecs* cecs)
 
 	free(cecs);
 	cecs = NULL;
-	return cecserr(CECSE_NONE);
+	return cecserr(CECS_NONE);
 }
 
 int cecs_start(struct cecs* cecs)
 {
 	if(cecs == NULL){
-		return cecserr(CECSE_NULL);
+		return cecserr(CECS_NULL);
 	} else if(cecs->state != CECS_UNINITILISED) {
-		return cecserr(CECSE_INVALID_OPERATION);
+		return cecserr(CECS_INVALID_OPERATION);
 	}
 
 	cecs->state = CECS_STARTED;
-	return cecserr(CECSE_NONE);
+	return cecserr(CECS_NONE);
 }
 
