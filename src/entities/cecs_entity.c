@@ -66,7 +66,7 @@ int extend_components(struct cecs* cecs)
 	for(i = old_size; i < cecs->num_entities; ++i){
 		array_push(cecs->free_entities, &cecs->entities[i]);
 	}
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 int need_components_extended(struct cecs* cecs)
@@ -122,7 +122,7 @@ int cecs_add_entity(struct cecs* cecs, char* name, struct cecs_entity** out)
 	(*out)->id = id;
 	(*out)->mask = selection->mask;
 
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 int cecs_rem_entity(struct cecs* cecs, struct cecs_entity** ent)
@@ -136,12 +136,12 @@ int cecs_rem_entity(struct cecs* cecs, struct cecs_entity** ent)
 	for(int i = 0; i < cecs->free_entities.length; ++i){
 		// entity is already inactive, can report success
 		if(ent == cecs->free_entities.data[i])
-			return cecserr(CECS_NONE);
+			return cecserr(CECS_NOERR);
 	}
 
 	// flagging the entity for removal
 	array_push(cecs->free_entities, *ent);
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 int cecs_ent_add_component(struct cecs *cecs, uint32_t id, char* name)
@@ -157,7 +157,7 @@ int cecs_ent_add_component(struct cecs *cecs, uint32_t id, char* name)
 
 	// adding the key to the entity
 	ent->mask = ent->mask | key;
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
@@ -173,7 +173,7 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 
 	// removing the key to the entity using bitwise xor
 	ent->mask = ent->mask ^ key;
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps)

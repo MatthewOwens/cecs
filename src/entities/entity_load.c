@@ -153,6 +153,6 @@ int cecs_load_ent_yaml(struct cecs* cecs, const char* filename)
 			entities.data[i].components);
 	}
 	cleanup();
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 

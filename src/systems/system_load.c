@@ -379,5 +379,5 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 	 */
 	cecs->state = CECS_INITILISED;
 
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }

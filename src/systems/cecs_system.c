@@ -50,7 +50,7 @@ int cecs_reg_system(struct cecs* cecs, struct cecs_system* sys)
 	memcpy(sysptr, sys, sizeof(struct cecs_system));
 
 	cecs->num_systems = target;
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 struct cecs_system* cecs_system(struct cecs *cecs, const char* name)
@@ -104,5 +104,5 @@ int cecs_rem_system(struct cecs* cecs, const char* name)
 	sys->free = NULL;
 	sys->run = NULL;
 	sys->init = NULL;
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }

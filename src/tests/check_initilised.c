@@ -30,7 +30,7 @@ END_TEST
 
 START_TEST(start_successful)
 {
-	ck_assert_int_eq(cecs_start(cecs), CECS_NONE);
+	ck_assert_int_eq(cecs_start(cecs), CECS_NOERR);
 	ck_assert_int_eq(cecs->state, CECS_STARTED);
 }
 END_TEST

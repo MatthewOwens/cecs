@@ -34,7 +34,7 @@ int cecs_reg_component( struct cecs* cecs, const char* name,
 
 	// generating a unique key for the next component, the easy way
 	cecs->next_key++;
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 uint32_t cecs_component_key(struct cecs *cecs, const char* name)

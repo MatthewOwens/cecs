@@ -38,7 +38,7 @@ struct cecs* cecs_init()
 	cecs->registered_entity_names.capacity = 0;
 	cecs->registered_entity_names.data = NULL;
 
-	cecserr(CECS_NONE);
+	cecserr(CECS_NOERR);
 	return cecs;
 }
 
@@ -70,7 +70,7 @@ int cecs_free(struct cecs* cecs)
 
 	free(cecs);
 	cecs = NULL;
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
 int cecs_start(struct cecs* cecs)
@@ -82,6 +82,6 @@ int cecs_start(struct cecs* cecs)
 	}
 
 	cecs->state = CECS_STARTED;
-	return cecserr(CECS_NONE);
+	return cecserr(CECS_NOERR);
 }
 
