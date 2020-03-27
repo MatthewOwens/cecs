@@ -9,6 +9,7 @@
 enum cecs_state
 {
 	CECS_UNINITILISED = 0,
+	CECS_INITILISED,
 	CECS_STARTED
 };
 

@@ -77,7 +77,7 @@ int cecs_start(struct cecs* cecs)
 {
 	if(cecs == NULL){
 		return cecserr(CECS_NULL);
-	} else if(cecs->state != CECS_UNINITILISED) {
+	} else if(cecs->state != CECS_INITILISED) {
 		return cecserr(CECS_INVALID_OPERATION);
 	}
 

@@ -92,7 +92,7 @@ enum parse_state{
 	i_m
 };
 
-void cecs_free_sys_yaml()
+void cecs_free_sys_libs()
 {
 	printf("\t%s\n", __FUNCTION__);
 	#ifdef CECS_SYS_FUNCS
@@ -206,7 +206,7 @@ static void set_runtype(const char* value, struct cecs_system *system)
 		}
 	}
 
-	system->runtype = unknown;
+	system->runtype = sys_unknown;
 }
 
 static void append_read_key(const char* value, struct cecs_system* system,
@@ -372,6 +372,12 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 	if(status == bad) {
 		return cecserr_msg(CECS_INVALID_VALUE, "bad component yaml");
 	}
+
+	/*
+	 * since systems must be the last thing we load for cecs, we can say
+	 * that cecs has been intilised if we get here
+	 */
+	cecs->state = CECS_INITILISED;
 
 	return cecserr(CECS_NONE);
 }

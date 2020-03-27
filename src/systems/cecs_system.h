@@ -10,10 +10,10 @@ typedef void (*sys_run_func)();
 typedef void (*sys_tidy_func)();
 
 typedef enum {
-	unknown = -1,
-	init = 0,
-	per_frame,
-	direct_call
+	sys_unknown = -1,
+	sys_init = 0,
+	sys_per_frame,
+	sys_direct_call
 }sys_runtype;
 
 struct cecs_system

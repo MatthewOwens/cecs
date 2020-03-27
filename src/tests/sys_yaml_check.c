@@ -48,7 +48,7 @@ static void yaml_init()
 
 static void yaml_teardown()
 {
-	cecs_free_sys_yaml();
+	cecs_free_sys_libs();
 }
 
 START_TEST(systems_added)

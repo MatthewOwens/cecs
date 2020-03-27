@@ -17,7 +17,7 @@ static char* cecs_errmsg[] = {
 	"invalid operation",
 	"cecs could not allocate any more memory!",
 	"stub function called",
-	"cecs is uninitilised"
+	"cecs is NULL"
 };
 
 int cecserr(enum cecs_errno err)
