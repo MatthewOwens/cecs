@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include "cecs_entity.h"
 #include "cecs_component.h"
+#include "cecs_component_key.h"
 #include "cecs_system.h"
 #include "arr.h"
 
@@ -28,7 +29,7 @@ struct cecs{
 	struct cecs_entity *entities;
 	int num_entities;
 
-	uint32_t next_comp_key;
+	CECS_COMP_KEY next_comp_key;
 
 	array(struct cecs_entity*) free_entities;
 };
