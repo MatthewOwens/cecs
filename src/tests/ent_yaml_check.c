@@ -12,7 +12,7 @@ static struct cecs_entity *entities[ENTITY_COUNT];
 
 /*
  * manually grabbed based on the order that components are loaded in
- * components.yml. Correct as of TODO:UPDATE SHA, so if you break the manual_ent_load
+ * components.yml. Correct as of e40442, so if you break the manual_ent_load
  * test, check if you've updated the component loading and update accordingly
 */
 static int expected_masks [3] = {7, 23 ,17};
