@@ -28,7 +28,7 @@ struct cecs{
 	struct cecs_entity *entities;
 	int num_entities;
 
-	uint32_t next_key;
+	uint32_t next_comp_key;
 
 	array(struct cecs_entity*) free_entities;
 };

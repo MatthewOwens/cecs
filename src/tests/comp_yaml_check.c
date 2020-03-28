@@ -27,34 +27,34 @@ END_TEST
 START_TEST(position_loaded)
 {
 	uint32_t key = cecs_component_key(cecs, "position");
-	ck_assert_uint_eq(key, 0);
+	ck_assert_uint_eq(key, 1);
 }
 END_TEST
 
 START_TEST(velocity_loaded)
 {
 	uint32_t key = cecs_component_key(cecs, "velocity");
-	ck_assert_uint_eq(key, 1);
+	ck_assert_uint_eq(key, 2);
 }
 END_TEST
 
 START_TEST(uv_loaded)
 {
 	uint32_t key = cecs_component_key(cecs, "uvs");
-	ck_assert_uint_eq(key, 2);
+	ck_assert_uint_eq(key, 4);
 }
 END_TEST
 
 START_TEST(stats_loaded)
 {
 	uint32_t key = cecs_component_key(cecs, "stats");
-	ck_assert_uint_eq(key, 3);
+	ck_assert_uint_eq(key, 8);
 }
 
 START_TEST(name_loaded)
 {
 	uint32_t key = cecs_component_key(cecs, "name");
-	ck_assert_uint_eq(key, 4);
+	ck_assert_uint_eq(key, 16);
 }
 END_TEST
 

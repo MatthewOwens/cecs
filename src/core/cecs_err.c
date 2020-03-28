@@ -17,6 +17,7 @@ static char* cecs_errmsg[] = {
 	"invalid operation",
 	"cecs could not allocate any more memory!",
 	"stub function called",
+	"max amount of components reached - all key bits used",
 	"cecs is NULL"
 };
 

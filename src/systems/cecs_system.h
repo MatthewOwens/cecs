@@ -1,7 +1,7 @@
 #pragma once
 #include "cecs.h"
-#include "arr.h"
 #include <stdbool.h>
+#include "cecs_component_key.h"
 
 struct cecs;
 
@@ -22,9 +22,9 @@ struct cecs_system
 	sys_run_func run;
 	sys_tidy_func free;
 	sys_runtype runtype;
-	array(uint32_t) read_keys;
-	array(uint32_t) write_keys;
-	array(uint32_t) ignore_keys;
+	CECS_COMP_KEY read_keys;
+	CECS_COMP_KEY write_keys;
+	CECS_COMP_KEY ignore_keys;
 	const char *name;
 	bool registered;
 };

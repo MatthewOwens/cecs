@@ -1,13 +1,16 @@
+#include <yaml.h>
+#include "cecs.h"
+#include <yaml.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "cecs_err.h"
 #include "system_load.h"
 #include "cecs_system.h"
 #include "yaml_helper.h"
-#include "cecs_err.h"
-#include "cecs.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <yaml.h>
+#include "cecs_component.h"
+#include "cecs_component_key.h"
 
 #define N_ELEMENTS 5
 #define N_FUNCTIONS 3
@@ -209,34 +212,9 @@ static void set_runtype(const char* value, struct cecs_system *system)
 	system->runtype = sys_unknown;
 }
 
-static void append_read_key(const char* value, struct cecs_system* system,
-			struct cecs *cecs){
-	const uint32_t bad_key = -1;
-	uint32_t key = cecs_component_key(cecs, value);
-
-	if(key != bad_key) {
-		array_push(system->read_keys, key);
-	}
-}
-
-static void append_write_key(const char* value, struct cecs_system* system,
-			struct cecs *cecs){
-	const uint32_t bad_key = -1;
-	uint32_t key = cecs_component_key(cecs, value);
-
-	if(key != bad_key) {
-		array_push(system->write_keys, key);
-	}
-}
-
-static void append_ignore_key(const char* value, struct cecs_system* system,
-			struct cecs *cecs){
-	const uint32_t bad_key = -1;
-	uint32_t key = cecs_component_key(cecs, value);
-
-	if(key != bad_key) {
-		array_push(system->ignore_keys, key);
-	}
+static void append_key(CECS_COMP_KEY comp_key, CECS_COMP_KEY* sys_keys)
+{
+	*sys_keys |= comp_key;
 }
 
 static void parse_scalar(const char* value, enum parse_state* s,
@@ -273,13 +251,16 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		set_runtype(value, system);
 		break;
 	case r_m:
-		append_read_key(value, system, cecs);
+		append_key(cecs_component_key(cecs, value),
+				&system->read_keys);
 		break;
 	case w_m:
-		append_write_key(value, system, cecs);
+		append_key(cecs_component_key(cecs, value),
+				&system->write_keys);
 		break;
 	case i_m:
-		append_ignore_key(value, system, cecs);
+		append_key(cecs_component_key(cecs, value),
+				&system->ignore_keys);
 		break;
 	case func_m:
 		if(strcmp(prevValue, "init") == 0) {

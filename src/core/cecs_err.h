@@ -7,6 +7,7 @@ enum cecs_errno
 	CECS_INVALID_OPERATION,
 	CECS_NOMEM,
 	CECS_STUB,
+	CECS_NO_KEY,
 	CECS_NULL
 };
 

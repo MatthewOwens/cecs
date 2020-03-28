@@ -12,10 +12,10 @@ static struct cecs_entity *entities[ENTITY_COUNT];
 
 /*
  * manually grabbed based on the order that components are loaded in
- * components.yml. Correct as of 1dbc6173a, so if you break the manual_ent_load
+ * components.yml. Correct as of TODO:UPDATE SHA, so if you break the manual_ent_load
  * test, check if you've updated the component loading and update accordingly
 */
-static int expected_masks [3] = {3, 7 ,4};
+static int expected_masks [3] = {7, 23 ,17};
 
 static void suite_init()
 {
@@ -70,12 +70,13 @@ END_TEST
 
 START_TEST(yaml_reg_ent_masks)
 {
-	ck_assert_int_eq(cecs->registered_entities.data[0].mask,
-		expected_masks[0]);
-	ck_assert_int_eq(cecs->registered_entities.data[1].mask,
-		expected_masks[1]);
-	ck_assert_int_eq(cecs->registered_entities.data[2].mask,
-		expected_masks[2]);
+	for(int i = 0; i < 3; ++i) {
+		printf("%s mask is %d\n",
+				cecs->registered_entity_names.data[i],
+				cecs->registered_entities.data[i].mask);
+		ck_assert_int_eq(cecs->registered_entities.data[i].mask,
+			expected_masks[i]);
+	}
 }
 END_TEST
 
