@@ -35,7 +35,7 @@ endif
 ####################
 # exporting sane defaults for our various targets
 export TARGET := lib$(TARGET_NAME)$(STO_END)
-export TEST_TARGET := check
+export TEST_TARGET := check$(EXE_END)
 export COMP_TARGET := components$(EXE_END)
 export EXAMPLE_SYSTEMS := lib$(TARGET_NAME)_sysfuncs$(SO_END)
 
