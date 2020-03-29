@@ -18,7 +18,7 @@ struct cecs_entity* get_inactive_entity(struct cecs* cecs)
 	}
 }
 
-int is_inactive(struct cecs* cecs, uint32_t entID)
+int cecs_ent_inactive(struct cecs* cecs, uint32_t entID)
 {
 	for(uint32_t i = 0; i < cecs->free_entities.length; ++i){
 		if(cecs->entities[i].id == cecs->free_entities.data[i]->id)
@@ -150,7 +150,7 @@ int cecs_ent_add_component(struct cecs *cecs, uint32_t id, char* name)
 	if(cecs == NULL)	 return cecserr(CECS_NULL);
 	ent = ent_from_id(cecs, id);
 	if(ent == NULL) return cecserr(CECS_INVALID_VALUE);
-	if(is_inactive(cecs, id) == 0) return cecserr(CECS_INVALID_VALUE);
+	if(cecs_ent_inactive(cecs,id) == 0) return cecserr(CECS_INVALID_VALUE);
 
 	uint32_t key = cecs_component_key(cecs, name);
 	if(key == -1) return cecserr(CECS_INVALID_VALUE);
@@ -166,7 +166,7 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	if(cecs == NULL) return cecserr(CECS_NULL);
 	ent = ent_from_id(cecs, id);
 	if(ent == NULL)		 return cecserr(CECS_INVALID_VALUE);
-	if(is_inactive(cecs, id) == 0) return cecserr(CECS_INVALID_VALUE);
+	if(cecs_ent_inactive(cecs,id) == 0) return cecserr(CECS_INVALID_VALUE);
 
 	uint32_t key = cecs_component_key(cecs, name);
 	if(key == -1) return cecserr(CECS_INVALID_VALUE);
