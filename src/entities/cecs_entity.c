@@ -152,7 +152,7 @@ int cecs_ent_add_component(struct cecs *cecs, uint32_t id, char* name)
 	if(ent == NULL) return cecserr(CECS_INVALID_VALUE);
 	if(cecs_ent_inactive(cecs,id) == 0) return cecserr(CECS_INVALID_VALUE);
 
-	uint32_t key = cecs_component_key(cecs, name);
+	CECS_COMP_KEY key = cecs_component_key(cecs, name);
 	if(key == -1) return cecserr(CECS_INVALID_VALUE);
 
 	// adding the key to the entity
@@ -168,7 +168,7 @@ int cecs_ent_rem_component(struct cecs *cecs, uint32_t id, char* name)
 	if(ent == NULL)		 return cecserr(CECS_INVALID_VALUE);
 	if(cecs_ent_inactive(cecs,id) == 0) return cecserr(CECS_INVALID_VALUE);
 
-	uint32_t key = cecs_component_key(cecs, name);
+	CECS_COMP_KEY key = cecs_component_key(cecs, name);
 	if(key == -1) return cecserr(CECS_INVALID_VALUE);
 
 	// removing the key to the entity using bitwise xor
