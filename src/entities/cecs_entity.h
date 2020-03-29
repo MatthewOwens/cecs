@@ -1,12 +1,13 @@
 #pragma once
 #include "cecs.h"
+#include "cecs_component_key.h"
 
 struct cecs;
 
 struct cecs_entity
 {
 	uint32_t id;
-	uint32_t mask;
+	CECS_COMP_KEY mask;
 };
 
 int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps);

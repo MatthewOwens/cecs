@@ -183,7 +183,7 @@ int cecs_reg_entity(struct cecs *cecs, char* name, int n_comps, char **comps)
 		return cecserr_msg(CECS_INVALID_VALUE, __FUNCTION__);
 	}
 
-	uint32_t key;
+	CECS_COMP_KEY key;
 	struct cecs_entity ent;
 	ent.mask = 0;
 	ent.id = -1;
