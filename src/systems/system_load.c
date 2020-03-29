@@ -351,7 +351,7 @@ int cecs_load_sys_yaml( struct cecs* cecs, const char* filename)
 	yaml_parser_delete(&parser);
 
 	if(status == bad) {
-		return cecserr_msg(CECS_INVALID_VALUE, "bad component yaml");
+		return cecserr_msg(CECS_INVALID_VALUE, "bad system yaml");
 	}
 
 	/*
