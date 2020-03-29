@@ -112,14 +112,12 @@ int cecs_add_entity(struct cecs* cecs, char* name, struct cecs_entity** out)
 		cecs->entities = tmp;
 		*out = &cecs->entities[cecs->num_entities - 1];
 		// setting the identity id to it's position in our array
+		(*out)->id = cecs->num_entities - 1;
 	} else {
 		*out = inactive;
 		array_pop(cecs->free_entities);
 	}
 
-	// basic, but ensures that each entity as a unique id
-	id++;
-	(*out)->id = id;
 	(*out)->mask = selection->mask;
 
 	return cecserr(CECS_NOERR);
