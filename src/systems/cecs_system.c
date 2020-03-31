@@ -122,6 +122,8 @@ int cecs_resolve_sys_deps(struct cecs* cecs)
 				}
 				if(cecs->systems[k].registered == true) {
 					index = k;
+					free(systems[i].dependNames.data[j]);
+					systems[i].dependNames.data[j] == NULL;
 					break;
 				}
 				else break;
