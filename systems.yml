@@ -10,6 +10,8 @@
       init: tsys_init
       work: tsys_run
       tidy: tsys_clean
+    depends:
+      - pathing    # need to know where to move
 - pathing:
     reads:
       - position
