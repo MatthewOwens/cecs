@@ -105,6 +105,30 @@ START_TEST(pathing_runs_correct)
 }
 END_TEST
 
+START_TEST(system_depends)
+{
+	struct cecs_system* movement = cecs_system(cecs, "movement");
+
+	ck_assert_ptr_nonnull(movement->dependNames.data);
+	ck_assert_ptr_null(movement->dependIndices.data);
+	ck_assert_int_eq(strcmp(movement->dependNames.data[0], "pathing"), 0);
+
+	cecs_resolve_sys_deps(cecs);
+	ck_assert_ptr_null(movement->dependNames.data);
+	ck_assert_ptr_nonnull(movement->dependIndices.data);
+
+	// finding the itr
+	int itr = -1;
+
+	for(int i = 0; i < cecs->num_systems; ++i) {
+		if(strcmp(cecs->systems[i].name, "pathing") == 0){
+			itr = i;
+		}
+	}
+	ck_assert_int_eq(movement->dependIndices.data[0], itr);
+}
+END_TEST
+
 Suite * sys_yaml_suite(void)
 {
 	Suite * s = suite_create("system yaml suite");
@@ -115,6 +139,7 @@ Suite * sys_yaml_suite(void)
 
 	tcase_add_test(yaml_load, systems_array_size);
 	tcase_add_test(yaml_load, systems_added);
+	tcase_add_test(yaml_load, system_depends);
 	tcase_add_test(yaml_load, movement_load_correct);
 	tcase_add_test(yaml_load, movement_runs_correct);
 	tcase_add_test(yaml_load, pathing_load_correct);

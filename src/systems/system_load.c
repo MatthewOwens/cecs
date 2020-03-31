@@ -14,6 +14,7 @@
 
 #define N_ELEMENTS 5
 #define N_FUNCTIONS 3
+#define SYS_NAME_MAX 32
 
 // preprocessor magic for includes
 
@@ -60,12 +61,13 @@
 static LIBTYPE sysfuncs = NULL;
 static LIBTYPE usrfuncs = NULL;
 
-static char *elements[5] = {
+static char *elements[6] = {
 	"runtype",
 	"reads",
 	"writes",
 	"ignores",
-	"functions"
+	"functions",
+	"depends"
 };
 
 static char *functions[3] = {
@@ -85,6 +87,8 @@ enum parse_state{
 	sys = 0,
 	func,
 	func_m,
+	dep,
+	dep_m,
 	rt,
 	rt_m,
 	r,
@@ -110,7 +114,7 @@ static void load_libs()
 {
 	printf("\t%s\n", __FUNCTION__);
 	printf("\tCECS_SYS_FUNCS = " XSTR(CECS_SYS_FUNCS) "\n");
-	//printf("\tCECS_USR_FUNCS = %s\n", CECS_USR_FUNCS);
+
 	#ifdef CECS_SYS_FUNCS
 	sysfuncs = DLOPEN(XSTR(CECS_SYS_FUNCS));
 	if(sysfuncs == NULL) {
@@ -144,13 +148,7 @@ static void set_scalar_state(const char* value, enum parse_state* s)
 	if(strcmp(value, elements[2]) == 0) { *s = w; }
 	if(strcmp(value, elements[3]) == 0) { *s = i; }
 	if(strcmp(value, elements[4]) == 0) { *s = func; }
-
-	//for(int i = 0; i < N_FUNCTIONS; ++i){
-	//	if(strcmp(value, functions[i]) == 0) {
-	//		*s = func;
-	//		return;
-	//	}
-	//}
+	if(strcmp(value, elements[5]) == 0) { *s = dep; }
 }
 
 static void set_func(struct cecs_system* system, int iwt, const char* value)
@@ -240,11 +238,25 @@ static void parse_scalar(const char* value, enum parse_state* s,
 	case func:	// functions
 		*s = func_m;
 		break;
+	case dep:	// dependencies
+		*s = dep_m;
+		break;
 	case sys:
 	{
 		struct cecs_system empty = {0};
 		*system = empty;
 		system->name = value;
+		break;
+	}
+	case dep_m:
+	{
+		char *ptr = NULL;
+		int i = system->dependNames.length;
+		ptr = strndup(value, SYS_NAME_MAX);
+		array_push(system->dependNames, ptr);
+
+		printf("%s depends on %s\n\n", system->name,
+			system->dependNames.data[i]);
 		break;
 	}
 	case rt_m:
