@@ -106,3 +106,7 @@ int cecs_rem_system(struct cecs* cecs, const char* name)
 	sys->init = NULL;
 	return cecserr(CECS_NOERR);
 }
+
+int cecs_resolve_sys_deps(struct cecs* cecs)	// TODO: stub
+{
+}

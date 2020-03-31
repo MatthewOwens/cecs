@@ -2,6 +2,7 @@
 #include "cecs.h"
 #include <stdbool.h>
 #include "cecs_component_key.h"
+#include "arr.h"
 
 struct cecs;
 
@@ -27,8 +28,18 @@ struct cecs_system
 	CECS_COMP_KEY ignore_keys;
 	const char *name;
 	bool registered;
+
+	/* 
+	 * tracking systems that must be executed prior
+	 * to this one. Once dependencies have been resolved, names
+	 * will be cleared and indices stored instead to reduce memory overhead
+	 * and enable quicker parsing.
+	*/
+	array(int) dependIndices;
+	array(char *)dependNames;
 };
 
 int cecs_reg_system(struct cecs* cecs, struct cecs_system* sys);
 int cecs_rem_system(struct cecs* cecs, const char* name);
+int cecs_resolve_sys_deps(struct cecs* cecs);
 struct cecs_system* cecs_system(struct cecs *cecs, const char* name);
