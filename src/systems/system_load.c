@@ -1,3 +1,4 @@
+#include "arr.h"
 #include <yaml.h>
 #include "cecs.h"
 #include <yaml.h>
@@ -12,7 +13,7 @@
 #include "cecs_component.h"
 #include "cecs_component_key.h"
 
-#define N_ELEMENTS 5
+#define N_ELEMENTS 7
 #define N_FUNCTIONS 3
 #define SYS_NAME_MAX 32
 
@@ -61,16 +62,17 @@
 static LIBTYPE sysfuncs = NULL;
 static LIBTYPE usrfuncs = NULL;
 
-static char *elements[6] = {
+static char *elements[N_ELEMENTS] = {
 	"runtype",
 	"reads",
 	"writes",
 	"ignores",
 	"functions",
-	"depends"
+	"adds",
+	"consumes"
 };
 
-static char *functions[3] = {
+static char *functions[N_FUNCTIONS] = {
 	"init",
 	"work",
 	"tidy"
@@ -87,8 +89,10 @@ enum parse_state{
 	sys = 0,
 	func,
 	func_m,
-	dep,
-	dep_m,
+	add,
+	add_m,
+	con,
+	con_m,
 	rt,
 	rt_m,
 	r,
@@ -148,7 +152,8 @@ static void set_scalar_state(const char* value, enum parse_state* s)
 	if(strcmp(value, elements[2]) == 0) { *s = w; }
 	if(strcmp(value, elements[3]) == 0) { *s = i; }
 	if(strcmp(value, elements[4]) == 0) { *s = func; }
-	if(strcmp(value, elements[5]) == 0) { *s = dep; }
+	if(strcmp(value, elements[5]) == 0) { *s = add; }
+	if(strcmp(value, elements[6]) == 0) { *s = con; }
 }
 
 static void set_func(struct cecs_system* system, int iwt, const char* value)
@@ -219,6 +224,7 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		struct cecs_system* system, struct cecs *cecs)
 {
 	static char* prevValue = NULL;
+	int dummy = 1;		// dummy variable for component tagging
 	set_scalar_state(value, s);
 
 
@@ -238,8 +244,11 @@ static void parse_scalar(const char* value, enum parse_state* s,
 	case func:	// functions
 		*s = func_m;
 		break;
-	case dep:	// dependencies
-		*s = dep_m;
+	case add:	// adds
+		*s = add_m;
+		break;
+	case con:	// consumes
+		*s = con_m;
 		break;
 	case sys:
 	{
@@ -248,15 +257,29 @@ static void parse_scalar(const char* value, enum parse_state* s,
 		system->name = value;
 		break;
 	}
-	case dep_m:
+	case add_m:
 	{
-		char *ptr = NULL;
-		int i = system->dependNames.length;
-		ptr = strndup(value, SYS_NAME_MAX);
-		array_push(system->dependNames, ptr);
-
-		printf("%s depends on %s\n\n", system->name,
-			system->dependNames.data[i]);
+		// If the component hasn't been added, add tag component
+		if(cecs_component_key(cecs, value) == 0) {
+			cecs_reg_component(cecs, value, &dummy, sizeof(dummy));
+		}
+		array_push(system->addKeys, cecs_component_key(cecs, value));
+		printf("%s adds %s on completion\n", system->name,
+			value);
+		printf("\tkey is %d\n", cecs_component_key(cecs, value));
+		break;
+	}
+	case con_m:
+	{
+		// If the component hasn't been added, add tag component
+		if(cecs_component_key(cecs, value) == 0) {
+			cecs_reg_component(cecs, value, &dummy, sizeof(dummy));
+		}
+		array_push(system->consumeKeys,
+			cecs_component_key(cecs, value));
+		printf("%s consumes %s on completion\n", system->name,
+			value);
+		printf("\tkey is %d\n", cecs_component_key(cecs, value));
 		break;
 	}
 	case rt_m:

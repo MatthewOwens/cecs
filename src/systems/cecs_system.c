@@ -106,32 +106,3 @@ int cecs_rem_system(struct cecs* cecs, const char* name)
 	sys->init = NULL;
 	return cecserr(CECS_NOERR);
 }
-
-// TODO: remove _vile_ loops
-int cecs_resolve_sys_deps(struct cecs* cecs)
-{
-	struct cecs_system * const systems = cecs->systems;
-
-	for(int i = 0; i < cecs->num_systems; ++i) {
-		for(int j = 0; j < systems[i].dependNames.length; ++j) {
-			int index = -1;
-			for(int k = 0; k < cecs->num_systems; ++k){
-				if(strcmp(systems[i].dependNames.data[j],
-					cecs->systems[k].name) != 0){
-					continue;
-				}
-				if(cecs->systems[k].registered == true) {
-					index = k;
-					free(systems[i].dependNames.data[j]);
-					systems[i].dependNames.data[j] == NULL;
-					break;
-				}
-				else break;
-			}
-			if(index != -1) {
-				array_push(systems[i].dependIndices, index);
-			}
-		}
-		array_free(systems[i].dependNames);
-	}
-}
